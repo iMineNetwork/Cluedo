@@ -1,0 +1,4 @@
+name: CluedoPlugin
+main: nl.imine.minigame.cluedo.CluedoPlugin
+version: 1.0
+depend: [iMineAPI, Minigame-Server]
