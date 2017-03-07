@@ -17,6 +17,8 @@ public class CluedoPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         CluedoPlugin.plugin = this;
+        CluedoPlugin.settings = new Settings(this.getConfig());
+        setUpConfig();
         CluedoPlugin.timerManager = new TimerManager();
         CluedoPlugin.timerManager.init(this);
         CluedoMinigame game = new CluedoMinigame();
