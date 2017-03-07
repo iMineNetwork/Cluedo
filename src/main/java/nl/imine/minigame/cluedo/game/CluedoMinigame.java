@@ -8,7 +8,9 @@ import nl.imine.minigame.cluedo.game.state.endgame.CluedoEndGame;
 import nl.imine.minigame.cluedo.game.state.game.CluedoGame;
 import nl.imine.minigame.cluedo.game.state.lobby.CluedoLobby;
 import nl.imine.minigame.cluedo.game.state.pregame.CluedoPreGame;
+import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Log;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -17,16 +19,15 @@ import java.util.List;
 
 public class CluedoMinigame extends Minigame{
 
-    public static final int SETTINGS_MAX_PLAYERCOUNT = 10;
-    public static final String SETTINGS_MINIGAME_NAME = "Cluedo";
-
     private ArrayList<Player> players = new ArrayList<>();
-    private World cluedoWorld;
-
     private CluedoState gameState;
+    private String gameName = CluedoPlugin.getSettings().getString(Setting.GAME_NAME);
+    private int maxPlayers = CluedoPlugin.getSettings().getInt(Setting.GAME_MAX_PLAYERS);
+    private String worldName = CluedoPlugin.getSettings().getString(Setting.GAME_WORLD_NAME);
+
 
     public String getName() {
-        return SETTINGS_MINIGAME_NAME;
+        return gameName;
     }
 
     public boolean isJoinable() {
@@ -34,7 +35,7 @@ public class CluedoMinigame extends Minigame{
     }
 
     public int getMaxPlayers() {
-        return SETTINGS_MAX_PLAYERCOUNT;
+        return maxPlayers;
     }
 
     public int getPlayerCount() {
@@ -59,7 +60,7 @@ public class CluedoMinigame extends Minigame{
     }
 
     public World getCluedoWorld() {
-        return cluedoWorld;
+        return Bukkit.getWorld(worldName);
     }
 
     public CluedoState getGameState() {

@@ -3,6 +3,7 @@ package nl.imine.minigame.cluedo;
 import nl.imine.minigame.MinigameManager;
 import nl.imine.minigame.cluedo.game.CluedoMinigame;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
+import nl.imine.minigame.cluedo.settings.Settings;
 import nl.imine.minigame.timer.TimerManager;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class CluedoPlugin extends JavaPlugin {
 
     private static Plugin plugin;
+    private static Settings settings;
     private static TimerManager timerManager;
 
     @Override
@@ -32,4 +34,13 @@ public class CluedoPlugin extends JavaPlugin {
     }
 
     public static TimerManager getTimerManager() { return timerManager; }
+
+    public static Settings getSettings(){
+        return settings;
+    }
+
+    private void setUpConfig(){
+        settings.createDefaults();
+        this.saveConfig();
+    }
 }
