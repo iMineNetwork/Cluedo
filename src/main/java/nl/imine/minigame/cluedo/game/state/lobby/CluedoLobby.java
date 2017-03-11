@@ -27,14 +27,14 @@ public class CluedoLobby implements CluedoState, TimerHandler{
 
     @Override
     public void handleStateChange() {
-        Log.info("Handling state change for: " + this.getClass().getSimpleName());
+        Log.finer("Handling state change for: " + this.getClass().getSimpleName());
         this.timer = CluedoPlugin.getTimerManager().createTimer("Lobby", gameTimer, this);
         cluedoMinigame.getPlayers().forEach(this::handlePlayer);
     }
 
     @Override
     public void onTimerEnd() {
-        Log.info("Handling timer end for: " + this.getClass().getSimpleName());
+        Log.finest("Handling timer end for: " + this.getClass().getSimpleName());
         cluedoMinigame.getPlayers().forEach(timer::hideTimer);
         cluedoMinigame.changeGameState(CluedoStateType.PRE_GAME);
     }

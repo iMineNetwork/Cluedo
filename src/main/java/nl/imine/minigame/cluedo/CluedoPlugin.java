@@ -3,13 +3,16 @@ package nl.imine.minigame.cluedo;
 import nl.imine.minigame.MinigameManager;
 import nl.imine.minigame.cluedo.game.CluedoMinigame;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
+import nl.imine.minigame.cluedo.game.state.game.CluedoSpawn;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.settings.Settings;
+import nl.imine.minigame.cluedo.settings.SpawnLocationService;
 import nl.imine.minigame.timer.TimerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,6 +21,7 @@ public class CluedoPlugin extends JavaPlugin {
     private static Plugin plugin;
     private static Settings settings;
     private static TimerManager timerManager;
+    private static SpawnLocationService spawnLocationService;
 
     @Override
     public void onEnable() {
@@ -39,6 +43,12 @@ public class CluedoPlugin extends JavaPlugin {
                 .generatorSettings("3;minecraft:air;127;decoration;2;");
         Bukkit.createWorld(worldCreator);
 
+        // Initialize spawns
+        ConfigurationSerialization.registerClass(CluedoSpawn.class);
+        spawnLocationService = new SpawnLocationService();
+        spawnLocationService.init();
+        spawnLocationService.getSpawns();
+
         //Start Plugin
         CluedoMinigame game = new CluedoMinigame();
         game.changeGameState(CluedoStateType.LOBBY);
@@ -58,6 +68,10 @@ public class CluedoPlugin extends JavaPlugin {
 
     public static Settings getSettings(){
         return settings;
+    }
+
+    public static SpawnLocationService getSpawnLocationService(){
+        return spawnLocationService;
     }
 
     private void setUpConfig(){

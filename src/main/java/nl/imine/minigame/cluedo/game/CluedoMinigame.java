@@ -68,7 +68,7 @@ public class CluedoMinigame extends Minigame{
     }
 
     public void changeGameState(CluedoStateType type){
-        Log.info("Changing game state to: " + type.name());
+        Log.fine("Changing game state to: " + type.name());
         switch (type){
             case PRE_GAME:
                 gameState = new CluedoPreGame(this);

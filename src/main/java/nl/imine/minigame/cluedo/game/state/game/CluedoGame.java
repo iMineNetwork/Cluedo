@@ -10,13 +10,18 @@ import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+import java.util.Random;
+
 public class CluedoGame implements CluedoState, TimerHandler{
 
     public static final CluedoStateType cluedoStateType = CluedoStateType.IN_GAME;
 
     private CluedoMinigame cluedoMinigame;
+    private List<CluedoSpawn> spawns = CluedoPlugin.getSpawnLocationService().getSpawns();
     private int gameTimer = CluedoPlugin.getSettings().getInt(Setting.IN_GAME_TIME);
     private Timer timer;
+    boolean started = false;
 
     public CluedoGame(CluedoMinigame cluedoMinigame){
         this.cluedoMinigame = cluedoMinigame;
@@ -24,14 +29,15 @@ public class CluedoGame implements CluedoState, TimerHandler{
 
     @Override
     public void handleStateChange() {
-        Log.info("Handling state change for: " + this.getClass().getSimpleName());
+        Log.finer("Handling state change for: " + this.getClass().getSimpleName());
         this.timer = CluedoPlugin.getTimerManager().createTimer(CluedoPlugin.getInstance().getName(), gameTimer, this);
         cluedoMinigame.getPlayers().forEach(this::handlePlayer);
+        started = true;
     }
 
     @Override
     public void onTimerEnd() {
-        Log.info("Handling timer end for: " + this.getClass().getSimpleName());
+        Log.finest("Handling timer end for: " + this.getClass().getSimpleName());
         cluedoMinigame.getPlayers().forEach(timer::hideTimer);
         cluedoMinigame.changeGameState(CluedoStateType.END_GAME);
     }
@@ -43,6 +49,12 @@ public class CluedoGame implements CluedoState, TimerHandler{
 
     @Override
     public void handlePlayer(Player player) {
-        timer.showTimer(player);
+        if(!started) {
+            timer.showTimer(player);
+            spawns = CluedoPlugin.getSpawnLocationService().getSpawns();
+            player.teleport(spawns.get(new Random().nextInt(spawns.size())).getLocation());
+        } else {
+            player.teleport(spawns.get(new Random().nextInt(spawns.size())).getLocation());
+        }
     }
 }
