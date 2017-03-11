@@ -54,7 +54,7 @@ public class SpawnLocationService {
                     .forEach(cluedoSpawns::add);
 
         } catch (IOException e) {
-            Log.warning("Could not loads spawns from file | Caused by: " + e.getClass().getSimpleName() + ": " + e.getMessage()));
+            Log.warning("Could not loads spawns from file | Caused by: " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
         return cluedoSpawns;
     }
