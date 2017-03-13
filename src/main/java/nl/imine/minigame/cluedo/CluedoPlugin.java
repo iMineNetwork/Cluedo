@@ -43,7 +43,23 @@ public class CluedoPlugin extends JavaPlugin {
                 .generateStructures(false)
                 .type(WorldType.FLAT)
                 .generatorSettings("3;minecraft:air;127;decoration;2;");
-        Bukkit.createWorld(worldCreator);
+        World world = Bukkit.createWorld(worldCreator);
+
+        //Set world Gamerules
+        world.setGameRuleValue("spectatorsGenerateChunks", "false");
+        world.setGameRuleValue("doWeatherCycle", "false");
+        world.setGameRuleValue("doTileDrops", "false");
+        world.setGameRuleValue("doFireTick", "false");
+        world.setGameRuleValue("naturalRegeneration", "false");
+        world.setGameRuleValue("doMobSpawning", "false");
+        world.setGameRuleValue("mobGriefing", "false");
+        world.setGameRuleValue("doEntityDrops", "false");
+
+        //Set world time and weather
+        world.setWeatherDuration(1);
+        world.setThunderDuration(1);
+        world.setTime(18000);
+
 
         //Initialize spawns
         ConfigurationSerialization.registerClass(CluedoSpawn.class);
