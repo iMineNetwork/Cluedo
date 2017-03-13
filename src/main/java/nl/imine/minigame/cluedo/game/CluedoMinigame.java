@@ -2,6 +2,8 @@ package nl.imine.minigame.cluedo.game;
 
 import nl.imine.minigame.Minigame;
 import nl.imine.minigame.cluedo.CluedoPlugin;
+import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
+import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.game.state.CluedoState;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.game.state.endgame.CluedoEndGame;
@@ -15,11 +17,13 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CluedoMinigame extends Minigame{
 
-    private ArrayList<Player> players = new ArrayList<>();
+    private ArrayList<CluedoPlayer> players = new ArrayList<>();
     private CluedoState gameState;
     private String gameName = CluedoPlugin.getSettings().getString(Setting.GAME_NAME);
     private int maxPlayers = CluedoPlugin.getSettings().getInt(Setting.GAME_MAX_PLAYERS);
@@ -47,16 +51,17 @@ public class CluedoMinigame extends Minigame{
     }
 
     public void onJoin(Player player) {
-        players.add(player);
+        RoleType role = gameState.getState().equals(CluedoStateType.LOBBY) ? RoleType.LOBBY : RoleType.SPECTATOR;
+        players.add(new CluedoPlayer(player, role));
         getGameState().handlePlayer(player);
     }
 
     public void onLeave(Player player) {
-        players.remove(player);
+        players.removeIf(cluedoPlayer -> cluedoPlayer.getPlayer().equals(player));
     }
 
     public List<Player> getPlayers() {
-        return players;
+        return players.stream().map(CluedoPlayer::getPlayer).collect(Collectors.toList());
     }
 
     public World getCluedoWorld() {
