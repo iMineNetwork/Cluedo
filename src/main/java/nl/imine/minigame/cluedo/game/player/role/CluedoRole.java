@@ -26,4 +26,12 @@ public abstract class CluedoRole {
 	public boolean isInnocent() {
 		return roleType.isInnocent();
 	}
+
+	/**
+	 * Get this role's type
+	 * @return the RoleType of the role.
+	 */
+	public RoleType getRoleType() {
+		return roleType;
+	}
 }

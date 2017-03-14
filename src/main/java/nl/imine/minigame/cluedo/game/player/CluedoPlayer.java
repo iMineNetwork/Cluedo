@@ -22,11 +22,11 @@ public class CluedoPlayer {
 	/**
 	 * Sets the role and updates the player's inventory to the role specific settings.
 	 *
-	 * @param role, The role to update to
+	 * @param roleType, The role to update to
 	 */
-	public void setRole(CluedoRole role) {
+	public void setRole(RoleType roleType) {
+		this.role = RoleType.getCluedoRole(roleType);
 		role.preparePlayer(player);
-		this.role = role;
 	}
 
 	public CluedoRole getRole() {

@@ -64,6 +64,10 @@ public class CluedoMinigame extends Minigame{
         return players.stream().map(CluedoPlayer::getPlayer).collect(Collectors.toList());
     }
 
+    public List<CluedoPlayer> getCluedoPlayers() {
+        return players;
+    }
+
     public World getCluedoWorld() {
         return Bukkit.getWorld(worldName);
     }
