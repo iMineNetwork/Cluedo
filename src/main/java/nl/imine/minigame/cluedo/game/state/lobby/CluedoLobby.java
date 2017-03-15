@@ -41,10 +41,10 @@ public class CluedoLobby implements CluedoState, TimerHandler{
     @Override
     public void onTimerEnd() {
         Log.finest("Handling timer end for: " + this.getClass().getSimpleName());
+		cluedoMinigame.getPlayers().forEach(timer::hideTimer);
 
-        //A game should always contain at least 3 players
-        if(cluedoMinigame.getCluedoPlayers().size() > 2) {
-            cluedoMinigame.getPlayers().forEach(timer::hideTimer);
+		//A game should always contain at least 3 players
+		if(cluedoMinigame.getCluedoPlayers().size() > 2) {
             cluedoMinigame.changeGameState(CluedoStateType.PRE_GAME);
 
         /* As we don't accept players anymore when the game has already started. We assign roles
