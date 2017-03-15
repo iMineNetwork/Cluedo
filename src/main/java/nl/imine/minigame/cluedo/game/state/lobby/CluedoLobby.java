@@ -41,29 +41,36 @@ public class CluedoLobby implements CluedoState, TimerHandler{
     @Override
     public void onTimerEnd() {
         Log.finest("Handling timer end for: " + this.getClass().getSimpleName());
-        cluedoMinigame.getPlayers().forEach(timer::hideTimer);
-        cluedoMinigame.changeGameState(CluedoStateType.PRE_GAME);
+
+        //A game should always contain at least 3 players
+        if(cluedoMinigame.getCluedoPlayers().size() > 2) {
+            cluedoMinigame.getPlayers().forEach(timer::hideTimer);
+            cluedoMinigame.changeGameState(CluedoStateType.PRE_GAME);
 
         /* As we don't accept players anymore when the game has already started. We assign roles
             at the end of the lobby rather then when a player joins preparation. */
-        Random random = new Random();
+            Random random = new Random();
 
-        List<CluedoPlayer> assignablePlayers = cluedoMinigame.getCluedoPlayers().stream()
-                .filter(player -> player.getRole().equals(RoleType.LOBBY))
-                .collect(Collectors.toList());
+            List<CluedoPlayer> assignablePlayers = cluedoMinigame.getCluedoPlayers().stream()
+                    .filter(player -> player.getRole().equals(RoleType.LOBBY))
+                    .collect(Collectors.toList());
 
-        //Select a random player and make him the murderer, then remove him from the assignable list
-        int assignIndex = random.nextInt(assignablePlayers.size());
-        assignablePlayers.get(assignIndex).setRole(RoleType.MURDERER);
-        assignablePlayers.remove(assignIndex);
+            //Select a random player and make him the murderer, then remove him from the assignable list
+            int assignIndex = random.nextInt(assignablePlayers.size());
+            assignablePlayers.get(assignIndex).setRole(RoleType.MURDERER);
+            assignablePlayers.remove(assignIndex);
 
-        //Select a random player and make him the detective, then remove him from the assignable list
-        assignIndex = random.nextInt(assignablePlayers.size());
-        assignablePlayers.get(assignIndex).setRole(RoleType.MURDERER);
-        assignablePlayers.remove(assignIndex);
+            //Select a random player and make him the detective, then remove him from the assignable list
+            assignIndex = random.nextInt(assignablePlayers.size());
+            assignablePlayers.get(assignIndex).setRole(RoleType.MURDERER);
+            assignablePlayers.remove(assignIndex);
 
-        //Assign all the remaining players to Bystander
-        assignablePlayers.forEach(assignablePlayer -> assignablePlayer.setRole(RoleType.BYSTANDER));
+            //Assign all the remaining players to Bystander
+            assignablePlayers.forEach(assignablePlayer -> assignablePlayer.setRole(RoleType.BYSTANDER));
+        } else {
+            //Restart lobby
+            cluedoMinigame.changeGameState(CluedoStateType.LOBBY);
+        }
     }
 
     @Override
