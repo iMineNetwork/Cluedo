@@ -77,7 +77,7 @@ public class CluedoLobby implements CluedoState, TimerHandler{
         cluedoMinigame.getCluedoPlayers().stream()
                 .filter(cluedoPlayer -> cluedoPlayer.getPlayer().equals(player))
                 .findAny()
-                .ifPresent(cluedoPlayer -> cluedoPlayer.setRole(RoleType.getCluedoRole(RoleType.LOBBY)));
+                .ifPresent(cluedoPlayer -> cluedoPlayer.setRole(RoleType.LOBBY));
         player.teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 }
