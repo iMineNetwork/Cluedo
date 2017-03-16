@@ -45,7 +45,6 @@ public class CluedoLobby implements CluedoState, TimerHandler{
 
 		//A game should always contain at least 3 players
 		if(cluedoMinigame.getCluedoPlayers().size() > 2) {
-            cluedoMinigame.changeGameState(CluedoStateType.PRE_GAME);
 
         /* As we don't accept players anymore when the game has already started. We assign roles
             at the end of the lobby rather then when a player joins preparation. */
@@ -67,6 +66,7 @@ public class CluedoLobby implements CluedoState, TimerHandler{
 
             //Assign all the remaining players to Bystander
             assignablePlayers.forEach(assignablePlayer -> assignablePlayer.setRole(RoleType.BYSTANDER));
+            cluedoMinigame.changeGameState(CluedoStateType.PRE_GAME);
         } else {
             //Restart lobby
             cluedoMinigame.changeGameState(CluedoStateType.LOBBY);
