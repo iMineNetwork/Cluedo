@@ -2,7 +2,7 @@ package nl.imine.minigame.cluedo;
 
 import nl.imine.minigame.MinigameManager;
 import nl.imine.minigame.cluedo.game.CluedoMinigame;
-import nl.imine.minigame.cluedo.game.state.CluedoListener;
+import nl.imine.minigame.cluedo.game.CluedoListener;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.game.state.game.CluedoSpawn;
 import nl.imine.minigame.cluedo.settings.Setting;

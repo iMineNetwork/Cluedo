@@ -1,4 +1,4 @@
-package nl.imine.minigame.cluedo.game.state;
+package nl.imine.minigame.cluedo.game;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Arrow;
@@ -7,8 +7,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
+import nl.imine.minigame.cluedo.game.player.role.RoleType;
 
 public class CluedoListener implements Listener {
 
@@ -33,6 +35,21 @@ public class CluedoListener implements Listener {
 		if (evt.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
 			evt.setCancelled(true);
 		}
+	}
+
+	@EventHandler
+	public void onPlayerDead(PlayerDeathEvent evt) {
+		Player player = evt.getEntity();
+
+		//Make sure the player is actually participating in this minigame
+		if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
+			return;
+		}
+
+		CluedoPlugin.getGame().getCluedoPlayers().stream()
+				.filter(cluedoPlayer -> cluedoPlayer.getPlayer().equals(player))
+				.findFirst()
+				.ifPresent(cludeoPlayer -> cludeoPlayer.setRole(RoleType.LOBBY));
 	}
 
 	@EventHandler
