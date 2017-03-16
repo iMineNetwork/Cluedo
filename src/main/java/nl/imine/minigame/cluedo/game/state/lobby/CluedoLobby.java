@@ -51,7 +51,7 @@ public class CluedoLobby implements CluedoState, TimerHandler{
             Random random = new Random();
 
             List<CluedoPlayer> assignablePlayers = cluedoMinigame.getCluedoPlayers().stream()
-                    .filter(player -> player.getRole().equals(RoleType.LOBBY))
+                    .filter(player -> player.getRole().getRoleType().equals(RoleType.LOBBY))
                     .collect(Collectors.toList());
 
             //Select a random player and make him the murderer, then remove him from the assignable list
