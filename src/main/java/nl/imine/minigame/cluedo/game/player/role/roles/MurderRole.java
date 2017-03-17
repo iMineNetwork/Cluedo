@@ -10,36 +10,39 @@ import org.bukkit.potion.*;
 
 import nl.imine.minigame.cluedo.game.player.role.CluedoRole;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
 
 public class MurderRole extends CluedoRole {
 
-	public MurderRole() {
-		super(RoleType.MURDERER);
-	}
+    public MurderRole() {
+        super(RoleType.MURDERER);
+    }
 
-	@Override
-	public void preparePlayer(Player player) {
-		//Clean player's inventory
-		player.closeInventory();
-		player.getInventory().clear();
+    @Override
+    public void preparePlayer(Player player) {
+        //Clean player's inventory
+        player.closeInventory();
+        player.getInventory().clear();
 
-		//Set gamemode
-		player.setGameMode(GameMode.ADVENTURE);
+        //Set gamemode
+        player.setGameMode(GameMode.ADVENTURE);
 
-		//Create knife itemstack
-		ItemStack knife = new ItemStack(Material.WOOD_SWORD);
-		ItemMeta knifeMeta = knife.getItemMeta();
-		knifeMeta.setUnbreakable(true);
-		knife.setItemMeta(knifeMeta);
+        //Create knife itemstack
+        ItemStack knife = new ItemStack(Material.WOOD_SWORD);
+        ItemMeta knifeMeta = knife.getItemMeta();
+        knifeMeta.setUnbreakable(true);
+        knife.setItemMeta(knifeMeta);
 
-		//Create Potion itemstack
-		ItemStack potion = new ItemStack(Material.POTION);
-		PotionMeta potionMeta = (PotionMeta) potion.getItemMeta();
-		potionMeta.setBasePotionData(new PotionData(PotionType.INVISIBILITY));
-		potionMeta.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 160, 0, true, false), true);
-		potion.setItemMeta(potionMeta);
+        //Create Potion itemstack
+        ItemStack potion = new ItemStack(Material.POTION);
+        PotionMeta potionMeta = (PotionMeta) potion.getItemMeta();
+        potionMeta.setDisplayName(ChatColor.WHITE + "Potion of Invisibility");
+        potionMeta.setColor(Color.GRAY);
+        potionMeta.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 160, 0, true, false), true);
+        potion.setItemMeta(potionMeta);
 
-		//Give the player their items
-		player.getInventory().addItem(knife, potion);
-	}
+        //Give the player their items
+        player.getInventory().addItem(knife, potion);
+    }
 }
