@@ -60,6 +60,7 @@ public class CluedoListener implements Listener {
 			return;
 		}
 		Player player = (Player) evt.getEntity();
+
 		//Check if the attacker was a player
 		Player damager = null;
 		boolean wasArrow = false;
@@ -73,15 +74,16 @@ public class CluedoListener implements Listener {
 			} else {
 				return;
 			}
-			if (damager == null) {
-				damager = (Player) evt.getDamager();
-			}
+		}
+		if (damager == null) {
+			damager = (Player) evt.getDamager();
 		}
 
 		//Make sure the players are actually participating in this minigame
 		if (!(CluedoPlugin.getGame().getPlayers().contains(damager) && CluedoPlugin.getGame().getPlayers().contains(player))) {
 			return;
 		}
+
 		if(CluedoPlugin.getGame().getGameState().getState().equals(CluedoStateType.IN_GAME)) {
 			if (wasArrow) {
 				handleArrowDamage(evt);
