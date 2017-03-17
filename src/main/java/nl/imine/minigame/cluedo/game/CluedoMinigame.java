@@ -12,6 +12,7 @@ import nl.imine.minigame.cluedo.game.state.lobby.CluedoLobby;
 import nl.imine.minigame.cluedo.game.state.pregame.CluedoPreGame;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Log;
+import nl.imine.minigame.cluedo.util.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -54,6 +55,7 @@ public class CluedoMinigame extends Minigame{
         RoleType role = gameState.getState().equals(CluedoStateType.LOBBY) ? RoleType.LOBBY : RoleType.SPECTATOR;
         players.add(new CluedoPlayer(player, role));
         getGameState().handlePlayer(player);
+        PlayerUtil.cleanPlayer(player);
     }
 
     public void onLeave(Player player) {

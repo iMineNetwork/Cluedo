@@ -1,5 +1,6 @@
 package nl.imine.minigame.cluedo.game;
 
+import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -81,10 +82,14 @@ public class CluedoListener implements Listener {
 		if (!(CluedoPlugin.getGame().getPlayers().contains(damager) && CluedoPlugin.getGame().getPlayers().contains(player))) {
 			return;
 		}
-		if(wasArrow){
-			handleArrowDamage(evt);
+		if(CluedoPlugin.getGame().getGameState().getState().equals(CluedoStateType.IN_GAME)) {
+			if (wasArrow) {
+				handleArrowDamage(evt);
+			} else {
+				handleMeleeDamage(evt);
+			}
 		} else {
-			handleMeleeDamage(evt);
+			evt.setCancelled(true);
 		}
 	}
 
