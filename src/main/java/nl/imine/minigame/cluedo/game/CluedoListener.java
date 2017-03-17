@@ -1,10 +1,12 @@
 package nl.imine.minigame.cluedo.game;
 
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
+import nl.imine.minigame.cluedo.game.state.lobby.CluedoLobby;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -12,6 +14,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class CluedoListener implements Listener {
 
@@ -19,7 +22,7 @@ public class CluedoListener implements Listener {
 		Bukkit.getServer().getPluginManager().registerEvents(new CluedoListener(), CluedoPlugin.getInstance());
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerDamage(EntityDamageEvent evt) {
 		//Check if entity is a player
 		if (!(evt.getEntity() instanceof Player)) {
@@ -51,9 +54,26 @@ public class CluedoListener implements Listener {
 				.filter(cluedoPlayer -> cluedoPlayer.getPlayer().equals(player))
 				.findFirst()
 				.ifPresent(cludeoPlayer -> cludeoPlayer.setRole(RoleType.LOBBY));
+
+        player.spigot().respawn();
+
+        //TODO HANDLE GAME END
 	}
 
 	@EventHandler
+	public void onPlayerRespawn(PlayerRespawnEvent evt){
+		Player player = evt.getPlayer();
+
+		//Make sure the player is actually participating in this minigame
+		if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
+			return;
+		}
+
+        //TODO HANDLE RESPAWN (TELEPORT, ETC)
+
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPvPDamage(EntityDamageByEntityEvent evt) {
 		//Check if entity is a player
 		if (!(evt.getEntity() instanceof Player)) {
