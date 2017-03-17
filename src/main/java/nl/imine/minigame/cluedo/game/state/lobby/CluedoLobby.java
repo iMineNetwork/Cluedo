@@ -61,7 +61,7 @@ public class CluedoLobby implements CluedoState, TimerHandler{
 
             //Select a random player and make him the detective, then remove him from the assignable list
             assignIndex = random.nextInt(assignablePlayers.size());
-            assignablePlayers.get(assignIndex).setRole(RoleType.MURDERER);
+            assignablePlayers.get(assignIndex).setRole(RoleType.DETECTIVE);
             assignablePlayers.remove(assignIndex);
 
             //Assign all the remaining players to Bystander
