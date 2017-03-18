@@ -16,6 +16,7 @@ public class TimerImpl implements Timer{
     private final BossBar bossbar;
     private int maxTime;
     private int timer;
+    private boolean stopped = false;
 
     public TimerImpl(String title, int maxTime, TimerHandler... handlers){
         this.maxTime = maxTime;
@@ -33,6 +34,7 @@ public class TimerImpl implements Timer{
     @Override
     public void resetTimer(int startTime) {
         this.maxTime = startTime;
+        this.stopped = false;
         setTimer(startTime);
     }
 
@@ -66,5 +68,15 @@ public class TimerImpl implements Timer{
             this.timer = timer;
         }
         this.bossbar.setProgress((double) timer / (double) maxTime);
+    }
+
+    @Override
+    public void setStopped(boolean stopped) {
+        this.stopped = stopped;
+    }
+
+    @Override
+    public boolean isStopped() {
+        return this.stopped;
     }
 }

@@ -46,4 +46,18 @@ public interface Timer {
      *            The player to hide the timer from.
      */
     void hideTimer(Player player);
+
+    /**
+     * Starts or stops the timer from ticking.
+     * true = stopped;
+     * false = running;
+     * @param stopped whether the timer should stop or start running
+     */
+    void setStopped(boolean stopped);
+
+    /**
+     * check if the timer is running
+     * @return true if the timer is stopped, false if it's active
+     */
+    boolean isStopped();
 }
