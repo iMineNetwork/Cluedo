@@ -95,4 +95,9 @@ public class CluedoLobby implements CluedoState, TimerHandler{
         PlayerUtil.cleanPlayer(player);
         player.teleport(spawnLocation);
     }
+
+    @Override
+    public Location getRespawnLocation() {
+        return spawnLocation;
+    }
 }

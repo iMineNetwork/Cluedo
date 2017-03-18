@@ -67,4 +67,9 @@ public class CluedoEndGame implements CluedoState, TimerHandler{
 
         cluedoPlayer.setRole(RoleType.SPECTATOR);
     }
+
+    @Override
+    public Location getRespawnLocation() {
+        return respawnLocation;
+    }
 }

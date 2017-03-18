@@ -88,6 +88,11 @@ public class CluedoGame implements CluedoState, TimerHandler{
 
     }
 
+    @Override
+    public Location getRespawnLocation() {
+        return respawnLocation;
+    }
+
     private GameResult checkGameEnd(){
         boolean murdererAlive = false;
         boolean innocentsAlive = false;

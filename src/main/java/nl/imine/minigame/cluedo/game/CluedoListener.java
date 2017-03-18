@@ -63,7 +63,7 @@ public class CluedoListener implements Listener {
 
         player.spigot().respawn();
 
-        //TODO HANDLE GAME END
+        CluedoPlugin.getGame().getGameState().handlePlayerDeath(player);
 	}
 
 	@EventHandler
@@ -74,6 +74,8 @@ public class CluedoListener implements Listener {
 		if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
 			return;
 		}
+
+
 
         //TODO HANDLE RESPAWN (TELEPORT, ETC)
 

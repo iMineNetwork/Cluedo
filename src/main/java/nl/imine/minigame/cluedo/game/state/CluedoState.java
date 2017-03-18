@@ -1,5 +1,6 @@
 package nl.imine.minigame.cluedo.game.state;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public interface CluedoState {
@@ -8,4 +9,5 @@ public interface CluedoState {
     CluedoStateType getState();
     void handlePlayer(Player player);
     void handlePlayerDeath(Player player);
+    Location getRespawnLocation();
 }
