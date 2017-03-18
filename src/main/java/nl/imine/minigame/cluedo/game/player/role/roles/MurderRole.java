@@ -43,6 +43,9 @@ public class MurderRole extends CluedoRole {
         potion.setItemMeta(potionMeta);
 
         //Give the player their items
-        player.getInventory().addItem(knife, potion);
+        player.getInventory().setHeldItemSlot(0);
+        player.getInventory().setItem(1, knife);
+        player.getInventory().setItem(2, potion);
+
     }
 }

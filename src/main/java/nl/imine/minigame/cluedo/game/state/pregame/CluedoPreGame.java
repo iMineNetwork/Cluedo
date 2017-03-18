@@ -70,7 +70,7 @@ public class CluedoPreGame implements CluedoState, TimerHandler {
 				break;
 			case DETECTIVE:
 				titleText = String.format("%sYou are a detective", ChatColor.BLUE);
-				subtitleText = String.format("%sThere is a murderer on the loose. Find an kill him", ChatColor.AQUA);
+				subtitleText = String.format("%sThere is a murderer on the loose. Find and kill him", ChatColor.AQUA);
 				break;
 			case BYSTANDER:
 				titleText = String.format("%sYou are a bystander", ChatColor.BLUE);

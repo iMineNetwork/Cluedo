@@ -14,6 +14,8 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
+import org.bukkit.GameMode;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class CluedoListener implements Listener {
@@ -132,4 +134,13 @@ public class CluedoListener implements Listener {
 			evt.setCancelled(true);
 		}
 	}
+        
+       
+        @EventHandler
+        private void onPlayerItemDrop(PlayerDropItemEvent pdie){
+            if(pdie.getPlayer().getGameMode() != GameMode.CREATIVE){
+                pdie.setCancelled(true);
+            }
+        }
+
 }

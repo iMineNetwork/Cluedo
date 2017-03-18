@@ -32,6 +32,9 @@ public class DetectiveRole extends CluedoRole {
 		bowMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
 		bow.setItemMeta(bowMeta);
 
-		player.getInventory().addItem(bow, new ItemStack(Material.ARROW));
+		player.getInventory().setHeldItemSlot(0);
+                player.getInventory().setItem(1, bow);
+                player.getInventory().setItem(9, new ItemStack(Material.ARROW));
+
 	}
 }
