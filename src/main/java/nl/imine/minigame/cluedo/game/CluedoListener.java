@@ -1,5 +1,6 @@
 package nl.imine.minigame.cluedo.game;
 
+import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.game.state.lobby.CluedoLobby;
 import org.bukkit.Bukkit;
@@ -16,10 +17,7 @@ import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
 public class CluedoListener implements Listener {
@@ -56,14 +54,20 @@ public class CluedoListener implements Listener {
 			return;
 		}
 
-		CluedoPlugin.getGame().getCluedoPlayers().stream()
-				.filter(cluedoPlayer -> cluedoPlayer.getPlayer().equals(player))
-				.findFirst()
-				.ifPresent(cludeoPlayer -> cludeoPlayer.setRole(RoleType.LOBBY));
+		//Get Cluedo player object
+		CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
+				.filter(cPlayer -> cPlayer.getPlayer().equals(player))
+				.findFirst().orElse(null);
 
-        player.spigot().respawn();
+		//Handle item drops
+		if(cluedoPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)){
+			evt.getEntity().getLocation().getWorld()
+					.dropItem(evt.getEntity().getLocation(), new ItemStack(Material.BOW));
+		}
+		evt.getDrops().clear();
 
-        CluedoPlugin.getGame().getGameState().handlePlayerDeath(player);
+		CluedoPlugin.getGame().getGameState().handlePlayerDeath(player);
+		player.spigot().respawn();
 	}
 
 	@EventHandler
@@ -80,6 +84,29 @@ public class CluedoListener implements Listener {
         //TODO HANDLE RESPAWN (TELEPORT, ETC)
 
 	}
+
+    @EventHandler
+    public void onPlayerItemPickup(PlayerPickupItemEvent evt){
+        Player player = evt.getPlayer();
+
+        //Make sure the player is actually participating in this minigame
+        if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
+            return;
+        }
+
+        //Get Cluedo player object
+        CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
+                .filter(cPlayer -> cPlayer.getPlayer().equals(player))
+                .findFirst().orElse(null);
+
+        //Check if the player is a bystander without a weapon
+        if(cluedoPlayer.getRole().getRoleType().equals(RoleType.BYSTANDER)){
+            cluedoPlayer.setRole(RoleType.DETECTIVE);
+        }
+
+        //Don't allow pickups as we handle that ourselves
+        evt.setCancelled(true);
+    }
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPvPDamage(EntityDamageByEntityEvent evt) {
@@ -140,30 +167,30 @@ public class CluedoListener implements Listener {
 			evt.setCancelled(true);
 		}
 	}
-        
-              
+
+
         @EventHandler
         private void onPlayerItemDrop(PlayerDropItemEvent pdie){
-            
+
                 //Make sure the player is actually participating in this minigame
                 if(!CluedoPlugin.getGame().getPlayers().contains(pdie.getPlayer())){
                     return;
                 }
-                
+
                 if(pdie.getPlayer().getGameMode() != GameMode.CREATIVE){
                     pdie.setCancelled(true);
                 }
         }
-        
+
 
         @EventHandler
         private void onPlayerInteract(PlayerInteractEvent pie) {
-                                        
+
                 //Make sure the player is actually participating in this minigame
                 if(!CluedoPlugin.getGame().getPlayers().contains(pie.getPlayer())){
                     return;
                 }
-                                
+
                 //people in Creative get full access to edit the map
                 if (pie.getPlayer().getGameMode() == GameMode.CREATIVE) {
                    return;
@@ -179,17 +206,17 @@ public class CluedoListener implements Listener {
 
         @EventHandler
         private void onPotionConsume(PlayerItemConsumeEvent pice) {
-                                
+
                 //Make sure the player is actually participating in this minigame
                 if(!CluedoPlugin.getGame().getPlayers().contains(pice.getPlayer())){
                     return;
                 }
-                
+
                 //when a player in Creative dirnks a potion he doesn't get a bottle, so no need to do anything else
                 if (pice.getPlayer().getGameMode() == GameMode.CREATIVE) {
                     return;
                 }
-        
+
                 if (pice.getItem().getType() == Material.POTION) {
                     Bukkit.getScheduler().scheduleSyncDelayedTask(CluedoPlugin.getInstance(), () -> { //delay to allow the bottle to be placed into the inventory
                         ItemStack bottle = new ItemStack(Material.GLASS_BOTTLE);
