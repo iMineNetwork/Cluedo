@@ -93,7 +93,6 @@ public class CluedoLobby implements CluedoState, TimerHandler{
     @Override
     public void handlePlayerDeath(Player player) {
         PlayerUtil.cleanPlayer(player);
-        player.teleport(spawnLocation);
     }
 
     @Override

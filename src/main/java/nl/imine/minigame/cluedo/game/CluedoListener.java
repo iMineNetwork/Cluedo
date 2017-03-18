@@ -2,7 +2,6 @@ package nl.imine.minigame.cluedo.game;
 
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
-import nl.imine.minigame.cluedo.game.state.lobby.CluedoLobby;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -79,9 +78,7 @@ public class CluedoListener implements Listener {
             return;
         }
 
-
-        //TODO HANDLE RESPAWN (TELEPORT, ETC)
-
+        evt.setRespawnLocation(CluedoPlugin.getGame().getGameState().getRespawnLocation());
     }
 
     @EventHandler
