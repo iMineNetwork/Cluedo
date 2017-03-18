@@ -35,4 +35,12 @@ public class TimerManager {
         return timer;
     }
 
+    /**
+     * Destroys a timer object. This will prevent is from ever running again.
+     * @param timer The timer to destroy
+     */
+    public void removeTimer(Timer timer){
+        timerRunner.removeTimer(timer);
+    }
+
 }
