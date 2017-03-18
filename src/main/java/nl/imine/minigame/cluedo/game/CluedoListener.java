@@ -15,8 +15,12 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class CluedoListener implements Listener {
 
@@ -135,12 +139,62 @@ public class CluedoListener implements Listener {
 		}
 	}
         
-       
+              
         @EventHandler
         private void onPlayerItemDrop(PlayerDropItemEvent pdie){
-            if(pdie.getPlayer().getGameMode() != GameMode.CREATIVE){
-                pdie.setCancelled(true);
-            }
+            
+                //Make sure the player is actually participating in this minigame
+                if(!CluedoPlugin.getGame().getPlayers().contains(pdie.getPlayer())){
+                    return;
+                }
+                
+                if(pdie.getPlayer().getGameMode() != GameMode.CREATIVE){
+                    pdie.setCancelled(true);
+                }
         }
+        
+
+        @EventHandler
+        private void onPlayerInteract(PlayerInteractEvent pie) {
+                                        
+                //Make sure the player is actually participating in this minigame
+                if(!CluedoPlugin.getGame().getPlayers().contains(pie.getPlayer())){
+                    return;
+                }
+                                
+                //people in Creative get full access to edit the map
+                if (pie.getPlayer().getGameMode() == GameMode.CREATIVE) {
+                   return;
+                }
+
+                //disallow every interaction except stone buttons and levers
+                if (pie.getClickedBlock() == null || pie.getClickedBlock().getType() == Material.STONE_BUTTON || pie.getClickedBlock().getType() == Material.WOOD_BUTTON || pie.getClickedBlock().getType() == Material.LEVER) {
+                    return;
+                }
+
+                pie.setCancelled(true);
+    }
+
+        @EventHandler
+        private void onPotionConsume(PlayerItemConsumeEvent pice) {
+                                
+                //Make sure the player is actually participating in this minigame
+                if(!CluedoPlugin.getGame().getPlayers().contains(pice.getPlayer())){
+                    return;
+                }
+                
+                //when a player in Creative dirnks a potion he doesn't get a bottle, so no need to do anything else
+                if (pice.getPlayer().getGameMode() == GameMode.CREATIVE) {
+                    return;
+                }
+        
+                if (pice.getItem().getType() == Material.POTION) {
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(CluedoPlugin.getInstance(), () -> { //delay to allow the bottle to be placed into the inventory
+                        ItemStack bottle = new ItemStack(Material.GLASS_BOTTLE);
+                        bottle.setAmount(1);
+                        pice.getPlayer().getInventory().remove(bottle);
+                    }, 1L);
+                }
+    }
 
 }
