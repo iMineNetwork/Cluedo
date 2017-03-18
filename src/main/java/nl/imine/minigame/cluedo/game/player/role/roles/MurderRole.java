@@ -39,7 +39,7 @@ public class MurderRole extends CluedoRole {
         PotionMeta potionMeta = (PotionMeta) potion.getItemMeta();
         potionMeta.setDisplayName(ChatColor.WHITE + "Potion of Invisibility");
         potionMeta.setColor(Color.GRAY);
-        potionMeta.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 160, 0, true, false), true);
+        potionMeta.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 400, 0, true, false), true);
         potion.setItemMeta(potionMeta);
 
         //Give the player their items
