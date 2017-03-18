@@ -12,6 +12,7 @@ import nl.imine.minigame.cluedo.game.state.CluedoState;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Log;
+import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
 import org.bukkit.Location;
@@ -68,8 +69,9 @@ public class CluedoLobby implements CluedoState, TimerHandler{
             assignablePlayers.forEach(assignablePlayer -> assignablePlayer.setRole(RoleType.BYSTANDER));
             cluedoMinigame.changeGameState(CluedoStateType.PRE_GAME);
         } else {
-            //Restart lobby
-            cluedoMinigame.changeGameState(CluedoStateType.LOBBY);
+            //Restart lobby timer
+            this.timer = CluedoPlugin.getTimerManager().createTimer("Lobby", gameTimer, this);
+            cluedoMinigame.getPlayers().forEach(timer::showTimer);
         }
     }
 
@@ -86,5 +88,11 @@ public class CluedoLobby implements CluedoState, TimerHandler{
                 .findAny()
                 .ifPresent(cluedoPlayer -> cluedoPlayer.setRole(RoleType.LOBBY));
         player.teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+    }
+
+    @Override
+    public void handlePlayerDeath(Player player) {
+        PlayerUtil.cleanPlayer(player);
+        player.teleport(spawnLocation);
     }
 }

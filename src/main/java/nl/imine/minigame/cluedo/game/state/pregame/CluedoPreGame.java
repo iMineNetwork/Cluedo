@@ -88,4 +88,9 @@ public class CluedoPreGame implements CluedoState, TimerHandler {
 		//Blind the players for the remainder of the preparation
 		player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, ((timer.getTimer()+1) * 20), 0, true, false), true);
 	}
+
+	@Override
+	public void handlePlayerDeath(Player player) {
+		player.teleport(spawnLocation);
+	}
 }

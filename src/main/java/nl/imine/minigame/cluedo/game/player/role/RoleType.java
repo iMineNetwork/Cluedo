@@ -3,7 +3,7 @@ package nl.imine.minigame.cluedo.game.player.role;
 import nl.imine.minigame.cluedo.game.player.role.roles.*;
 
 public enum RoleType {
-	LOBBY(true), SPECTATOR(true), BYSTANDER(true), DETECTIVE(true), MURDERER(false);
+	LOBBY(false), SPECTATOR(false), BYSTANDER(true), DETECTIVE(true), MURDERER(false);
 
 	private boolean innocent;
 
@@ -11,6 +11,11 @@ public enum RoleType {
 		this.innocent = innocent;
 	}
 
+	/**
+	 * Checks if this role is considered innocent or not.
+	 * Out of game roles like Lobby and Spectators are considered not innocent as they do not take part in the game.
+	 * @return if the player is innocent.
+	 */
 	public boolean isInnocent() {
 		return this.innocent;
 	}

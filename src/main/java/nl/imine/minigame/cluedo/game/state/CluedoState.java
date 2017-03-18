@@ -7,4 +7,5 @@ public interface CluedoState {
     void handleStateChange();
     CluedoStateType getState();
     void handlePlayer(Player player);
+    void handlePlayerDeath(Player player);
 }
