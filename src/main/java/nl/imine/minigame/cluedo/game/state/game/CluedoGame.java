@@ -18,6 +18,7 @@ import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
+import nl.imine.minigame.timer.TimerManager;
 
 public class CluedoGame implements CluedoState, TimerHandler {
 
@@ -126,13 +127,13 @@ public class CluedoGame implements CluedoState, TimerHandler {
 	}
 
 	private void endGame(GameResult result) {
+		//Hide timer and prevent it from ticking
 		cluedoMinigame.getPlayers().forEach(timer::hideTimer);
-		cluedoMinigame.changeGameState(CluedoStateType.END_GAME);
+		CluedoPlugin.getTimerManager().removeTimer(timer);
 
-
+		//Setup end game notifications
 		String titleText = null;
 		String subtitleText = null;
-
 		switch (result) {
 			case BYSTANDER_WIN:
 				titleText = ChatColor.BLUE + "Bystanders Win";
@@ -140,14 +141,18 @@ public class CluedoGame implements CluedoState, TimerHandler {
 			case MURDERER_WIN:
 				titleText = ChatColor.RED + "Murderer Wins";
 				break;
+			//Will run when the timer has finished or the game stops for any other reason
 			case STALEMATE:
 			default:
 				titleText = ChatColor.DARK_PURPLE+ "Time limit reached";
 				break;
 		}
 
+		//Show the set-up title to all players in the minigame instance
 		for (Player player : cluedoMinigame.getPlayers()) {
 			player.sendTitle(titleText, subtitleText, 10 ,100,10);
 		}
+
+		cluedoMinigame.changeGameState(CluedoStateType.END_GAME);
 	}
 }
