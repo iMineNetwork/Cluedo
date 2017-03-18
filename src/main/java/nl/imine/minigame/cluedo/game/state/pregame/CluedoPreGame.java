@@ -40,7 +40,6 @@ public class CluedoPreGame implements CluedoState, TimerHandler {
 	@Override
 	public void onTimerEnd() {
 		Log.finest("Handling timer end for: " + this.getClass().getSimpleName());
-		cluedoMinigame.getPlayers().forEach(timer::hideTimer);
 		cluedoMinigame.changeGameState(CluedoStateType.IN_GAME);
 	}
 
@@ -51,7 +50,6 @@ public class CluedoPreGame implements CluedoState, TimerHandler {
 
 	@Override
 	public void handlePlayer(Player player) {
-		timer.showTimer(player);
 		player.teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
 		//Find the player's game object.
