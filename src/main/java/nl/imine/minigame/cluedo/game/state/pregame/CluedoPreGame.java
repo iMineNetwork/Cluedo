@@ -23,7 +23,7 @@ public class CluedoPreGame implements CluedoState, TimerHandler {
 
 	private CluedoMinigame cluedoMinigame;
 	private int gameTimer = CluedoPlugin.getSettings().getInt(Setting.PRE_GAME_TIME);
-	private Location spawnLocation = CluedoPlugin.getSettings().getLocation(Setting.LOBBY_SPAWN);
+	private Location spawnLocation = CluedoPlugin.getSettings().getLocation(Setting.PRE_GAME_SPAWN);
 	private Timer timer;
 
 	public CluedoPreGame(CluedoMinigame cluedoMinigame) {
