@@ -93,20 +93,21 @@ public class CluedoListener implements Listener {
         //Don't drop the inventory
         evt.getDrops().clear();
         CluedoPlugin.getGame().getGameState().handlePlayerDeath(player);
-        player.teleport(CluedoPlugin.getGame().getGameState().getRespawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        player.spigot().respawn();
+//        player.teleport(CluedoPlugin.getGame().getGameState().getRespawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
-//    @EventHandler
-//    public void onPlayerRespawn(PlayerRespawnEvent evt) {
-//        Player player = evt.getPlayer();
-//
-//        //Make sure the player is actually participating in this minigame
-//        if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
-//            return;
-//        }
-//
-//        evt.setRespawnLocation(CluedoPlugin.getGame().getGameState().getRespawnLocation());
-//    }
+    @EventHandler
+    public void onPlayerRespawn(PlayerRespawnEvent evt) {
+        Player player = evt.getPlayer();
+
+        //Make sure the player is actually participating in this minigame
+        if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
+            return;
+        }
+
+        evt.setRespawnLocation(CluedoPlugin.getGame().getGameState().getRespawnLocation());
+    }
 
     @EventHandler
     public void onPlayerItemPickup(PlayerPickupItemEvent evt) {
