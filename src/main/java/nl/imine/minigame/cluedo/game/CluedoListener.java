@@ -123,13 +123,8 @@ public class CluedoListener implements Listener {
                 .filter(cPlayer -> cPlayer.getPlayer().equals(player))
                 .findFirst().orElse(null);
 
-        //Bystanders on timeout should not be able to pick up a weapon
-        if(detectiveTimeout.contains(cluedoPlayer)){
-            return;
-        }
-
         //Check if the player is a bystander without a weapon
-        if (cluedoPlayer.getRole().getRoleType().equals(RoleType.BYSTANDER)) {
+        if (cluedoPlayer.getRole().getRoleType().equals(RoleType.BYSTANDER) && !detectiveTimeout.contains(cluedoPlayer)) {
             cluedoPlayer.setRole(RoleType.DETECTIVE);
             evt.getItem().remove();
         }
