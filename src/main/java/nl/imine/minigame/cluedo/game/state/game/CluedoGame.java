@@ -3,8 +3,12 @@ package nl.imine.minigame.cluedo.game.state.game;
 import java.util.List;
 import java.util.Random;
 
+import com.sun.scenario.Settings;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
@@ -151,6 +155,11 @@ public class CluedoGame implements CluedoState, TimerHandler {
 			player.sendTitle(titleText, subtitleText, 10 ,100,10);
 		}
 
+		//Clean map
+		cluedoMinigame.getCluedoWorld().getEntitiesByClasses(Arrow.class, Item.class)
+				.forEach(Entity::remove);
+
+		//Change state
 		cluedoMinigame.changeGameState(CluedoStateType.END_GAME);
 	}
 }
