@@ -18,6 +18,8 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +85,7 @@ public class CluedoListener implements Listener {
                     killerPlayer.getPlayer().getLocation().getWorld()
                             .dropItem(killerPlayer.getPlayer().getLocation(), new ItemStack(Material.BOW));
                     //Put the detective in time-out
+                    killerPlayer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 5, 0, false, false), true);
                     detectiveTimeout.add(killerPlayer);
                     //Remove him from timeout after 30 seconds (20 ticks == 1 second)
                     Bukkit.getScheduler().runTaskLater(CluedoPlugin.getInstance(), () -> detectiveTimeout.remove(killerPlayer), 30 * 20);
