@@ -19,7 +19,12 @@ import org.bukkit.Material;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CluedoListener implements Listener {
+
+    private List<CluedoPlayer> detectiveTimeout = new ArrayList<>();
 
     public static void init() {
         Bukkit.getServer().getPluginManager().registerEvents(new CluedoListener(), CluedoPlugin.getInstance());
@@ -63,23 +68,45 @@ public class CluedoListener implements Listener {
             evt.getEntity().getLocation().getWorld()
                     .dropItem(evt.getEntity().getLocation(), new ItemStack(Material.BOW));
         }
-        evt.getDrops().clear();
 
-        CluedoPlugin.getGame().getGameState().handlePlayerDeath(player);
-        player.spigot().respawn();
-    }
-
-    @EventHandler
-    public void onPlayerRespawn(PlayerRespawnEvent evt) {
-        Player player = evt.getPlayer();
-
-        //Make sure the player is actually participating in this minigame
-        if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
-            return;
+        //If a detective killed an innocent player, take away their weapons and put them in time-out
+        if(cluedoPlayer.getRole().isInnocent()){
+            if(evt.getEntity().getKiller() != null){
+                //Find the killer's object
+                CluedoPlayer killerPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
+                        .filter(cPlayer -> cPlayer.getPlayer().equals(player))
+                        .findFirst().orElse(null);
+                if(killerPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)){
+                    //Demote the detective
+                    killerPlayer.setRole(RoleType.BYSTANDER);
+                    //Drop the bow
+                    killerPlayer.getPlayer().getLocation().getWorld()
+                            .dropItem(killerPlayer.getPlayer().getLocation(), new ItemStack(Material.BOW));
+                    //Put the detective in time-out
+                    detectiveTimeout.add(killerPlayer);
+                    //Remove him from timeout after 30 seconds (20 ticks == 1 second)
+                    Bukkit.getScheduler().runTaskLater(CluedoPlugin.getInstance(), () -> detectiveTimeout.remove(killerPlayer), 30 * 20);
+                }
+            }
         }
 
-        evt.setRespawnLocation(CluedoPlugin.getGame().getGameState().getRespawnLocation());
+        //Don't drop the inventory
+        evt.getDrops().clear();
+        CluedoPlugin.getGame().getGameState().handlePlayerDeath(player);
+        player.teleport(CluedoPlugin.getGame().getGameState().getRespawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
+
+//    @EventHandler
+//    public void onPlayerRespawn(PlayerRespawnEvent evt) {
+//        Player player = evt.getPlayer();
+//
+//        //Make sure the player is actually participating in this minigame
+//        if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
+//            return;
+//        }
+//
+//        evt.setRespawnLocation(CluedoPlugin.getGame().getGameState().getRespawnLocation());
+//    }
 
     @EventHandler
     public void onPlayerItemPickup(PlayerPickupItemEvent evt) {
@@ -94,6 +121,11 @@ public class CluedoListener implements Listener {
         CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
                 .filter(cPlayer -> cPlayer.getPlayer().equals(player))
                 .findFirst().orElse(null);
+
+        //Bystanders on timeout should not be able to pick up a weapon
+        if(detectiveTimeout.contains(cluedoPlayer)){
+            return;
+        }
 
         //Check if the player is a bystander without a weapon
         if (cluedoPlayer.getRole().getRoleType().equals(RoleType.BYSTANDER)) {
@@ -147,25 +179,6 @@ public class CluedoListener implements Listener {
         }
     }
 
-    private void handleMeleeDamage(EntityDamageByEntityEvent evt) {
-        double woodenSwordMaxDamage = 4;
-        if (evt.getDamage() >= woodenSwordMaxDamage) {
-            evt.setDamage(100);
-        } else {
-            evt.setCancelled(true);
-        }
-    }
-
-    private void handleArrowDamage(EntityDamageByEntityEvent evt) {
-        Arrow arrow = (Arrow) evt.getDamager();
-        if (arrow.isCritical()) {
-            evt.setDamage(100);
-        } else {
-            evt.setCancelled(true);
-        }
-    }
-
-
     @EventHandler
     private void onPlayerItemDrop(PlayerDropItemEvent pdie) {
 
@@ -201,6 +214,7 @@ public class CluedoListener implements Listener {
         pie.setCancelled(true);
     }
 
+
     @EventHandler
     private void onPotionConsume(PlayerItemConsumeEvent pice) {
 
@@ -220,6 +234,24 @@ public class CluedoListener implements Listener {
                 bottle.setAmount(1);
                 pice.getPlayer().getInventory().remove(bottle);
             }, 1L);
+        }
+    }
+
+    private void handleMeleeDamage(EntityDamageByEntityEvent evt) {
+        double woodenSwordMaxDamage = 4;
+        if (evt.getDamage() >= woodenSwordMaxDamage) {
+            evt.setDamage(100);
+        } else {
+            evt.setCancelled(true);
+        }
+    }
+
+    private void handleArrowDamage(EntityDamageByEntityEvent evt) {
+        Arrow arrow = (Arrow) evt.getDamager();
+        if (arrow.isCritical()) {
+            evt.setDamage(100);
+        } else {
+            evt.setCancelled(true);
         }
     }
 
