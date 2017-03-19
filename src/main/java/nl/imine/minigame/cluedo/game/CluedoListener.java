@@ -98,6 +98,7 @@ public class CluedoListener implements Listener {
         //Check if the player is a bystander without a weapon
         if (cluedoPlayer.getRole().getRoleType().equals(RoleType.BYSTANDER)) {
             cluedoPlayer.setRole(RoleType.DETECTIVE);
+            evt.getItem().remove();
         }
 
         //Don't allow pickups as we handle that ourselves
