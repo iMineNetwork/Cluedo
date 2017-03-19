@@ -74,7 +74,7 @@ public class CluedoListener implements Listener {
             if(evt.getEntity().getKiller() != null){
                 //Find the killer's object
                 CluedoPlayer killerPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
-                        .filter(cPlayer -> cPlayer.getPlayer().equals(player))
+                        .filter(cPlayer -> cPlayer.getPlayer().equals(evt.getEntity().getKiller()))
                         .findFirst().orElse(null);
                 if(killerPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)){
                     //Demote the detective
