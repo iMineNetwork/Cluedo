@@ -41,6 +41,15 @@ public class CluedoPreGame implements CluedoState, TimerHandler {
 	public void onTimerEnd() {
 		Log.finest("Handling timer end for: " + this.getClass().getSimpleName());
 		cluedoMinigame.changeGameState(CluedoStateType.IN_GAME);
+
+		//Reveal all players to each other
+		for (CluedoPlayer subjectPlayer : cluedoMinigame.getCluedoPlayers()) {
+			for (CluedoPlayer targetPlayer : cluedoMinigame.getCluedoPlayers()) {
+				if(subjectPlayer != targetPlayer){
+					subjectPlayer.getPlayer().showPlayer(targetPlayer.getPlayer());
+				}
+			}
+		}
 	}
 
 	@Override
@@ -57,6 +66,13 @@ public class CluedoPreGame implements CluedoState, TimerHandler {
 				.filter(registeredPlayer -> registeredPlayer.getPlayer().equals(player))
 				.findAny()
 				.orElse(null);
+
+		//Hide all other players
+		for (CluedoPlayer targetPlayer : cluedoMinigame.getCluedoPlayers()) {
+			if(cluedoPlayer != targetPlayer){
+				cluedoPlayer.getPlayer().hidePlayer(targetPlayer.getPlayer());
+			}
+		}
 
 		//Set the introductory title texts
 		String titleText;
