@@ -1,5 +1,10 @@
 package nl.imine.minigame.cluedo.game.player;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.LinkedList;
+
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import nl.imine.minigame.cluedo.game.player.role.CluedoRole;
@@ -9,6 +14,10 @@ public class CluedoPlayer {
 
 	private final Player player;
 	private CluedoRole role;
+
+	//Gameplay Details
+	private Color footprintColor = Color.black;
+	private LinkedList<Location> footprints = new LinkedList<>();
 
 	public CluedoPlayer(Player player, RoleType role) {
 		this.player = player;
@@ -31,5 +40,39 @@ public class CluedoPlayer {
 
 	public CluedoRole getRole() {
 		return role;
+	}
+
+	public Color getFootprintColor() {
+		return footprintColor;
+	}
+
+	public void setFootprintColor(Color footprintColor) {
+		this.footprintColor = footprintColor;
+	}
+
+	/**
+	 * Get this player's footprints
+	 * @return a list of the last 20 locations of this player
+	 */
+	public LinkedList<Location> getFootprints() {
+		return footprints;
+	}
+
+	/**
+	 * Reset this player's footprint list
+	 */
+	public void clearFootprints(){
+		footprints.clear();
+	}
+
+	/**
+	 *
+	 * @param footprint
+	 */
+	public void addFootprint(Location footprint) {
+		if(footprints.size() > 20){
+			footprints.removeFirst();
+		}
+		footprints.add(footprint);
 	}
 }

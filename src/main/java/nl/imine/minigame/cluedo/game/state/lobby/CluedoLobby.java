@@ -1,5 +1,6 @@
 package nl.imine.minigame.cluedo.game.state.lobby;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -67,6 +68,17 @@ public class CluedoLobby implements CluedoState, TimerHandler{
 
             //Assign all the remaining players to Bystander
             assignablePlayers.forEach(assignablePlayer -> assignablePlayer.setRole(RoleType.BYSTANDER));
+
+            //Set the player's footprint color
+            for (int i = 0; i < cluedoMinigame.getCluedoPlayers().size(); i++) {
+                CluedoPlayer cluedoPlayer = cluedoMinigame.getCluedoPlayers().get(i);
+
+                //Get the color in a relative spaced HSB (Hue, Saturation, Brightness) spectrum.
+                //HSB Ensures we get bright, vibrant colors without doing difficult calculations.
+                Color color = Color.getHSBColor((1 / cluedoMinigame.getCluedoPlayers().size()) * i, 1, 1);
+                cluedoPlayer.setFootprintColor(color);
+            }
+
             cluedoMinigame.changeGameState(CluedoStateType.PRE_GAME);
         } else {
             //Restart lobby timer
