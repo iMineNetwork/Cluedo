@@ -31,7 +31,7 @@ public class FootprintHandler implements Runnable {
 								float colorG = (trackingPlayer.getFootprintColor().getGreen()  / 255F);
 								float colorB = (trackingPlayer.getFootprintColor().getBlue() / 255F);
 
-								footprint.getWorld().spawnParticle(Particle.BLOCK_DUST, footprint, 5, colorR, colorG, colorB, 0, 64);
+								footprint.getWorld().spawnParticle(Particle.BLOCK_DUST, footprint, 5, colorR, colorG, colorB, 0);
 							});
 						});
 			}
