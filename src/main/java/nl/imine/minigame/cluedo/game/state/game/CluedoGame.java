@@ -51,7 +51,7 @@ public class CluedoGame implements CluedoState, TimerHandler {
 		Log.finer("Handling state change for: " + this.getClass().getSimpleName());
 		this.timer = CluedoPlugin.getTimerManager().createTimer(CluedoPlugin.getInstance().getName(), gameTimer, this);
 		cluedoMinigame.getPlayers().forEach(this::handlePlayer);
-		Bukkit.getScheduler().runTaskTimer(CluedoPlugin.getInstance(), new FootprintHandler(), 0, 20);
+		footprintHandler = Bukkit.getScheduler().runTaskTimer(CluedoPlugin.getInstance(), new FootprintHandler(), 0, 20);
 		started = true;
 	}
 
@@ -174,6 +174,7 @@ public class CluedoGame implements CluedoState, TimerHandler {
 
 		//Remove footprint runner
 		footprintHandler.cancel();
+		footprintHandler = null;
 
 		//Change state
 		cluedoMinigame.changeGameState(CluedoStateType.END_GAME);
