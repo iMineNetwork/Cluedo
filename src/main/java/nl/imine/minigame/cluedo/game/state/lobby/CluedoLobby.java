@@ -75,7 +75,16 @@ public class CluedoLobby implements CluedoState, TimerHandler{
 
                 //Get the color in a relative spaced HSB (Hue, Saturation, Brightness) spectrum.
                 //HSB Ensures we get bright, vibrant colors without doing difficult calculations.
-                Color color = Color.getHSBColor((1 / cluedoMinigame.getCluedoPlayers().size()) * i, 1, 1);
+                Color color = Color.getHSBColor((1F / cluedoMinigame.getCluedoPlayers().size()) * i, 1, 1);
+
+                //Debug: Calculate RGB from HSV values.
+                Log.finest(String.format("(%s) HSV: R:%s, G:%s, B:%s", cluedoPlayer.getPlayer().getName(), color.getRed(), color.getGreen(), color.getBlue()));
+                float colorR = (cluedoPlayer.getFootprintColor().getRed() / 255F) - 1F;
+                float colorG = (cluedoPlayer.getFootprintColor().getGreen()  / 255F);
+                float colorB = (cluedoPlayer.getFootprintColor().getBlue() / 255F);
+                Log.finest(String.format("(%s) RGB: R:%s, G:%s, B:%s", cluedoPlayer.getPlayer().getName(), colorR, colorG, colorB));
+
+                //Set the player's footprint color
                 cluedoPlayer.setFootprintColor(color);
             }
 

@@ -26,12 +26,12 @@ public class FootprintHandler implements Runnable {
 						.forEach(trackingPlayer -> {
 							//Show the footprints
 							trackingPlayer.getFootprints().forEach(footprint -> {
-								//Calculate colors. Red has an ofset because it is originally a redstone particle
+								//Calculate colors. Red has an offset because it is originally a redstone particle
 								float colorR = (trackingPlayer.getFootprintColor().getRed() / 255F) - 1F;
 								float colorG = (trackingPlayer.getFootprintColor().getGreen()  / 255F);
 								float colorB = (trackingPlayer.getFootprintColor().getBlue() / 255F);
 
-								footprint.getWorld().spawnParticle(Particle.BLOCK_DUST, footprint, 5, colorR, colorG, colorB, 0);
+								cluedoPlayer.getPlayer().spawnParticle(Particle.REDSTONE, footprint, 0,  colorR, colorG, colorB, 1);
 							});
 						});
 			}

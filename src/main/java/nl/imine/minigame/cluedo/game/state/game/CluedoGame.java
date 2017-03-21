@@ -51,7 +51,7 @@ public class CluedoGame implements CluedoState, TimerHandler {
         Log.finer("Handling state change for: " + this.getClass().getSimpleName());
         this.timer = CluedoPlugin.getTimerManager().createTimer(CluedoPlugin.getInstance().getName(), gameTimer, this);
         cluedoMinigame.getPlayers().forEach(this::handlePlayer);
-        footprintHandler = Bukkit.getScheduler().runTaskTimer(CluedoPlugin.getInstance(), new FootprintHandler(), 0, 20);
+        footprintHandler = Bukkit.getScheduler().runTaskTimer(CluedoPlugin.getInstance(), new FootprintHandler(), 0, 5);
         started = true;
     }
 
