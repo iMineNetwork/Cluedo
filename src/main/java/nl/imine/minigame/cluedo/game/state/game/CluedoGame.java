@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Random;
 
 import com.sun.scenario.Settings;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.CluedoMinigame;
@@ -22,19 +25,22 @@ import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
-import nl.imine.minigame.timer.TimerManager;
 
 public class CluedoGame implements CluedoState, TimerHandler {
 
-	public static final CluedoStateType cluedoStateType = CluedoStateType.IN_GAME;
-	private Location respawnLocation = CluedoPlugin.getSettings().getLocation(Setting.LOBBY_SPAWN);
-
-
+	//Dependencies
 	private CluedoMinigame cluedoMinigame;
+
+	//Settings
+	private Location respawnLocation = CluedoPlugin.getSettings().getLocation(Setting.LOBBY_SPAWN);
 	private List<CluedoSpawn> spawns = CluedoPlugin.getSpawnLocationService().getSpawns();
 	private int gameTimer = CluedoPlugin.getSettings().getInt(Setting.IN_GAME_TIME);
+	public static final CluedoStateType cluedoStateType = CluedoStateType.IN_GAME;
+
+	//Game variables
 	private Timer timer;
-	boolean started = false;
+	private BukkitTask footprintHandler;
+	private boolean started = false;
 
 	public CluedoGame(CluedoMinigame cluedoMinigame) {
 		this.cluedoMinigame = cluedoMinigame;
@@ -45,6 +51,7 @@ public class CluedoGame implements CluedoState, TimerHandler {
 		Log.finer("Handling state change for: " + this.getClass().getSimpleName());
 		this.timer = CluedoPlugin.getTimerManager().createTimer(CluedoPlugin.getInstance().getName(), gameTimer, this);
 		cluedoMinigame.getPlayers().forEach(this::handlePlayer);
+		Bukkit.getScheduler().runTaskTimer(CluedoPlugin.getInstance(), new FootprintHandler(), 0, 20);
 		started = true;
 	}
 
@@ -129,9 +136,6 @@ public class CluedoGame implements CluedoState, TimerHandler {
 	}
 
 	private void endGame(GameResult result) {
-		//Hide timer and prevent it from ticking
-		cluedoMinigame.getPlayers().forEach(timer::hideTimer);
-		CluedoPlugin.getTimerManager().removeTimer(timer);
 
 		//Setup end game notifications
 		String titleText = null;
@@ -150,14 +154,26 @@ public class CluedoGame implements CluedoState, TimerHandler {
 				break;
 		}
 
-		//Show the set-up title to all players in the minigame instance
-		for (Player player : cluedoMinigame.getPlayers()) {
-			player.sendTitle(titleText, subtitleText, 10 ,100,10);
+		for (CluedoPlayer player : cluedoMinigame.getCluedoPlayers()) {
+			//Show the set-up title to all players in the minigame instance
+			player.getPlayer().sendTitle(titleText, subtitleText, 10 ,100,10);
+
+			//Hide Timer
+			timer.hideTimer(player.getPlayer());
+
+			//Remove footprints
+			player.clearFootprints();
 		}
+
+		//Hide timer and prevent it from ticking
+		CluedoPlugin.getTimerManager().removeTimer(timer);
 
 		//Clean map
 		cluedoMinigame.getCluedoWorld().getEntitiesByClasses(Arrow.class, Item.class)
 				.forEach(Entity::remove);
+
+		//Remove footprint runner
+		footprintHandler.cancel();
 
 		//Change state
 		cluedoMinigame.changeGameState(CluedoStateType.END_GAME);
