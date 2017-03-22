@@ -3,8 +3,6 @@ package nl.imine.minigame.cluedo.game.state.game;
 import java.util.List;
 import java.util.Random;
 
-import com.sun.scenario.Settings;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,14 +19,17 @@ import nl.imine.minigame.cluedo.game.CluedoMinigame;
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.game.state.CluedoState;
+import static nl.imine.minigame.cluedo.game.state.CluedoState.interactableItems;
+import static nl.imine.minigame.cluedo.game.state.CluedoState.murdererInteractableItems;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
+import org.bukkit.Material;
 
-public class CluedoGame implements CluedoState, TimerHandler {
+public class CluedoGame extends CluedoState implements TimerHandler {
 
     //Dependencies
     private CluedoMinigame cluedoMinigame;
@@ -37,7 +38,7 @@ public class CluedoGame implements CluedoState, TimerHandler {
     private Location respawnLocation = CluedoPlugin.getSettings().getLocation(Setting.LOBBY_SPAWN);
     private List<CluedoSpawn> spawns = CluedoPlugin.getSpawnLocationService().getSpawns();
     private int gameTimer = CluedoPlugin.getSettings().getInt(Setting.IN_GAME_TIME);
-    public static final CluedoStateType cluedoStateType = CluedoStateType.IN_GAME;
+    
 
     //Game variables
     //Scoreboard
@@ -49,6 +50,15 @@ public class CluedoGame implements CluedoState, TimerHandler {
 
     public CluedoGame(CluedoMinigame cluedoMinigame) {
         this.cluedoMinigame = cluedoMinigame;
+        cluedoStateType = CluedoStateType.IN_GAME;
+        
+        //setting up all blocks players can interact with
+        interactableItems.add(Material.SPRUCE_DOOR);
+        interactableItems.add(Material.STONE_BUTTON);
+        interactableItems.add(Material.LEVER);
+        interactableItems.add(Material.JUKEBOX);
+        
+        murdererInteractableItems.add(Material.WOOD_BUTTON);
     }
 
     @Override

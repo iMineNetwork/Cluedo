@@ -20,9 +20,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-public class CluedoLobby implements CluedoState, TimerHandler{
-
-    public static final CluedoStateType cluedoStateType = CluedoStateType.LOBBY;
+public class CluedoLobby extends CluedoState implements TimerHandler{
 
     private CluedoMinigame cluedoMinigame;
     private int gameTimer = CluedoPlugin.getSettings().getInt(Setting.LOBBY_TIME);
@@ -31,6 +29,7 @@ public class CluedoLobby implements CluedoState, TimerHandler{
 
     public CluedoLobby(CluedoMinigame cluedoMinigame){
         this.cluedoMinigame = cluedoMinigame;
+        cluedoStateType = CluedoStateType.LOBBY;
     }
 
     @Override

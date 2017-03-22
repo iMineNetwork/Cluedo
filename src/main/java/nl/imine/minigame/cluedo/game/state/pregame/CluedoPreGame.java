@@ -17,9 +17,7 @@ import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
 
-public class CluedoPreGame implements CluedoState, TimerHandler {
-
-	public static final CluedoStateType cluedoStateType = CluedoStateType.PRE_GAME;
+public class CluedoPreGame extends CluedoState implements TimerHandler {
 
 	private CluedoMinigame cluedoMinigame;
 	private int gameTimer = CluedoPlugin.getSettings().getInt(Setting.PRE_GAME_TIME);
@@ -28,6 +26,7 @@ public class CluedoPreGame implements CluedoState, TimerHandler {
 
 	public CluedoPreGame(CluedoMinigame cluedoMinigame) {
 		this.cluedoMinigame = cluedoMinigame;
+                cluedoStateType = CluedoStateType.PRE_GAME;
 	}
 
 	@Override

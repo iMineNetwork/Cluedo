@@ -27,6 +27,7 @@ import java.util.List;
 public class CluedoListener implements Listener {
 
     private List<CluedoPlayer> detectiveTimeout = new ArrayList<>();
+    
 
     public static void init() {
         Bukkit.getServer().getPluginManager().registerEvents(new CluedoListener(), CluedoPlugin.getInstance());
@@ -205,10 +206,23 @@ public class CluedoListener implements Listener {
             return;
         }
 
-        //disallow every interaction except stone buttons and levers
-        if (pie.getClickedBlock() == null || pie.getClickedBlock().getType() == Material.STONE_BUTTON || pie.getClickedBlock().getType() == Material.WOOD_BUTTON || pie.getClickedBlock().getType() == Material.LEVER) {
+        //allows murderer to use more blocks
+        if( CluedoPlugin.getGame().getGameState().getMurdererInteractableItems().contains(pie.getClickedBlock().getType())){
+            
+            //null check because there isn't always a murderer
+            if(CluedoPlugin.getGame().getMurderer() != null && CluedoPlugin.getGame().getMurderer().getPlayer() == pie.getPlayer()){
+                return;
+            }else{
+                pie.getPlayer().sendMessage("Only the murderer can use this");
+            }
+        }
+        
+        
+        if(CluedoPlugin.getGame().getGameState().getMurdererInteractableItems().contains(pie.getClickedBlock().getType())){
             return;
         }
+        
+        //TODO: allowing a player to draw back a bow when facing a block
 
         pie.setCancelled(true);
     }

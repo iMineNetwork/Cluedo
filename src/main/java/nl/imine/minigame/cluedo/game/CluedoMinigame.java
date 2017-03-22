@@ -18,18 +18,16 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CluedoMinigame extends Minigame{
+public class CluedoMinigame extends Minigame {
 
     private ArrayList<CluedoPlayer> players = new ArrayList<>();
     private CluedoState gameState;
     private String gameName = CluedoPlugin.getSettings().getString(Setting.GAME_NAME);
     private int maxPlayers = CluedoPlugin.getSettings().getInt(Setting.GAME_MAX_PLAYERS);
     private String worldName = CluedoPlugin.getSettings().getString(Setting.GAME_WORLD_NAME);
-
 
     public String getName() {
         return gameName;
@@ -78,9 +76,27 @@ public class CluedoMinigame extends Minigame{
         return gameState;
     }
 
-    public void changeGameState(CluedoStateType type){
+    public CluedoPlayer getMurderer() {
+        for (CluedoPlayer player : CluedoPlugin.getGame().getCluedoPlayers()) {
+            if(player.getRole().getRoleType() == RoleType.MURDERER){
+                return player;
+            }
+        } 
+        return null;
+    }
+    
+     public CluedoPlayer getDetective() {
+        for (CluedoPlayer player : CluedoPlugin.getGame().getCluedoPlayers()) {
+            if(player.getRole().getRoleType() == RoleType.DETECTIVE){
+                return player;
+            }
+        } 
+        return null;
+    }
+
+    public void changeGameState(CluedoStateType type) {
         Log.fine("Changing game state to: " + type.name());
-        switch (type){
+        switch (type) {
             case PRE_GAME:
                 gameState = new CluedoPreGame(this);
                 gameState.handleStateChange();
