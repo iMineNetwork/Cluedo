@@ -13,6 +13,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.CluedoMinigame;
@@ -38,6 +40,9 @@ public class CluedoGame implements CluedoState, TimerHandler {
     public static final CluedoStateType cluedoStateType = CluedoStateType.IN_GAME;
 
     //Game variables
+    //Scoreboard
+    private Scoreboard gameScoreboard;
+    private Team invisibleNametagTeam;
     private Timer timer;
     private BukkitTask footprintHandler;
     private boolean started = false;
@@ -49,9 +54,19 @@ public class CluedoGame implements CluedoState, TimerHandler {
     @Override
     public void handleStateChange() {
         Log.finer("Handling state change for: " + this.getClass().getSimpleName());
+
         this.timer = CluedoPlugin.getTimerManager().createTimer(CluedoPlugin.getInstance().getName(), gameTimer, this);
-        cluedoMinigame.getPlayers().forEach(this::handlePlayer);
+
+        // Initialize a clean scoreboard
+        gameScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+
+        //Add a team to remove the players' nametags
+        invisibleNametagTeam = gameScoreboard.registerNewTeam("InvisibleNametag");
+        invisibleNametagTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
+
         footprintHandler = Bukkit.getScheduler().runTaskTimer(CluedoPlugin.getInstance(), new FootprintHandler(), 0, 5);
+        cluedoMinigame.getPlayers().forEach(this::handlePlayer);
+
         started = true;
     }
 
@@ -70,6 +85,12 @@ public class CluedoGame implements CluedoState, TimerHandler {
     public void handlePlayer(Player player) {
         if (!started) {
             timer.showTimer(player);
+
+            //Handle scoreboard
+            player.setScoreboard(gameScoreboard);
+            invisibleNametagTeam.addEntry(player.getName());
+
+            //Teleport player to random spawn
             spawns = CluedoPlugin.getSpawnLocationService().getSpawns();
             player.teleport(spawns.get(new Random().nextInt(spawns.size())).getLocation());
         } else {
@@ -161,6 +182,10 @@ public class CluedoGame implements CluedoState, TimerHandler {
             //Hide Timer
             timer.hideTimer(player.getPlayer());
 
+            //Remove player nametag invisibility
+            player.getPlayer().setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+            invisibleNametagTeam.removeEntry(player.getPlayer().getName());
+
             //Remove footprints
             player.clearFootprints();
         }
@@ -175,6 +200,9 @@ public class CluedoGame implements CluedoState, TimerHandler {
         //Remove footprint runner
         footprintHandler.cancel();
         footprintHandler = null;
+
+        //Unregister Team
+        invisibleNametagTeam.unregister();
 
         //Change state
         cluedoMinigame.changeGameState(CluedoStateType.END_GAME);
