@@ -211,6 +211,12 @@ public class CluedoListener implements Listener {
             return;
         }
 
+      
+        
+        if(CluedoPlugin.getGame().getGameState().getInteractableItems().contains(pie.getClickedBlock().getType())){
+            return;
+        }
+        
         //allows murderer to use more blocks
         if(CluedoPlugin.getGame().getGameState().getMurdererInteractableItems().contains(pie.getClickedBlock().getType())){
             
@@ -219,11 +225,6 @@ public class CluedoListener implements Listener {
             }else{
                 pie.getPlayer().sendMessage("Only the murderer can use this");
             }
-        }
-        
-        
-        if(CluedoPlugin.getGame().getGameState().getMurdererInteractableItems().contains(pie.getClickedBlock().getType())){
-            return;
         }
         
         //TODO: allowing a player to draw back a bow when facing a block
