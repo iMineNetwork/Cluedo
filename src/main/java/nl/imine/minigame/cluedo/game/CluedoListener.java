@@ -200,6 +200,11 @@ public class CluedoListener implements Listener {
         if (!CluedoPlugin.getGame().getPlayers().contains(pie.getPlayer())) {
             return;
         }
+        
+        //testing to see if the clicked block exists to prevent NullPointerExceptions
+        if(pie.getClickedBlock() == null){
+            return;
+        }
 
         //people in Creative get full access to edit the map
         if (pie.getPlayer().getGameMode() == GameMode.CREATIVE) {
@@ -207,10 +212,9 @@ public class CluedoListener implements Listener {
         }
 
         //allows murderer to use more blocks
-        if( CluedoPlugin.getGame().getGameState().getMurdererInteractableItems().contains(pie.getClickedBlock().getType())){
+        if(CluedoPlugin.getGame().getGameState().getMurdererInteractableItems().contains(pie.getClickedBlock().getType())){
             
-            //null check because there isn't always a murderer
-            if(CluedoPlugin.getGame().getMurderer() != null && CluedoPlugin.getGame().getMurderer().getPlayer() == pie.getPlayer()){
+            if(CluedoPlugin.getGame().isMurderer(pie.getPlayer())){
                 return;
             }else{
                 pie.getPlayer().sendMessage("Only the murderer can use this");

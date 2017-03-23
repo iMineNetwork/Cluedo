@@ -76,22 +76,32 @@ public class CluedoMinigame extends Minigame {
         return gameState;
     }
 
-    public CluedoPlayer getMurderer() {
-        for (CluedoPlayer player : CluedoPlugin.getGame().getCluedoPlayers()) {
-            if(player.getRole().getRoleType() == RoleType.MURDERER){
-                return player;
-            }
-        } 
-        return null;
+    public List<CluedoPlayer> getMurderers() {
+        List<CluedoPlayer> murderers = new ArrayList<>();
+        
+        CluedoPlugin.getGame().getCluedoPlayers().stream()
+                .filter(player -> player.getRole().getRoleType() == RoleType.MURDERER)
+                .forEach(player -> murderers.add(player)); 
+        return murderers;
     }
     
-     public CluedoPlayer getDetective() {
-        for (CluedoPlayer player : CluedoPlugin.getGame().getCluedoPlayers()) {
-            if(player.getRole().getRoleType() == RoleType.DETECTIVE){
-                return player;
-            }
-        } 
-        return null;
+    public List<CluedoPlayer> getDetectives() {
+        List<CluedoPlayer> detectives = new ArrayList<>();
+        
+        CluedoPlugin.getGame().getCluedoPlayers().stream()
+                .filter(player -> player.getRole().getRoleType() == RoleType.MURDERER)
+                .forEach(player -> detectives.add(player));
+        return detectives;
+    }
+     
+    public boolean isMurderer(Player player){
+        return CluedoPlugin.getGame().getCluedoPlayers().stream()
+                .anyMatch(cluedoPlayer -> cluedoPlayer.getRole().getRoleType() == RoleType.MURDERER && cluedoPlayer.getPlayer() == player);
+    }
+    
+    public boolean isDetective(Player player){
+        return CluedoPlugin.getGame().getCluedoPlayers().stream()
+                .anyMatch(cluedoPlayer -> cluedoPlayer.getRole().getRoleType() == RoleType.DETECTIVE && cluedoPlayer.getPlayer() == player);
     }
 
     public void changeGameState(CluedoStateType type) {
