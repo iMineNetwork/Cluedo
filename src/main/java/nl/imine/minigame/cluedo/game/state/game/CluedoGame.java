@@ -73,7 +73,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
         //Add a team to remove the players' nametags
         invisibleNametagTeam = gameScoreboard.registerNewTeam("InvisibleNametag");
         invisibleNametagTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
-        invisibleNametagTeam.setCanSeeFriendlyInvisibles(false);--
+        invisibleNametagTeam.setCanSeeFriendlyInvisibles(false);
         
 
         footprintHandler = Bukkit.getScheduler().runTaskTimer(CluedoPlugin.getInstance(), new FootprintHandler(), 0, 5);
