@@ -211,8 +211,6 @@ public class CluedoListener implements Listener {
             return;
         }
 
-      
-        
         if(CluedoPlugin.getGame().getGameState().getInteractableItems().contains(pie.getClickedBlock().getType())){
             return;
         }
@@ -224,6 +222,8 @@ public class CluedoListener implements Listener {
                 return;
             }else{
                 pie.getPlayer().sendMessage("Only the murderer can use this");
+                pie.setCancelled(true);
+                return;
             }
         }
         
