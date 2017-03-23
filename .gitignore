@@ -38,3 +38,6 @@ fabric.properties
 !libs/*.jar
 .DS_Store
 /target/
+
+#Don't ignore source files
+!src/*

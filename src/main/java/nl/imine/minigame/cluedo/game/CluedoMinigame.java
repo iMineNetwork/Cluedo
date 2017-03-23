@@ -2,6 +2,7 @@ package nl.imine.minigame.cluedo.game;
 
 import nl.imine.minigame.Minigame;
 import nl.imine.minigame.cluedo.CluedoPlugin;
+import nl.imine.minigame.cluedo.game.player.role.RoleInteractPermission;
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.game.state.CluedoState;
@@ -25,9 +26,12 @@ public class CluedoMinigame extends Minigame {
 
     private ArrayList<CluedoPlayer> players = new ArrayList<>();
     private CluedoState gameState;
-    private String gameName = CluedoPlugin.getSettings().getString(Setting.GAME_NAME);
-    private int maxPlayers = CluedoPlugin.getSettings().getInt(Setting.GAME_MAX_PLAYERS);
-    private String worldName = CluedoPlugin.getSettings().getString(Setting.GAME_WORLD_NAME);
+
+    //Settings
+    private final String gameName = CluedoPlugin.getSettings().getString(Setting.GAME_NAME);
+    private final int maxPlayers = CluedoPlugin.getSettings().getInt(Setting.GAME_MAX_PLAYERS);
+    private final String worldName = CluedoPlugin.getSettings().getString(Setting.GAME_WORLD_NAME);
+    private final List<RoleInteractPermission> roleInteractionPermissions = CluedoPlugin.getSettings().getRoleInteractPermissions();
 
     public String getName() {
         return gameName;
@@ -70,6 +74,10 @@ public class CluedoMinigame extends Minigame {
 
     public World getCluedoWorld() {
         return Bukkit.getWorld(worldName);
+    }
+
+    public List<RoleInteractPermission> getRoleInteractionPermissions() {
+        return roleInteractionPermissions;
     }
 
     public CluedoState getGameState() {

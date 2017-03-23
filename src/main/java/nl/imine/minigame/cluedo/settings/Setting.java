@@ -26,5 +26,7 @@ public final class Setting {
 
     //END-GAME
     public static final String END_GAME_TIME = "endgame.time";
-    
+
+    //Role Interaction
+    public static final String ROLE_INTERACTION_LIST = "role";
 }

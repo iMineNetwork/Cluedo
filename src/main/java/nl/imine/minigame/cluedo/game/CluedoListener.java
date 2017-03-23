@@ -211,18 +211,18 @@ public class CluedoListener implements Listener {
             return;
         }
 
-        //allows murderer to use more blocks
-        if(CluedoPlugin.getGame().getGameState().getMurdererInteractableItems().contains(pie.getClickedBlock().getType())){
-            
-            if(CluedoPlugin.getGame().isMurderer(pie.getPlayer())){
-                return;
-            }else{
-                pie.getPlayer().sendMessage("Only the murderer can use this");
-            }
-        }
-        
-        
-        if(CluedoPlugin.getGame().getGameState().getMurdererInteractableItems().contains(pie.getClickedBlock().getType())){
+        //Get Cluedo player object
+        CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
+                .filter(cPlayer -> cPlayer.getPlayer().equals(pie.getPlayer()))
+                .findFirst().orElse(null);
+
+        //Check if the player can interact with this block
+        boolean canInteract = CluedoPlugin.getGame().getRoleInteractionPermissions().stream()               //Find all role interaction permission entries
+                .filter(permission -> permission.getType().equals(pie.getMaterial()))                       //Only check on the current Material
+                .anyMatch(permission -> permission.canInteract(cluedoPlayer.getRole().getRoleType()));      //If the roles match, interaction should be allowed.
+
+        //Disable blocking if the player can interact
+        if(canInteract){
             return;
         }
         
