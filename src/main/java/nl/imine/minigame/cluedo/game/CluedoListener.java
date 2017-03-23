@@ -211,6 +211,10 @@ public class CluedoListener implements Listener {
             return;
         }
 
+        if(CluedoPlugin.getGame().getGameState().getInteractableItems().contains(pie.getClickedBlock().getType())){
+            return;
+        }
+
         //Get Cluedo player object
         CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
                 .filter(cPlayer -> cPlayer.getPlayer().equals(pie.getPlayer()))
@@ -225,7 +229,7 @@ public class CluedoListener implements Listener {
         if(canInteract){
             return;
         }
-        
+
         //TODO: allowing a player to draw back a bow when facing a block
 
         pie.setCancelled(true);
