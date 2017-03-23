@@ -53,9 +53,11 @@ public class MurderRole extends CluedoRole {
         damagePotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.HARM, 1, 50, true, false), true);
         damagePotionMeta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.RED + "Instant kill, use with Caughtion!");
+        lore.add(ChatColor.RED + "Instant kill, use with caution!");
         damagePotionMeta.setLore(lore);
+        damagePotion.setItemMeta(damagePotionMeta);
 
+        
         //Give the player their items
         player.getInventory().setHeldItemSlot(0);
         player.getInventory().setItem(1, knife);
