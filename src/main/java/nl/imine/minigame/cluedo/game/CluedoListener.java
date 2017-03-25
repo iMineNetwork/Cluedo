@@ -23,6 +23,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 
 public class CluedoListener implements Listener {
 
@@ -274,6 +275,25 @@ public class CluedoListener implements Listener {
         } else {
             evt.setCancelled(true);
         }
+    }
+    
+    private void onFoodLevelChange(FoodLevelChangeEvent flce){
+        
+        //this event can be fired for an NPC, but since we're not interested in them we'll filter them out
+        if(!(flce.getEntity() instanceof Player)){
+            return;
+        }
+        Player player = (Player) flce.getEntity();
+        
+        //Make sure the player is actually participating in this minigame
+        if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
+            return;
+        }
+        
+        flce.setCancelled(true);
+        flce.setFoodLevel(20);
+        player.setSaturation(Float.MAX_VALUE);
+        
     }
 
 }
