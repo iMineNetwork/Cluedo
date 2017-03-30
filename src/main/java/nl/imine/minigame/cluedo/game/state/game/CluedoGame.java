@@ -19,8 +19,6 @@ import nl.imine.minigame.cluedo.game.CluedoMinigame;
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.game.state.CluedoState;
-import static nl.imine.minigame.cluedo.game.state.CluedoState.interactableItems;
-import static nl.imine.minigame.cluedo.game.state.CluedoState.murdererInteractableItems;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Log;
@@ -49,16 +47,9 @@ public class CluedoGame extends CluedoState implements TimerHandler {
     private boolean started = false;
 
     public CluedoGame(CluedoMinigame cluedoMinigame) {
+        super(CluedoStateType.IN_GAME);
+
         this.cluedoMinigame = cluedoMinigame;
-        cluedoStateType = CluedoStateType.IN_GAME;
-        
-        //setting up all blocks players can interact with
-        interactableItems.add(Material.SPRUCE_DOOR);
-        interactableItems.add(Material.STONE_BUTTON);
-        interactableItems.add(Material.LEVER);
-        interactableItems.add(Material.JUKEBOX);
-        
-        murdererInteractableItems.add(Material.WOOD_BUTTON);
     }
 
     @Override

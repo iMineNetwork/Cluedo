@@ -212,10 +212,6 @@ public class CluedoListener implements Listener {
             return;
         }
 
-        if(CluedoPlugin.getGame().getGameState().getInteractableItems().contains(pie.getClickedBlock().getType())){
-            return;
-        }
-
         //Get Cluedo player object
         CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
                 .filter(cPlayer -> cPlayer.getPlayer().equals(pie.getPlayer()))
@@ -245,7 +241,7 @@ public class CluedoListener implements Listener {
             return;
         }
 
-        //when a player in Creative dirnks a potion he doesn't get a bottle, so no need to do anything else
+        //when a player in Creative drinks a potion he doesn't get a bottle, so no need to do anything else
         if (pice.getPlayer().getGameMode() == GameMode.CREATIVE) {
             return;
         }

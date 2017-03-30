@@ -26,8 +26,8 @@ public class CluedoEndGame extends CluedoState implements TimerHandler{
     private Timer timer;
 
     public CluedoEndGame(CluedoMinigame cluedoMinigame){
+        super(CluedoStateType.END_GAME);
         this.cluedoMinigame = cluedoMinigame;
-        cluedoStateType = CluedoStateType.END_GAME;
     }
     
     @Override

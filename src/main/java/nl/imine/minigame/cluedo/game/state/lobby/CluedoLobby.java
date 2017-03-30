@@ -28,8 +28,8 @@ public class CluedoLobby extends CluedoState implements TimerHandler{
     private Timer timer;
 
     public CluedoLobby(CluedoMinigame cluedoMinigame){
+        super(CluedoStateType.LOBBY);
         this.cluedoMinigame = cluedoMinigame;
-        cluedoStateType = CluedoStateType.LOBBY;
     }
 
     @Override

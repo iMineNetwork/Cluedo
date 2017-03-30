@@ -8,26 +8,12 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class CluedoState {
 
-    /**
-     *alle blocks waarmee een speler tijdens een bepaalde game state mee kunnen interacten
-     */
-    public static final ArrayList<Material> interactableItems = new ArrayList<Material>();
-    
-    /**
-     * alle blocks waar de murderer mee kan interacten tijdens een bepaalde game state
-     */
-    public static final ArrayList<Material> murdererInteractableItems = new ArrayList<Material>();
-    
-    public CluedoStateType cluedoStateType;
-    
-    public ArrayList<Material> getInteractableItems(){
-        return interactableItems;
+    protected CluedoStateType cluedoStateType;
+
+    public CluedoState(CluedoStateType cluedoStateType) {
+        this.cluedoStateType = cluedoStateType;
     }
-    
-    public ArrayList<Material> getMurdererInteractableItems(){
-        return murdererInteractableItems;
-    }
-    
+
     public abstract void handleStateChange();
     public abstract CluedoStateType getState();
     public abstract void handlePlayer(Player player);
