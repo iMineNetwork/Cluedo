@@ -273,6 +273,7 @@ public class CluedoListener implements Listener {
         }
     }
     
+    @EventHandler
     private void onFoodLevelChange(FoodLevelChangeEvent flce){
         
         //this event can be fired for an NPC, but since we're not interested in them we'll filter them out
@@ -287,7 +288,6 @@ public class CluedoListener implements Listener {
         }
         
         flce.setCancelled(true);
-        flce.setFoodLevel(20);
         player.setSaturation(Float.MAX_VALUE);
         
     }
