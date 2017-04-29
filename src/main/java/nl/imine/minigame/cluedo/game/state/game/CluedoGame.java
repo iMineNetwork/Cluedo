@@ -3,6 +3,7 @@ package nl.imine.minigame.cluedo.game.state.game;
 import java.util.List;
 import java.util.Random;
 
+import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -96,6 +97,14 @@ public class CluedoGame extends CluedoState implements TimerHandler {
             //Teleport player to random spawn
             spawns = CluedoPlugin.getSpawnLocationService().getSpawns();
             player.teleport(spawns.get(new Random().nextInt(spawns.size())).getLocation());
+
+            //Find the player's game object.
+            CluedoPlayer cluedoPlayer = cluedoMinigame.getCluedoPlayers().stream()
+                    .filter(registeredPlayer -> registeredPlayer.getPlayer().equals(player))
+                    .findAny()
+                    .orElse(null);
+
+            JobManager.getInstance().assignJob(cluedoPlayer);
         } else {
             player.teleport(respawnLocation);
         }

@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import nl.imine.minigame.cluedo.game.state.game.jobs.Job;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -18,6 +19,9 @@ public class CluedoPlayer {
 	//Gameplay Details
 	private Color footprintColor = Color.black;
 	private LinkedList<Location> footprints = new LinkedList<>();
+
+	private Job activeJob;
+	private int completedJobs;
 
 	public CluedoPlayer(Player player, RoleType role) {
 		this.player = player;
@@ -74,5 +78,29 @@ public class CluedoPlayer {
 			footprints.removeFirst();
 		}
 		footprints.add(footprint);
+	}
+
+	public void setRole(CluedoRole role) {
+		this.role = role;
+	}
+
+	public void setFootprints(LinkedList<Location> footprints) {
+		this.footprints = footprints;
+	}
+
+	public Job getActiveJob() {
+		return activeJob;
+	}
+
+	public void setActiveJob(Job activeJob) {
+		this.activeJob = activeJob;
+	}
+
+	public int getCompletedJobs() {
+		return completedJobs;
+	}
+
+	public void setCompletedJobs(int completedJobs) {
+		this.completedJobs = completedJobs;
 	}
 }

@@ -6,6 +6,7 @@ public final class Setting {
     public static final String GAME_NAME = "game.name";
     public static final String GAME_MAX_PLAYERS = "game.max_players";
     public static final String GAME_WORLD_NAME = "game.world";
+    public static final String GAME_JOB_REQUIRED_AMOUNT = "game.job.requiredAmount";
 
     //LOBBY
     public static final String LOBBY_TIME = "lobby.time";

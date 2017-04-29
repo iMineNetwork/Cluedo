@@ -26,6 +26,7 @@ public class Settings {
         configuration.addDefault(Setting.GAME_NAME, "minigame_name");
         configuration.addDefault(Setting.GAME_MAX_PLAYERS, 10);
         configuration.addDefault(Setting.GAME_WORLD_NAME, "world");
+        configuration.addDefault(Setting.GAME_JOB_REQUIRED_AMOUNT, 5);
 
         //LOBBY
         configuration.addDefault(Setting.LOBBY_TIME, 15);

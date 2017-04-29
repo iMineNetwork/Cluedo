@@ -2,8 +2,10 @@ package nl.imine.minigame.cluedo.game;
 
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
+import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -128,10 +130,16 @@ public class CluedoListener implements Listener {
                 .filter(cPlayer -> cPlayer.getPlayer().equals(player))
                 .findFirst().orElse(null);
 
-        //Check if the player is a bystander without a weapon
-        if (cluedoPlayer.getRole().getRoleType().equals(RoleType.BYSTANDER) && !detectiveTimeout.contains(cluedoPlayer)) {
-            cluedoPlayer.setRole(RoleType.DETECTIVE);
-            evt.getItem().remove();
+        if(evt.getItem().getItemStack().getType().equals(Material.BOW)) {
+            //Check if the player is a bystander without a weapon
+            if (cluedoPlayer.getRole().getRoleType().equals(RoleType.BYSTANDER) && !detectiveTimeout.contains(cluedoPlayer)) {
+                cluedoPlayer.setRole(RoleType.DETECTIVE);
+                evt.getItem().remove();
+            }
+        }
+
+        if(evt.getItem().equals(cluedoPlayer.getActiveJob().getJobItem())){
+            JobManager.getInstance().handleJobItemPickup(cluedoPlayer);
         }
 
         //Don't allow pickups as we handle that ourselves
@@ -266,8 +274,12 @@ public class CluedoListener implements Listener {
 
     private void handleArrowDamage(EntityDamageByEntityEvent evt) {
         Arrow arrow = (Arrow) evt.getDamager();
-        if (arrow.isCritical()) {
-            evt.setDamage(100);
+        if(!evt.getEntity().equals(arrow.getShooter())) {
+            if (arrow.isCritical()) {
+                evt.setDamage(100);
+            } else {
+                evt.setCancelled(true);
+            }
         } else {
             evt.setCancelled(true);
         }

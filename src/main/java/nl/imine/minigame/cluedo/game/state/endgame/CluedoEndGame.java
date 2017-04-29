@@ -6,6 +6,7 @@ import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.game.state.CluedoState;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
+import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
@@ -35,6 +36,7 @@ public class CluedoEndGame extends CluedoState implements TimerHandler{
         Log.finer("Handling state change for: " + this.getClass().getSimpleName());
         this.timer = CluedoPlugin.getTimerManager().createTimer(CluedoPlugin.getInstance().getName(), gameTimer, this);
         cluedoMinigame.getPlayers().forEach(this::handlePlayer);
+        JobManager.getInstance().resetJobs();
     }
 
     @Override
@@ -52,6 +54,19 @@ public class CluedoEndGame extends CluedoState implements TimerHandler{
     @Override
     public void handlePlayer(Player player) {
         timer.showTimer(player);
+
+        //Find the player's game object.
+        CluedoPlayer cluedoPlayer = cluedoMinigame.getCluedoPlayers().stream()
+                .filter(registeredPlayer -> registeredPlayer.getPlayer().equals(player))
+                .findAny()
+                .orElse(null);
+
+        //Clear the job data of this player
+        if(cluedoPlayer.getActiveJob() != null){
+            cluedoPlayer.getActiveJob().getJobItem().remove();
+        }
+        cluedoPlayer.setActiveJob(null);
+        cluedoPlayer.setCompletedJobs(0);
     }
 
     @Override
