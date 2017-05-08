@@ -41,9 +41,7 @@ public class JobManager {
         jobPool.remove(job);
 
         //Spawn the Item
-        Item item = job.getLocation().getWorld().spawn(job.getLocation(), Item.class, itemEntity -> {
-            itemEntity.setItemStack(job.getDisplayItem());
-        });
+        Item item = job.getLocation().getWorld().dropItem(job.getLocation(), job.getDisplayItem());
 
         player.setActiveJob(new Job(job, item));
         player.getPlayer().sendMessage(job.getDescription());
