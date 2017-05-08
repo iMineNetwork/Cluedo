@@ -1,7 +1,6 @@
 package nl.imine.minigame.cluedo.settings;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import nl.imine.minigame.cluedo.game.player.role.RoleInteractPermission;
@@ -47,7 +46,9 @@ public class Settings {
         configuration.addDefault(Setting.END_GAME_TIME, 15);
 
         //Role block interactions
-        configuration.addDefault(Setting.ROLE_INTERACTION_LIST, "{}");
+        Map<String, List<String>> defaults = new HashMap<>();
+        defaults.put(Material.WOOD_BUTTON.toString(), Collections.singletonList(RoleType.MURDERER.toString()));
+        configuration.addDefault(Setting.ROLE_INTERACTION_LIST, defaults);
 
         configuration.options().copyDefaults(true);
     }

@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -227,7 +228,7 @@ public class CluedoListener implements Listener {
 
         //Check if the player can interact with this block
         boolean canInteract = CluedoPlugin.getGame().getRoleInteractionPermissions().stream()               //Find all role interaction permission entries
-                .filter(permission -> permission.getType().equals(pie.getMaterial()))                       //Only check on the current Material
+                .filter(permission -> permission.getType().equals(pie.getClickedBlock().getType()))         //Only check on the current Material
                 .anyMatch(permission -> permission.canInteract(cluedoPlayer.getRole().getRoleType()));      //If the roles match, interaction should be allowed.
 
         //Disable blocking if the player can interact
