@@ -61,7 +61,7 @@ public class AvailableJob implements ConfigurationSerializable {
 
         String displayName = objectMap.get("description").toString();
 
-        ItemStack item = new ItemStack(Material.valueOf(objectMap.get("itemType").toString()), Integer.parseInt(objectMap.get("itemData").toString()));
+        ItemStack item = new ItemStack(Material.valueOf(objectMap.get("itemType").toString()), 1, Short.parseShort(objectMap.get("itemData").toString()));
         return new AvailableJob(
                 Double.parseDouble(objectMap.get("spawnX").toString()),
                 Double.parseDouble(objectMap.get("spawnY").toString()),
