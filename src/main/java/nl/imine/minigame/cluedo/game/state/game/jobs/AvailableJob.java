@@ -22,7 +22,7 @@ public class AvailableJob implements ConfigurationSerializable {
 
     private ItemStack displayItem;
 
-    public AvailableJob(double spawnX, double spawnY, double SpawnZ, String description, ItemStack displayItem) {
+    public AvailableJob(double spawnX, double spawnY, double spawnZ, String description, ItemStack displayItem) {
         this.spawnX = spawnX;
         this.spawnY = spawnY;
         this.spawnZ = spawnZ;
