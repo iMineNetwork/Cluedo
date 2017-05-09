@@ -69,7 +69,7 @@ public class JobManager {
                     player.setRole(RoleType.DETECTIVE);
                     break;
                 case DETECTIVE:
-                    //TODO What kind of reward should a detective get?
+                    player.getPlayer().getInventory().addItem(new ItemStack(Material.TOTEM));
                     break;
                 case MURDERER:
                     //Set inventory
