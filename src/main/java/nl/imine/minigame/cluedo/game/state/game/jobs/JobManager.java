@@ -9,7 +9,7 @@ import nl.imine.minigame.cluedo.settings.JobService;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.timer.Timer;
-import nl.imine.minigame.timer.TimerManager;
+import nl.imine.minigame.cluedo.settings.Settings;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -20,7 +20,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 import java.util.Random;
 
-import com.sun.scenario.Settings;
 
 public class JobManager {
 
@@ -70,10 +69,10 @@ public class JobManager {
         player.setActiveJob(null);
 
         if(player.getCompletedJobs() < CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT)) {
-            Log.info(player.getPlayer().getDisplayName() + " has completed a Job. " + player.getCompletedJobs() + "/" + Settings.getInt(GAME_JOB_REQUIRED_AMOUNT, 5));
+            Log.info(player.getPlayer().getDisplayName() + " has completed a Job. " + player.getCompletedJobs() + "/" + CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT));
             //Assign a new job
         } else {
-            Log.info(player.getPlayer().getDisplayName() + " has finished all of their Jobs. " + player.getCompletedJobs() + "/" + Settings.getInt(GAME_JOB_REQUIRED_AMOUNT, 5));
+            Log.info(player.getPlayer().getDisplayName() + " has finished all of their Jobs. " + player.getCompletedJobs() + "/" + CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT));
             //Give the player a bonus for completing the jobs.
             //TODO Upgrade System for roles?
             switch(player.getRole().getRoleType()){
@@ -106,7 +105,7 @@ public class JobManager {
     public void startJobSystem(){
         CluedoPlugin.getGame().getCluedoPlayers().forEach(this::assignJob);
 
-        timer = CluedoPlugin.getTimerManager().createTimer("Job timer", Settings.getInt(Setting.GAME_JOB_REFRESH_RATE, 30), () -> {
+        timer = CluedoPlugin.getTimerManager().createTimer("Job timer", CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE), () -> {
             CluedoPlugin.getGame().getCluedoPlayers().stream()
                     .filter(cluedoPlayer -> cluedoPlayer.getActiveJob() == null)
                     .forEach(this::assignJob);
@@ -117,7 +116,7 @@ public class JobManager {
         jobPool = availableJobs;
         CluedoPlugin.getGame().getCluedoPlayers().forEach(cluedoPlayer -> cluedoPlayer.setActiveJob(null));
         timer.setStopped(true);
-        timer.resetTimer(Settings.getInt(Setting.GAME_JOB_REFRESH_RATE, 30));
+        timer.resetTimer(CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE));
     }
 
     public static JobManager getInstance(){
