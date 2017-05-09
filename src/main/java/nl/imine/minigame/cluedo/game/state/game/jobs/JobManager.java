@@ -40,7 +40,7 @@ public class JobManager {
     public void assignJob(CluedoPlayer player){
         if(jobPool.size() > 0) {
             AvailableJob job = jobPool.get(random.nextInt(jobPool.size()));
-            jobPool.remove(job);
+//            jobPool.remove(job);
 
             //Spawn the Item
             Item item = job.getLocation().getWorld().dropItem(job.getLocation(), job.getDisplayItem());
