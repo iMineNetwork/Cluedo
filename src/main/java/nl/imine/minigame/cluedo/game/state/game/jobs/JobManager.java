@@ -79,7 +79,7 @@ public class JobManager {
                     bowMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
                     bow.setItemMeta(bowMeta);
 
-                    player.getPlayer().getInventory().setItem(1, bow);
+                    player.getPlayer().getInventory().addItem(bow);
                     player.getPlayer().getInventory().setItem(9, new ItemStack(Material.ARROW));
                     break;
             }
