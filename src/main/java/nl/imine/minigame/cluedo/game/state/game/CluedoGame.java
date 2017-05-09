@@ -71,6 +71,8 @@ public class CluedoGame extends CluedoState implements TimerHandler {
         footprintHandler = Bukkit.getScheduler().runTaskTimer(CluedoPlugin.getInstance(), new FootprintHandler(), 0, 5);
         cluedoMinigame.getPlayers().forEach(this::handlePlayer);
 
+        JobManager.getInstance().startJobSystem();
+
         started = true;
     }
 
@@ -169,6 +171,9 @@ public class CluedoGame extends CluedoState implements TimerHandler {
     }
 
     private void endGame(GameResult result) {
+
+        //Stop player jobs
+        JobManager.getInstance().resetJobs();
 
         //Setup end game notifications
         String titleText = null;

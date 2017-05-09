@@ -34,7 +34,6 @@ public class TimerImpl implements Timer{
     @Override
     public void resetTimer(int startTime) {
         this.maxTime = startTime;
-        this.stopped = false;
         setTimer(startTime);
     }
 

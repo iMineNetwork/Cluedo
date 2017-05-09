@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import nl.imine.minigame.cluedo.game.state.game.jobs.Job;
 import org.bukkit.Location;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
 import nl.imine.minigame.cluedo.game.player.role.CluedoRole;
@@ -94,6 +95,7 @@ public class CluedoPlayer {
 
 	public void setActiveJob(Job activeJob) {
 		this.activeJob = activeJob;
+		this.getActiveJob().getJobItem().remove();
 	}
 
 	public int getCompletedJobs() {

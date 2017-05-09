@@ -1,11 +1,16 @@
 package nl.imine.minigame.cluedo.game.state.game.jobs;
 
+import static nl.imine.minigame.cluedo.settings.Setting.GAME_JOB_REQUIRED_AMOUNT;
+
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.settings.JobService;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Log;
+import nl.imine.minigame.timer.Timer;
+import nl.imine.minigame.timer.TimerManager;
+
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
@@ -14,6 +19,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 import java.util.Random;
+
+import com.sun.scenario.Settings;
 
 public class JobManager {
 
@@ -24,6 +31,7 @@ public class JobManager {
     private List<AvailableJob> availableJobs;
     private List<AvailableJob> jobPool;
     private Random random = new Random();
+    private Timer timer;
 
     public static void init() {
         // Load jobs from file
@@ -59,17 +67,14 @@ public class JobManager {
 
     public void handleJobItemPickup(CluedoPlayer player){
         player.setCompletedJobs(player.getCompletedJobs() + 1);
-        Item item = player.getActiveJob().getJobItem();
-        item.remove();
+        player.setActiveJob(null);
 
-        if(player.getCompletedJobs() < CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REQUIRED_AMOUNT)) {
+        if(player.getCompletedJobs() < CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT)) {
+            Log.info(player.getPlayer().getDisplayName() + " has completed a Job. " + player.getCompletedJobs() + "/" + Settings.getInt(GAME_JOB_REQUIRED_AMOUNT, 5));
             //Assign a new job
-            Log.info(player.getPlayer().getDisplayName() + " has completed a Job. " + player.getCompletedJobs() + "/" + Setting.GAME_JOB_REQUIRED_AMOUNT);
-            assignJob(player);
         } else {
-            Log.info(player.getPlayer().getDisplayName() + " has finished all of their Jobs. " + player.getCompletedJobs() + "/" + Setting.GAME_JOB_REQUIRED_AMOUNT);
+            Log.info(player.getPlayer().getDisplayName() + " has finished all of their Jobs. " + player.getCompletedJobs() + "/" + Settings.getInt(GAME_JOB_REQUIRED_AMOUNT, 5));
             //Give the player a bonus for completing the jobs.
-
             //TODO Upgrade System for roles?
             switch(player.getRole().getRoleType()){
                 case BYSTANDER:
@@ -98,8 +103,21 @@ public class JobManager {
         }
     }
 
+    public void startJobSystem(){
+        CluedoPlugin.getGame().getCluedoPlayers().forEach(this::assignJob);
+
+        timer = CluedoPlugin.getTimerManager().createTimer("Job timer", Settings.getInt(Setting.GAME_JOB_REFRESH_RATE, 30), () -> {
+            CluedoPlugin.getGame().getCluedoPlayers().stream()
+                    .filter(cluedoPlayer -> cluedoPlayer.getActiveJob() == null)
+                    .forEach(this::assignJob);
+        });
+    }
+
     public void resetJobs(){
         jobPool = availableJobs;
+        CluedoPlugin.getGame().getCluedoPlayers().forEach(cluedoPlayer -> cluedoPlayer.setActiveJob(null));
+        timer.setStopped(true);
+        timer.resetTimer(Settings.getInt(Setting.GAME_JOB_REFRESH_RATE, 30));
     }
 
     public static JobManager getInstance(){
