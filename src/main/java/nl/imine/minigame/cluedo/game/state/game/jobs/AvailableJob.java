@@ -1,6 +1,8 @@
 package nl.imine.minigame.cluedo.game.state.game.jobs;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
+import nl.imine.minigame.cluedo.game.state.game.CluedoGame;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -13,67 +15,57 @@ import java.util.Map;
 @SerializableAs("Job")
 public class AvailableJob implements ConfigurationSerializable {
 
-    private Location location;
+    private double spawnX;
+    private double spawnY;
+    private double spawnZ;
     private String description;
 
     private ItemStack displayItem;
 
-    public AvailableJob(Location location, String description, ItemStack displayItem) {
-        this.location = location;
+    public AvailableJob(double spawnX, double spawnY, double SpawnZ, String description, ItemStack displayItem) {
+        this.spawnX = spawnX;
+        this.spawnY = spawnY;
+        this.spawnZ = spawnZ;
         this.description = description;
         this.displayItem = displayItem;
     }
 
     public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
+        return new Location(CluedoPlugin.getGame().getCluedoWorld(), spawnX, spawnY, spawnZ);
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public ItemStack getDisplayItem() {
         return displayItem;
-    }
-
-    public void setDisplayItem(ItemStack displayItem) {
-        this.displayItem = displayItem;
     }
 
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> ret = new HashMap<>();
-        ret.put("spawnX", location.getX());
-        ret.put("spawnY", location.getY());
-        ret.put("spawnZ", location.getZ());
+        ret.put("spawnX", spawnX);
+        ret.put("spawnY", spawnY);
+        ret.put("spawnZ", spawnZ);
 
         ret.put("description", description);
 
-        ret.put("description", displayItem.getType());
-        ret.put("description", displayItem.getDurability());
+        ret.put("itemType", displayItem.getType().toString());
+        ret.put("itemData", displayItem.getDurability());
 
         return ret;
     }
 
     public static AvailableJob deserialize(Map<String, Object> objectMap){
-        Location location = new Location(CluedoPlugin.getGame().getCluedoWorld(),
-                Double.valueOf(objectMap.get("spawnX").toString()),
-                Double.valueOf(objectMap.get("spawnY").toString()),
-                Double.valueOf(objectMap.get("spawnZ").toString()));
 
         String displayName = objectMap.get("description").toString();
 
-        ItemStack item = new ItemStack(Material.valueOf(objectMap.get("jobDisplayItemType").toString()), Integer.parseInt(objectMap.get("jobDisplayItemData").toString()));
+        ItemStack item = new ItemStack(Material.valueOf(objectMap.get("itemType").toString()), Integer.parseInt(objectMap.get("itemData").toString()));
         return new AvailableJob(
-                location,
+                Double.parseDouble(objectMap.get("spawnX").toString()),
+                Double.parseDouble(objectMap.get("spawnY").toString()),
+                Double.parseDouble(objectMap.get("spawnZ").toString()),
                 displayName,
                 item);
     }

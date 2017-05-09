@@ -9,12 +9,12 @@ public class Job extends AvailableJob {
     private Item jobItem;
 
     public Job(AvailableJob job, Item jobItem) {
-        super(job.getLocation(), job.getDescription(), job.getDisplayItem());
+        super(job.getLocation().getX(), job.getLocation().getY(), job.getLocation().getZ(), job.getDescription(), job.getDisplayItem());
         this.jobItem = jobItem;
     }
 
     public Job(Location location, String jobLocationName, ItemStack displayItem, Item jobItem) {
-        super(location, jobLocationName, displayItem);
+        super(location.getX(), location.getY(), location.getZ(), jobLocationName, displayItem);
         this.jobItem = jobItem;
     }
 

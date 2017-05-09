@@ -5,8 +5,12 @@ import nl.imine.minigame.cluedo.game.state.game.CluedoSpawn;
 import nl.imine.minigame.cluedo.game.state.game.jobs.AvailableJob;
 import nl.imine.minigame.cluedo.game.state.game.jobs.Job;
 import nl.imine.minigame.cluedo.util.Log;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,6 +26,7 @@ public class JobService {
     private int requiredJobs = CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REQUIRED_AMOUNT);
 
     public JobService() {
+
     }
 
     /**
@@ -32,7 +37,9 @@ public class JobService {
             if (!Files.exists(JOBS_FILE)) {
                 Files.createFile(JOBS_FILE);
                 FileConfiguration fileConfiguration = YamlConfiguration.loadConfiguration(Files.newBufferedReader(JOBS_FILE));
-                fileConfiguration.set(JOBS_PATH, new ArrayList<AvailableJob>());
+                List<AvailableJob> jobs = new ArrayList<>();
+                jobs.add(new AvailableJob(0, 0, 0, "Test", new ItemStack(Material.STONE)));
+                fileConfiguration.set(JOBS_PATH, jobs);
                 fileConfiguration.save(JOBS_FILE.toFile());
             }
         } catch (IOException e) {

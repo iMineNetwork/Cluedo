@@ -5,6 +5,8 @@ import nl.imine.minigame.cluedo.game.CluedoMinigame;
 import nl.imine.minigame.cluedo.game.CluedoListener;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.game.state.game.CluedoSpawn;
+import nl.imine.minigame.cluedo.game.state.game.jobs.AvailableJob;
+import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.settings.Settings;
 import nl.imine.minigame.cluedo.settings.SpawnLocationService;
@@ -60,12 +62,14 @@ public class CluedoPlugin extends JavaPlugin {
         world.setThunderDuration(1);
         world.setTime(18000);
 
+        //Initialize Jobs
+        ConfigurationSerialization.registerClass(AvailableJob.class);
+        JobManager.init();
 
         //Initialize spawns
         ConfigurationSerialization.registerClass(CluedoSpawn.class);
         spawnLocationService = new SpawnLocationService();
         spawnLocationService.init();
-        spawnLocationService.getSpawns();
 
         //Start Plugin
         game = new CluedoMinigame();

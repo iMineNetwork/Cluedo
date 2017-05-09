@@ -19,7 +19,7 @@ public class JobManager {
 
     private static JobManager jobManager;
 
-    private static JobService jobService = new JobService();
+    private JobService jobService;
 
     private List<AvailableJob> availableJobs;
     private List<AvailableJob> jobPool;
@@ -27,24 +27,27 @@ public class JobManager {
 
     public static void init() {
         // Load jobs from file
+        JobService jobService = new JobService();
         jobService.init();
-        jobManager = new JobManager(jobService.getAvailableJobs());
+        jobManager = new JobManager(jobService);
     }
 
-    public JobManager(List<AvailableJob> availableJobs) {
-        this.availableJobs = availableJobs;
+    public JobManager(JobService jobService) {
+        this.availableJobs = jobService.getAvailableJobs();
         this.jobPool = availableJobs; //The available jobs is always the initial job pool
     }
 
     public void assignJob(CluedoPlayer player){
-        AvailableJob job = jobPool.get(random.nextInt(jobPool.size()));
-        jobPool.remove(job);
+        if(jobPool.size() > 0) {
+            AvailableJob job = jobPool.get(random.nextInt(jobPool.size()));
+            jobPool.remove(job);
 
-        //Spawn the Item
-        Item item = job.getLocation().getWorld().dropItem(job.getLocation(), job.getDisplayItem());
+            //Spawn the Item
+            Item item = job.getLocation().getWorld().dropItem(job.getLocation(), job.getDisplayItem());
 
-        player.setActiveJob(new Job(job, item));
-        player.getPlayer().sendMessage(job.getDescription());
+            player.setActiveJob(new Job(job, item));
+            player.getPlayer().sendMessage(job.getDescription());
+        }
     }
 
     public void handleJobItemPickup(CluedoPlayer player){
