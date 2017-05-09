@@ -1,12 +1,10 @@
 package nl.imine.minigame.cluedo.game.player;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import nl.imine.minigame.cluedo.game.state.game.jobs.Job;
 import org.bukkit.Location;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
 import nl.imine.minigame.cluedo.game.player.role.CluedoRole;

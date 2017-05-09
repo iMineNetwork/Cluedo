@@ -9,7 +9,6 @@ import nl.imine.minigame.cluedo.settings.JobService;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.timer.Timer;
-import nl.imine.minigame.cluedo.settings.Settings;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -24,8 +23,6 @@ import java.util.Random;
 public class JobManager {
 
     private static JobManager jobManager;
-
-    private JobService jobService;
 
     private List<AvailableJob> availableJobs;
     private List<AvailableJob> jobPool;
@@ -45,9 +42,8 @@ public class JobManager {
     }
 
     public void assignJob(CluedoPlayer player){
-        if(jobPool.size() > 0) {
+        if(!jobPool.isEmpty()) {
             AvailableJob job = jobPool.get(random.nextInt(jobPool.size()));
-//            jobPool.remove(job);
 
             //Spawn the Item
             Item item = job.getLocation().getWorld().dropItem(job.getLocation(), job.getDisplayItem());
@@ -105,11 +101,11 @@ public class JobManager {
     public void startJobSystem(){
         CluedoPlugin.getGame().getCluedoPlayers().forEach(this::assignJob);
 
-        timer = CluedoPlugin.getTimerManager().createTimer("Job timer", CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE), () -> {
+        timer = CluedoPlugin.getTimerManager().createTimer("Job timer", CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE), () ->
             CluedoPlugin.getGame().getCluedoPlayers().stream()
                     .filter(cluedoPlayer -> cluedoPlayer.getActiveJob() == null)
-                    .forEach(this::assignJob);
-        });
+                    .forEach(this::assignJob)
+        );
     }
 
     public void resetJobs(){

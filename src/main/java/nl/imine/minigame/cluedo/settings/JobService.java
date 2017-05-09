@@ -1,12 +1,8 @@
 package nl.imine.minigame.cluedo.settings;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
-import nl.imine.minigame.cluedo.game.state.game.CluedoSpawn;
 import nl.imine.minigame.cluedo.game.state.game.jobs.AvailableJob;
-import nl.imine.minigame.cluedo.game.state.game.jobs.Job;
 import nl.imine.minigame.cluedo.util.Log;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
