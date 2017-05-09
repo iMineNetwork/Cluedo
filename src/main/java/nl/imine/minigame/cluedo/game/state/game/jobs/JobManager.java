@@ -45,6 +45,13 @@ public class JobManager {
             //Spawn the Item
             Item item = job.getLocation().getWorld().dropItem(job.getLocation(), job.getDisplayItem());
 
+            //Set meta to prevent stacking with other player's items.
+            ItemStack itemStack = item.getItemStack();
+            ItemMeta meta = item.getItemStack().getItemMeta();
+            meta.setDisplayName(player.getPlayer().getDisplayName());
+            itemStack.setItemMeta(meta);
+            item.setItemStack(itemStack);
+
             player.setActiveJob(new Job(job, item));
             player.getPlayer().sendMessage(job.getDescription());
         }

@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,6 +63,8 @@ public class AvailableJob implements ConfigurationSerializable {
         String displayName = objectMap.get("description").toString();
 
         ItemStack item = new ItemStack(Material.valueOf(objectMap.get("itemType").toString()), 1, Short.parseShort(objectMap.get("itemData").toString()));
+        ItemMeta meta = item.getItemMeta();
+
         return new AvailableJob(
                 Double.parseDouble(objectMap.get("spawnX").toString()),
                 Double.parseDouble(objectMap.get("spawnY").toString()),
