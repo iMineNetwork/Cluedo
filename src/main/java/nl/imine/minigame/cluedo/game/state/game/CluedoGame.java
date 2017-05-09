@@ -106,7 +106,6 @@ public class CluedoGame extends CluedoState implements TimerHandler {
                     .findAny()
                     .orElse(null);
 
-            JobManager.getInstance().assignJob(cluedoPlayer);
         } else {
             player.teleport(respawnLocation);
         }
