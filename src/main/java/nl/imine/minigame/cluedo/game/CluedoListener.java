@@ -139,7 +139,7 @@ public class CluedoListener implements Listener {
             }
         }
 
-        if(evt.getItem().equals(cluedoPlayer.getActiveJob().getJobItem())){
+        if(cluedoPlayer.getActiveJob() != null && evt.getItem().equals(cluedoPlayer.getActiveJob().getJobItem())){
             JobManager.getInstance().handleJobItemPickup(cluedoPlayer);
         }
 

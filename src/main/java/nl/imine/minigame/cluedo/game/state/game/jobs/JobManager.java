@@ -101,10 +101,13 @@ public class JobManager {
     public void startJobSystem(){
         CluedoPlugin.getGame().getCluedoPlayers().forEach(this::assignJob);
 
-        timer = CluedoPlugin.getTimerManager().createTimer("Job timer", CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE), () ->
+        timer = CluedoPlugin.getTimerManager().createTimer("Job timer", CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE), () -> {
             CluedoPlugin.getGame().getCluedoPlayers().stream()
                     .filter(cluedoPlayer -> cluedoPlayer.getActiveJob() == null)
-                    .forEach(this::assignJob)
+                    .forEach(this::assignJob);
+                    timer.resetTimer(CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE));
+                    timer.setStopped(false);
+                }
         );
     }
 
