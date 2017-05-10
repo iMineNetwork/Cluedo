@@ -4,7 +4,6 @@ import static nl.imine.minigame.cluedo.settings.Setting.GAME_JOB_REQUIRED_AMOUNT
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
-import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.settings.JobService;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Log;
@@ -45,7 +44,6 @@ public class JobManager {
     public void assignJob(CluedoPlayer player){
         if(!jobPool.isEmpty()) {
             AvailableJob job = jobPool.get(random.nextInt(jobPool.size()));
-            player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0F, 1.0F);
 
             //Spawn the Item
             Item item = job.getLocation().getWorld().dropItem(job.getLocation(), job.getDisplayItem());
@@ -65,6 +63,7 @@ public class JobManager {
     public void handleJobItemPickup(CluedoPlayer player){
         player.setCompletedJobs(player.getCompletedJobs() + 1);
         player.setActiveJob(null);
+        player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0F, 1.0F);
 
         if(player.getCompletedJobs() < CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT)) {
             Log.info(player.getPlayer().getDisplayName() + " has completed a Job. " + player.getCompletedJobs() + "/" + CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT));
@@ -73,15 +72,16 @@ public class JobManager {
             Log.info(player.getPlayer().getDisplayName() + " has finished all of their Jobs. " + player.getCompletedJobs() + "/" + CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT));
             //Give the player a bonus for completing the jobs.
             //TODO Upgrade System for roles?
+
+            //Set inventory
+            ItemStack bow = new ItemStack(Material.BOW);
+            ItemMeta bowMeta = bow.getItemMeta();
+            bowMeta.setUnbreakable(true);
+            bowMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+            bow.setItemMeta(bowMeta);
+
             switch(player.getRole().getRoleType()){
                 case BYSTANDER:
-                    //Set inventory
-                    ItemStack bow = new ItemStack(Material.BOW);
-                    ItemMeta bowMeta = bow.getItemMeta();
-                    bowMeta.setUnbreakable(true);
-                    bowMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-                    bow.setItemMeta(bowMeta);
-
                     player.getPlayer().getInventory().setHeldItemSlot(0);
                     player.getPlayer().getInventory().setItem(1, bow);
                     player.getPlayer().getInventory().setItem(9, new ItemStack(Material.ARROW));                    break;
@@ -95,12 +95,6 @@ public class JobManager {
                     break;
                 case MURDERER:
                     //Set inventory
-                    ItemStack bow = new ItemStack(Material.BOW);
-                    ItemMeta bowMeta = bow.getItemMeta();
-                    bowMeta.setUnbreakable(true);
-                    bowMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-                    bow.setItemMeta(bowMeta);
-
                     player.getPlayer().getInventory().addItem(bow);
                     player.getPlayer().getInventory().setItem(9, new ItemStack(Material.ARROW));
                     break;
