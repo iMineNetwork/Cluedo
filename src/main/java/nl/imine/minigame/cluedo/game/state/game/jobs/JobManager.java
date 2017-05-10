@@ -11,6 +11,7 @@ import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.timer.Timer;
 
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
@@ -44,6 +45,7 @@ public class JobManager {
     public void assignJob(CluedoPlayer player){
         if(!jobPool.isEmpty()) {
             AvailableJob job = jobPool.get(random.nextInt(jobPool.size()));
+            player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0F, 1.0F);
 
             //Spawn the Item
             Item item = job.getLocation().getWorld().dropItem(job.getLocation(), job.getDisplayItem());
@@ -73,8 +75,16 @@ public class JobManager {
             //TODO Upgrade System for roles?
             switch(player.getRole().getRoleType()){
                 case BYSTANDER:
-                    player.setRole(RoleType.DETECTIVE);
-                    break;
+                    //Set inventory
+                    ItemStack bow = new ItemStack(Material.BOW);
+                    ItemMeta bowMeta = bow.getItemMeta();
+                    bowMeta.setUnbreakable(true);
+                    bowMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+                    bow.setItemMeta(bowMeta);
+
+                    player.getPlayer().getInventory().setHeldItemSlot(0);
+                    player.getPlayer().getInventory().setItem(1, bow);
+                    player.getPlayer().getInventory().setItem(9, new ItemStack(Material.ARROW));                    break;
                 case DETECTIVE:
                     // As players can shuffle their inventory, check if the off hand is occupied before setting the item.
                     if(player.getPlayer().getInventory().getItemInOffHand() == null) {

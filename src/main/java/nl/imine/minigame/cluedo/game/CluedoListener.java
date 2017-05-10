@@ -57,7 +57,7 @@ public class CluedoListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerDead(PlayerDeathEvent evt) {
+    public void onPlayerDeath(PlayerDeathEvent evt) {
         Player player = evt.getEntity();
 
         //Make sure the player is actually participating in this minigame
@@ -83,7 +83,7 @@ public class CluedoListener implements Listener {
                 CluedoPlayer killerPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
                         .filter(cPlayer -> cPlayer.getPlayer().equals(evt.getEntity().getKiller()))
                         .findFirst().orElse(null);
-                if(killerPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)){
+                if(killerPlayer.getRole().getRoleType().isInnocent()){
                     //Demote the detective
                     killerPlayer.setRole(RoleType.BYSTANDER);
                     //Drop the bow
