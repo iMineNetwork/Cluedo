@@ -31,7 +31,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 public class CluedoListener implements Listener {
 
     private List<CluedoPlayer> detectiveTimeout = new ArrayList<>();
-    
+
 
     public static void init() {
         Bukkit.getServer().getPluginManager().registerEvents(new CluedoListener(), CluedoPlugin.getInstance());
@@ -84,12 +84,15 @@ public class CluedoListener implements Listener {
                         .filter(cPlayer -> cPlayer.getPlayer().equals(evt.getEntity().getKiller()))
                         .findFirst().orElse(null);
                 if(killerPlayer.getRole().getRoleType().isInnocent()){
-                    //Demote the detective
-                    killerPlayer.setRole(RoleType.BYSTANDER);
-                    //Drop the bow
-                    killerPlayer.getPlayer().getLocation().getWorld()
-                            .dropItem(killerPlayer.getPlayer().getLocation(), new ItemStack(Material.BOW));
-                    //Put the detective in time-out
+                    if(killerPlayer.getRole().equals(RoleType.DETECTIVE)) {
+                        //Demote the detective
+                        killerPlayer.setRole(RoleType.BYSTANDER);
+                        //Drop the bow
+                        killerPlayer.getPlayer().getLocation().getWorld()
+                                .dropItem(killerPlayer.getPlayer().getLocation(), new ItemStack(Material.BOW));
+                    }
+					killerPlayer.getPlayer().getInventory().clear();
+					//Put the detective in time-out
                     killerPlayer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 5, 0, false, false), true);
                     detectiveTimeout.add(killerPlayer);
                     //Remove him from timeout after 30 seconds (20 ticks == 1 second)
@@ -210,7 +213,7 @@ public class CluedoListener implements Listener {
         if (!CluedoPlugin.getGame().getPlayers().contains(pie.getPlayer())) {
             return;
         }
-        
+
         //testing to see if the clicked block exists to prevent NullPointerExceptions
         if(pie.getClickedBlock() == null){
             return;
@@ -285,24 +288,24 @@ public class CluedoListener implements Listener {
             evt.setCancelled(true);
         }
     }
-    
+
     @EventHandler
     private void onFoodLevelChange(FoodLevelChangeEvent flce){
-        
+
         //this event can be fired for an NPC, but since we're not interested in them we'll filter them out
         if(!(flce.getEntity() instanceof Player)){
             return;
         }
         Player player = (Player) flce.getEntity();
-        
+
         //Make sure the player is actually participating in this minigame
         if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
             return;
         }
-        
+
         flce.setCancelled(true);
         player.setSaturation(Float.MAX_VALUE);
-        
+
     }
 
 }
