@@ -92,8 +92,10 @@ public class CluedoPlayer {
 	}
 
 	public void setActiveJob(Job activeJob) {
+		if(this.getActiveJob() != null) {
+			this.getActiveJob().getJobItem().remove();
+		}
 		this.activeJob = activeJob;
-		this.getActiveJob().getJobItem().remove();
 	}
 
 	public int getCompletedJobs() {
