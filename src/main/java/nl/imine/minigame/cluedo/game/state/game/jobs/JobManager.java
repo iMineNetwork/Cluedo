@@ -104,6 +104,7 @@ public class JobManager {
         timer = CluedoPlugin.getTimerManager().createTimer("Job timer", CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE), () -> {
             CluedoPlugin.getGame().getCluedoPlayers().stream()
                     .filter(cluedoPlayer -> cluedoPlayer.getActiveJob() == null)
+                    .filter(cluedoPlayer -> cluedoPlayer.getCompletedJobs() < CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT))
                     .forEach(this::assignJob);
                     timer.resetTimer(CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE));
                     timer.setStopped(false);
