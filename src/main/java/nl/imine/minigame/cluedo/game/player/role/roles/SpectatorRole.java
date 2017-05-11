@@ -19,6 +19,6 @@ public class SpectatorRole extends CluedoRole {
 		player.getInventory().clear();
 
 		//Set gamemode
-		player.setGameMode(GameMode.SPECTATOR);
+		player.setGameMode(GameMode.ADVENTURE);
 	}
 }
