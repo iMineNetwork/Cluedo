@@ -106,6 +106,7 @@ public class CluedoPreGame extends CluedoState implements TimerHandler {
 
 	@Override
 	public void handlePlayerDeath(Player player) {
+		player.teleport(spawnLocation);
 	}
 
 	@Override

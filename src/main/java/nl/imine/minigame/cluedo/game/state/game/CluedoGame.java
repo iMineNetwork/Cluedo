@@ -116,6 +116,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
     public void handlePlayerDeath(Player player) {
         //Clear the player of his items and put him back in the lobby.
         PlayerUtil.cleanPlayer(player, true);
+        player.teleport(respawnLocation);
 
         //Find the player's game object.
         CluedoPlayer cluedoPlayer = cluedoMinigame.getCluedoPlayers().stream()

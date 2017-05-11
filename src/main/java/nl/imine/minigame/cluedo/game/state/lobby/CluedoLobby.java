@@ -114,6 +114,7 @@ public class CluedoLobby extends CluedoState implements TimerHandler{
     @Override
     public void handlePlayerDeath(Player player) {
         PlayerUtil.cleanPlayer(player, true);
+        player.teleport(spawnLocation);
     }
 
     @Override

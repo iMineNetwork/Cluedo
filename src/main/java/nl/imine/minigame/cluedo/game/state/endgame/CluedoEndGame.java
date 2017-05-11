@@ -82,6 +82,8 @@ public class CluedoEndGame extends CluedoState implements TimerHandler{
                 .orElse(null);
 
         cluedoPlayer.setRole(RoleType.SPECTATOR);
+
+        player.teleport(respawnLocation);
     }
 
     @Override
