@@ -8,13 +8,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.*;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
@@ -27,7 +26,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
 
 public class CluedoListener implements Listener {
 
@@ -259,6 +257,32 @@ public class CluedoListener implements Listener {
             if (permission.getType().equals(pie.getClickedBlock().getType())) {
                 if (!permission.canInteract(cluedoPlayer.getRole().getRoleType())) {
                     pie.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    private void onEntityBlockInteract(EntityInteractEvent evt) {
+        if (!evt.getEntity().getWorld().equals(CluedoPlugin.getGame().getCluedoWorld())) {
+            return;
+        }
+
+        if (evt.getEntity() instanceof Arrow) {
+            if (((Projectile) evt.getEntity()).getShooter() instanceof Player) {
+                Player player = (Player) ((Projectile) evt.getEntity()).getShooter();
+
+                //Get Cluedo player object
+                CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
+                        .filter(cPlayer -> cPlayer.getPlayer().equals(player))
+                        .findFirst().orElse(null);
+
+                for (RoleInteractPermission permission : CluedoPlugin.getGame().getRoleInteractionPermissions()) {
+                    if (permission.getType().equals(evt.getBlock().getType())) {
+                        if (!permission.canInteract(cluedoPlayer.getRole().getRoleType())) {
+                            evt.setCancelled(true);
+                        }
+                    }
                 }
             }
         }
