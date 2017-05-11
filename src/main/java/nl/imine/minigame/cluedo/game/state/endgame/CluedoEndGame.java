@@ -34,7 +34,7 @@ public class CluedoEndGame extends CluedoState implements TimerHandler{
     @Override
     public void handleStateChange() {
         Log.finer("Handling state change for: " + this.getClass().getSimpleName());
-        this.timer = CluedoPlugin.getTimerManager().createTimer(CluedoPlugin.getInstance().getName(), gameTimer, this);
+        this.timer = CluedoPlugin.getTimerManager().createTimer(CluedoPlugin.getSettings().getString(Setting.GAME_NAME), gameTimer, this);
         cluedoMinigame.getPlayers().forEach(this::handlePlayer);
         JobManager.getInstance().resetJobs();
     }
