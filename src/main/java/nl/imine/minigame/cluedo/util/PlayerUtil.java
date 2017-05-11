@@ -14,5 +14,6 @@ public class PlayerUtil {
         player.setSaturation(Float.MAX_VALUE);
         player.setWalkSpeed(0.2f);
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+        player.setGlowing(false);
     }
 }

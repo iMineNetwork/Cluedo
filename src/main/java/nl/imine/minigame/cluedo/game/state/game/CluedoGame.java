@@ -142,7 +142,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 
     private GameResult checkGameEnd() {
         boolean murdererAlive = false;
-        boolean innocentsAlive = false;
+        int innocentsAlive = 0;
 
         for (CluedoPlayer cluedoPlayer : cluedoMinigame.getCluedoPlayers()) {
             //Check if there is still a murderer
@@ -153,10 +153,8 @@ public class CluedoGame extends CluedoState implements TimerHandler {
             }
 
             //Check if there are any bystanders left
-            if (!innocentsAlive) {
-                if (cluedoPlayer.getRole().isInnocent()) {
-                    innocentsAlive = true;
-                }
+            if (cluedoPlayer.getRole().isInnocent()) {
+                innocentsAlive++;
             }
         }
 
@@ -164,8 +162,14 @@ public class CluedoGame extends CluedoState implements TimerHandler {
             return GameResult.BYSTANDER_WIN;
         }
 
-        if (!innocentsAlive) {
+        if (innocentsAlive <= 0) {
             return GameResult.MURDERER_WIN;
+        } else if (innocentsAlive == 1){
+            cluedoMinigame.getCluedoPlayers().stream()
+                    .filter(cluedoPlayer -> cluedoPlayer.getRole().isInnocent())
+                    .forEach(cluedoPlayer -> {
+                        cluedoPlayer.getPlayer().setGlowing(true);
+                    });
         }
 
         return null;
