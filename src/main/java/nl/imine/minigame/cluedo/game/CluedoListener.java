@@ -57,6 +57,30 @@ public class CluedoListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerDisconnect(PlayerQuitEvent evt) {
+        Player player = evt.getPlayer();
+
+        //Make sure the player is actually participating in this minigame
+        if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
+            return;
+        }
+
+        //Get Cluedo player object
+        CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
+                .filter(cPlayer -> cPlayer.getPlayer().equals(player))
+                .findFirst().orElse(null);
+
+        //Handle item drops
+        if (cluedoPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)) {
+            evt.getPlayer().getLocation().getWorld()
+                    .dropItem(evt.getPlayer().getLocation(), new ItemStack(Material.BOW));
+        }
+
+        //Don't drop the inventory
+        CluedoPlugin.getGame().getGameState().handlePlayerDeath(player);
+    }
+
+    @EventHandler
     public void onPlayerDeath(PlayerDeathEvent evt) {
         Player player = evt.getEntity();
 
