@@ -57,7 +57,7 @@ public class CluedoMinigame extends Minigame {
         RoleType role = gameState.getState().equals(CluedoStateType.LOBBY) ? RoleType.LOBBY : RoleType.SPECTATOR;
         players.add(new CluedoPlayer(player, role));
         getGameState().handlePlayer(player);
-        PlayerUtil.cleanPlayer(player);
+        PlayerUtil.cleanPlayer(player, true);
     }
 
     public void onLeave(Player player) {

@@ -5,8 +5,10 @@ import org.bukkit.entity.Player;
 
 public class PlayerUtil {
 
-    public static void cleanPlayer(Player player) {
-        player.getInventory().clear();
+    public static void cleanPlayer(Player player, boolean clearInv) {
+        if(clearInv){
+            player.getInventory().clear();
+        }
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         player.setFoodLevel(20);
         player.setSaturation(Float.MAX_VALUE);

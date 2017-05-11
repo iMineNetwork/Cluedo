@@ -89,6 +89,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 
     @Override
     public void handlePlayer(Player player) {
+        PlayerUtil.cleanPlayer(player, false);
         if (!started) {
             timer.showTimer(player);
 
@@ -114,7 +115,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
     @Override
     public void handlePlayerDeath(Player player) {
         //Clear the player of his items and put him back in the lobby.
-        PlayerUtil.cleanPlayer(player);
+        PlayerUtil.cleanPlayer(player, true);
 
         //Find the player's game object.
         CluedoPlayer cluedoPlayer = cluedoMinigame.getCluedoPlayers().stream()

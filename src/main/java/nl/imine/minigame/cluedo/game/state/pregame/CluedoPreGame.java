@@ -14,6 +14,7 @@ import nl.imine.minigame.cluedo.game.state.CluedoState;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Log;
+import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
 
@@ -32,7 +33,7 @@ public class CluedoPreGame extends CluedoState implements TimerHandler {
 	@Override
 	public void handleStateChange() {
 		Log.finer("Handling state change for: " + this.getClass().getSimpleName());
-		this.timer = CluedoPlugin.getTimerManager().createTimer("Preperation", gameTimer, this);
+		this.timer = CluedoPlugin.getTimerManager().createTimer("Preparation", gameTimer, this);
 		cluedoMinigame.getPlayers().forEach(this::handlePlayer);
 	}
 
@@ -58,6 +59,7 @@ public class CluedoPreGame extends CluedoState implements TimerHandler {
 
 	@Override
 	public void handlePlayer(Player player) {
+		PlayerUtil.cleanPlayer(player, false);
 		player.teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
 		//Find the player's game object.
