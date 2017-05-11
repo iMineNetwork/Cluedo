@@ -255,9 +255,11 @@ public class CluedoListener implements Listener {
                 .findFirst().orElse(null);
 
         //Check if the player can interact with this block
-        for(RoleInteractPermission permission :CluedoPlugin.getGame().getRoleInteractionPermissions()){
-            if(!permission.canInteract(cluedoPlayer.getRole().getRoleType())){
-                pie.setCancelled(true);
+        for (RoleInteractPermission permission : CluedoPlugin.getGame().getRoleInteractionPermissions()) {
+            if (permission.getType().equals(pie.getClickedBlock().getType())) {
+                if (!permission.canInteract(cluedoPlayer.getRole().getRoleType())) {
+                    pie.setCancelled(true);
+                }
             }
         }
     }
