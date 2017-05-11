@@ -26,7 +26,7 @@ public class Settings {
         configuration.addDefault(Setting.GAME_MAX_PLAYERS, 10);
         configuration.addDefault(Setting.GAME_WORLD_NAME, "world");
 
-        //JOBD
+        //JOB
         configuration.addDefault(Setting.GAME_JOB_REQUIRED_AMOUNT, 5);
         configuration.addDefault(Setting.GAME_JOB_REFRESH_RATE, 30);
 

@@ -1,6 +1,7 @@
 package nl.imine.minigame.cluedo.game;
 
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
+import nl.imine.minigame.cluedo.game.player.role.RoleInteractPermission;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import org.bukkit.Bukkit;
@@ -254,18 +255,11 @@ public class CluedoListener implements Listener {
                 .findFirst().orElse(null);
 
         //Check if the player can interact with this block
-        boolean canInteract = CluedoPlugin.getGame().getRoleInteractionPermissions().stream()               //Find all role interaction permission entries
-                .filter(permission -> permission.getType().equals(pie.getClickedBlock().getType()))         //Only check on the current Material
-                .anyMatch(permission -> permission.canInteract(cluedoPlayer.getRole().getRoleType()));      //If the roles match, interaction should be allowed.
-
-        //Disable blocking if the player can interact
-        if(canInteract){
-            return;
+        for(RoleInteractPermission permission :CluedoPlugin.getGame().getRoleInteractionPermissions()){
+            if(!permission.canInteract(cluedoPlayer.getRole().getRoleType())){
+                pie.setCancelled(true);
+            }
         }
-
-        //TODO: allowing a player to draw back a bow when facing a block
-
-        pie.setCancelled(true);
     }
 
 
