@@ -84,7 +84,7 @@ public class CluedoListener implements Listener {
                         .filter(cPlayer -> cPlayer.getPlayer().equals(evt.getEntity().getKiller()))
                         .findFirst().orElse(null);
                 if(killerPlayer.getRole().getRoleType().isInnocent()){
-                    if(killerPlayer.getRole().equals(RoleType.DETECTIVE)) {
+                    if(killerPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)) {
                         //Demote the detective
                         killerPlayer.setRole(RoleType.BYSTANDER);
                         //Drop the bow
