@@ -4,6 +4,7 @@ import static nl.imine.minigame.cluedo.settings.Setting.GAME_JOB_REQUIRED_AMOUNT
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
+import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.settings.JobService;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Log;
@@ -108,6 +109,8 @@ public class JobManager {
         timer = CluedoPlugin.getTimerManager().createTimer("Job timer", CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE), () -> {
             CluedoPlugin.getGame().getCluedoPlayers().stream()
                     .filter(cluedoPlayer -> cluedoPlayer.getActiveJob() == null)
+                    .filter(cluedoPlayer -> cluedoPlayer.getRole().getRoleType() != RoleType.SPECTATOR)
+                    .filter(cluedoPlayer -> cluedoPlayer.getRole().getRoleType() != RoleType.LOBBY)
                     .filter(cluedoPlayer -> cluedoPlayer.getCompletedJobs() < CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT))
                     .forEach(this::assignJob);
                     timer.resetTimer(CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE));
