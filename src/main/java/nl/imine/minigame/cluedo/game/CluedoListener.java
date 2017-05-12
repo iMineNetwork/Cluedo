@@ -230,33 +230,39 @@ public class CluedoListener implements Listener {
 
 
     @EventHandler
-    private void onPlayerInteract(PlayerInteractEvent pie) {
+    private void onPlayerInteract(PlayerInteractEvent evt) {
 
         //Make sure the player is actually participating in this minigame
-        if (!CluedoPlugin.getGame().getPlayers().contains(pie.getPlayer())) {
+        if (!CluedoPlugin.getGame().getPlayers().contains(evt.getPlayer())) {
             return;
         }
 
         //testing to see if the clicked block exists to prevent NullPointerExceptions
-        if(pie.getClickedBlock() == null){
+        if(evt.getClickedBlock() == null){
             return;
         }
 
         //people in Creative get full access to edit the map
-        if (pie.getPlayer().getGameMode() == GameMode.CREATIVE) {
+        if (evt.getPlayer().getGameMode() == GameMode.CREATIVE) {
+            return;
+        }
+
+        //Disallow players from taking items from flower pots
+        if (evt.getClickedBlock().getType().equals(Material.FLOWER_POT)) {
+            evt.setCancelled(true);
             return;
         }
 
         //Get Cluedo player object
         CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
-                .filter(cPlayer -> cPlayer.getPlayer().equals(pie.getPlayer()))
+                .filter(cPlayer -> cPlayer.getPlayer().equals(evt.getPlayer()))
                 .findFirst().orElse(null);
 
         //Check if the player can interact with this block
         for (RoleInteractPermission permission : CluedoPlugin.getGame().getRoleInteractionPermissions()) {
-            if (permission.getType().equals(pie.getClickedBlock().getType())) {
+            if (permission.getType().equals(evt.getClickedBlock().getType())) {
                 if (!permission.canInteract(cluedoPlayer.getRole().getRoleType())) {
-                    pie.setCancelled(true);
+                    evt.setCancelled(true);
                 }
             }
         }
