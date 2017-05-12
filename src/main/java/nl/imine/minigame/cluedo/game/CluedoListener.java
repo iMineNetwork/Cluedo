@@ -288,6 +288,23 @@ public class CluedoListener implements Listener {
         }
     }
 
+    @EventHandler
+    private void onPlayerEntityInteract(PlayerInteractEntityEvent evt){
+
+        //Make sure the player is actually participating in this minigame
+        if (!CluedoPlugin.getGame().getPlayers().contains(evt.getPlayer())) {
+            return;
+        }
+
+        if(evt.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
+            return;
+        }
+
+        if(evt.getRightClicked() instanceof ItemFrame) {
+            evt.setCancelled(true);
+        }
+    }
+
 
     @EventHandler
     private void onPotionConsume(PlayerItemConsumeEvent pice) {
