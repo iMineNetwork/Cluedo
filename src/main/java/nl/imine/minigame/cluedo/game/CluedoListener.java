@@ -5,10 +5,7 @@ import nl.imine.minigame.cluedo.game.player.role.RoleInteractPermission;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -71,8 +68,9 @@ public class CluedoListener implements Listener {
 
         //Handle item drops
         if (cluedoPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)) {
-            evt.getPlayer().getLocation().getWorld()
+            Item item = evt.getPlayer().getLocation().getWorld()
                     .dropItem(evt.getPlayer().getLocation(), new ItemStack(Material.BOW));
+            item.setInvulnerable(true);
         }
 
         //Don't drop the inventory
@@ -95,8 +93,9 @@ public class CluedoListener implements Listener {
 
         //Handle item drops
         if (cluedoPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)) {
-            evt.getEntity().getLocation().getWorld()
+            Item item = evt.getEntity().getLocation().getWorld()
                     .dropItem(evt.getEntity().getLocation(), new ItemStack(Material.BOW));
+            item.setInvulnerable(true);
         }
 
         //If a detective killed an innocent player, take away their weapons and put them in time-out
@@ -111,8 +110,9 @@ public class CluedoListener implements Listener {
                         //Demote the detective
                         killerPlayer.setRole(RoleType.BYSTANDER);
                         //Drop the bow
-                        killerPlayer.getPlayer().getLocation().getWorld()
+                        Item item = killerPlayer.getPlayer().getLocation().getWorld()
                                 .dropItem(killerPlayer.getPlayer().getLocation(), new ItemStack(Material.BOW));
+                        item.setInvulnerable(true);
                     }
 					killerPlayer.getPlayer().getInventory().clear();
 					//Put the detective in time-out

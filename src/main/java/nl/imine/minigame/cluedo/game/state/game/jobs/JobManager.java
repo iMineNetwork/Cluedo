@@ -48,6 +48,7 @@ public class JobManager {
 
             //Spawn the Item
             Item item = job.getLocation().getWorld().dropItem(job.getLocation(), job.getDisplayItem());
+            item.setInvulnerable(true);
 
             //Set meta to prevent stacking with other player's items.
             ItemStack itemStack = item.getItemStack();
