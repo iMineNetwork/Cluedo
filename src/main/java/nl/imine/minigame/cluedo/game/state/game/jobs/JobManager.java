@@ -19,7 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 import java.util.Random;
-
+import org.bukkit.inventory.ItemFlag;
 
 public class JobManager {
 
@@ -42,8 +42,8 @@ public class JobManager {
         this.jobPool = availableJobs; //The available jobs is always the initial job pool
     }
 
-    public void assignJob(CluedoPlayer player){
-        if(!jobPool.isEmpty()) {
+    public void assignJob(CluedoPlayer player) {
+        if (!jobPool.isEmpty()) {
             AvailableJob job = jobPool.get(random.nextInt(jobPool.size()));
 
             //Spawn the Item
@@ -62,12 +62,12 @@ public class JobManager {
         }
     }
 
-    public void handleJobItemPickup(CluedoPlayer player){
+    public void handleJobItemPickup(CluedoPlayer player) {
         player.setCompletedJobs(player.getCompletedJobs() + 1);
         player.setActiveJob(null);
         player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0F, 1.0F);
 
-        if(player.getCompletedJobs() < CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT)) {
+        if (player.getCompletedJobs() < CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT)) {
             Log.info(player.getPlayer().getDisplayName() + " has completed a Job. " + player.getCompletedJobs() + "/" + CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT));
             //Assign a new job
         } else {
@@ -78,18 +78,26 @@ public class JobManager {
             //Set inventory
             ItemStack bow = new ItemStack(Material.BOW);
             ItemMeta bowMeta = bow.getItemMeta();
-            bowMeta.setUnbreakable(true);
             bowMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+            bowMeta.setUnbreakable(true);
             bow.setItemMeta(bowMeta);
 
-            switch(player.getRole().getRoleType()){
+            ItemStack bowMurderer = new ItemStack(Material.BOW);
+            ItemMeta bowMurdererMeta = bowMurderer.getItemMeta();
+            bowMurdererMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+            bowMurdererMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            bowMurdererMeta.setUnbreakable(true);
+            bowMurderer.setItemMeta(bowMeta);
+
+            switch (player.getRole().getRoleType()) {
                 case BYSTANDER:
                     player.getPlayer().getInventory().setHeldItemSlot(0);
                     player.getPlayer().getInventory().setItem(1, bow);
-                    player.getPlayer().getInventory().setItem(9, new ItemStack(Material.ARROW));                    break;
+                    player.getPlayer().getInventory().setItem(9, new ItemStack(Material.ARROW));
+                    break;
                 case DETECTIVE:
                     // As players can shuffle their inventory, check if the off hand is occupied before setting the item.
-                    if(player.getPlayer().getInventory().getItemInOffHand() == null) {
+                    if (player.getPlayer().getInventory().getItemInOffHand() == null) {
                         player.getPlayer().getInventory().setItemInOffHand(new ItemStack(Material.TOTEM));
                     } else {
                         player.getPlayer().getInventory().setItemInOffHand(new ItemStack(Material.TOTEM));
@@ -97,14 +105,16 @@ public class JobManager {
                     break;
                 case MURDERER:
                     //Set inventory
-                    player.getPlayer().getInventory().addItem(bow);
-                    player.getPlayer().getInventory().setItem(9, new ItemStack(Material.ARROW));
+                    ItemStack arrow = new ItemStack(Material.ARROW);
+                    arrow.setAmount(6);
+                    player.getPlayer().getInventory().addItem(bowMurderer);
+                    player.getPlayer().getInventory().setItem(9, arrow);
                     break;
             }
         }
     }
 
-    public void startJobSystem(){
+    public void startJobSystem() {
         CluedoPlugin.getGame().getCluedoPlayers().forEach(this::assignJob);
 
         timer = CluedoPlugin.getTimerManager().createTimer("Job timer", CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE), () -> {
@@ -114,20 +124,20 @@ public class JobManager {
                     .filter(cluedoPlayer -> cluedoPlayer.getRole().getRoleType() != RoleType.LOBBY)
                     .filter(cluedoPlayer -> cluedoPlayer.getCompletedJobs() < CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT))
                     .forEach(this::assignJob);
-                    timer.resetTimer(CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE));
-                    timer.setStopped(false);
-                }
+            timer.resetTimer(CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE));
+            timer.setStopped(false);
+        }
         );
     }
 
-    public void resetJobs(){
+    public void resetJobs() {
         jobPool = availableJobs;
         CluedoPlugin.getGame().getCluedoPlayers().forEach(cluedoPlayer -> cluedoPlayer.setActiveJob(null));
         timer.setStopped(true);
         timer.resetTimer(CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REFRESH_RATE));
     }
 
-    public static JobManager getInstance(){
+    public static JobManager getInstance() {
         return jobManager;
     }
 
