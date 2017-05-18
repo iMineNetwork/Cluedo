@@ -75,6 +75,8 @@ public class CluedoListener implements Listener {
 
         //Don't drop the inventory
         CluedoPlugin.getGame().getGameState().handlePlayerDeath(player);
+
+        CluedoPlugin.getGame().getCluedoPlayers().remove(cluedoPlayer);
     }
 
     @EventHandler
