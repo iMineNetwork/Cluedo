@@ -82,30 +82,36 @@ public class CluedoPlugin extends JavaPlugin {
         MinigameManager.registerMinigame(game);
     }
 
+    public static Plugin getPlugin() {
+        return plugin;
+    }
+
     @Override
     public void onDisable() {
         CluedoPlugin.plugin = null;
     }
 
-    public static Plugin getInstance(){
+    public static Plugin getInstance() {
         return plugin;
     }
 
-    public static CluedoMinigame getGame(){
+    public static CluedoMinigame getGame() {
         return game;
     }
 
-    public static TimerManager getTimerManager() { return timerManager; }
+    public static TimerManager getTimerManager() {
+        return timerManager;
+    }
 
-    public static Settings getSettings(){
+    public static Settings getSettings() {
         return settings;
     }
 
-    public static SpawnLocationService getSpawnLocationService(){
+    public static SpawnLocationService getSpawnLocationService() {
         return spawnLocationService;
     }
 
-    private void setUpConfig(){
+    private void setUpConfig() {
         settings.createDefaults();
         this.saveConfig();
     }

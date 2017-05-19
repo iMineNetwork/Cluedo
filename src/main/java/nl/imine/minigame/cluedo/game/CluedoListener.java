@@ -6,7 +6,6 @@ import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.*;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -23,11 +22,11 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
+import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
 
 public class CluedoListener implements Listener {
 
     private List<CluedoPlayer> detectiveTimeout = new ArrayList<>();
-
 
     public static void init() {
         Bukkit.getServer().getPluginManager().registerEvents(new CluedoListener(), CluedoPlugin.getInstance());
@@ -99,14 +98,14 @@ public class CluedoListener implements Listener {
         }
 
         //If a detective killed an innocent player, take away their weapons and put them in time-out
-        if(cluedoPlayer.getRole().isInnocent()){
-            if(evt.getEntity().getKiller() != null){
+        if (cluedoPlayer.getRole().isInnocent()) {
+            if (evt.getEntity().getKiller() != null) {
                 //Find the killer's object
                 CluedoPlayer killerPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
                         .filter(cPlayer -> cPlayer.getPlayer().equals(evt.getEntity().getKiller()))
                         .findFirst().orElse(null);
-                if(killerPlayer.getRole().getRoleType().isInnocent()){
-                    if(killerPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)) {
+                if (killerPlayer.getRole().getRoleType().isInnocent()) {
+                    if (killerPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)) {
                         //Demote the detective
                         killerPlayer.setRole(RoleType.BYSTANDER);
                         //Drop the bow
@@ -114,8 +113,8 @@ public class CluedoListener implements Listener {
                                 .dropItem(killerPlayer.getPlayer().getLocation(), new ItemStack(Material.BOW));
                         item.setInvulnerable(true);
                     }
-					killerPlayer.getPlayer().getInventory().clear();
-					//Put the detective in time-out
+                    killerPlayer.getPlayer().getInventory().clear();
+                    //Put the detective in time-out
                     killerPlayer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 5, 0, false, false), true);
                     detectiveTimeout.add(killerPlayer);
                     //Remove him from timeout after 30 seconds (20 ticks == 1 second)
@@ -157,7 +156,7 @@ public class CluedoListener implements Listener {
                 .filter(cPlayer -> cPlayer.getPlayer().equals(player))
                 .findFirst().orElse(null);
 
-        if(evt.getItem().getItemStack().getType().equals(Material.BOW)) {
+        if (evt.getItem().getItemStack().getType().equals(Material.BOW)) {
             //Check if the player is a bystander without a weapon
             if (cluedoPlayer.getRole().getRoleType().equals(RoleType.BYSTANDER) && !detectiveTimeout.contains(cluedoPlayer)) {
                 cluedoPlayer.setRole(RoleType.DETECTIVE);
@@ -165,7 +164,7 @@ public class CluedoListener implements Listener {
             }
         }
 
-        if(cluedoPlayer.getActiveJob() != null && evt.getItem().equals(cluedoPlayer.getActiveJob().getJobItem())){
+        if (cluedoPlayer.getActiveJob() != null && evt.getItem().equals(cluedoPlayer.getActiveJob().getJobItem())) {
             JobManager.getInstance().handleJobItemPickup(cluedoPlayer);
         }
 
@@ -228,7 +227,6 @@ public class CluedoListener implements Listener {
         }
     }
 
-
     @EventHandler
     private void onPlayerInteract(PlayerInteractEvent evt) {
 
@@ -238,7 +236,7 @@ public class CluedoListener implements Listener {
         }
 
         //testing to see if the clicked block exists to prevent NullPointerExceptions
-        if(evt.getClickedBlock() == null){
+        if (evt.getClickedBlock() == null) {
             return;
         }
 
@@ -259,13 +257,37 @@ public class CluedoListener implements Listener {
                 .findFirst().orElse(null);
 
         //Check if the player can interact with this block
-        for (RoleInteractPermission permission : CluedoPlugin.getGame().getRoleInteractionPermissions()) {
-            if (permission.getType().equals(evt.getClickedBlock().getType())) {
-                if (!permission.canInteract(cluedoPlayer.getRole().getRoleType())) {
+        CluedoPlugin.getGame().getRoleInteractionPermissions().stream()
+                .filter(permission -> permission.getType().equals(evt.getClickedBlock().getType()))
+                .filter(permission -> !permission.canInteract(cluedoPlayer.getRole().getRoleType()))
+                .forEachOrdered(_item -> {
                     evt.setCancelled(true);
-                }
-            }
+                });
+    }
+
+    @EventHandler
+    private void onCarrotOnAStickInteract(PlayerInteractEvent evt) {
+        //Make sure the player is actually participating in this minigame
+        if (!CluedoPlugin.getGame().getPlayers().contains(evt.getPlayer())) {
+            return;
         }
+
+        ItemStack mainHandItem = evt.getPlayer().getInventory().getItemInMainHand();
+        ItemStack offhandItem = evt.getPlayer().getInventory().getItemInOffHand();
+        if ((mainHandItem.getType().equals(Material.CARROT_STICK) && mainHandItem.getDurability() == 1)) {
+
+            mainHandItem.setAmount(mainHandItem.getAmount() - 1);
+            evt.getPlayer().getInventory().setItemInMainHand(mainHandItem);
+            evt.setCancelled(true);
+            MeeseeksManager.getInstance().createMeeseeks(evt.getPlayer(), evt.getPlayer().getLocation());
+
+        } else if ((offhandItem.getType().equals(Material.CARROT_STICK) && offhandItem.getDurability() == 1)) {
+            offhandItem.setAmount(offhandItem.getAmount() - 1);
+            evt.getPlayer().getInventory().setItemInOffHand(offhandItem);
+            evt.setCancelled(true);
+            MeeseeksManager.getInstance().createMeeseeks(evt.getPlayer(), evt.getPlayer().getLocation());
+        }
+
     }
 
     @EventHandler
@@ -295,22 +317,21 @@ public class CluedoListener implements Listener {
     }
 
     @EventHandler
-    private void onPlayerEntityInteract(PlayerInteractEntityEvent evt){
+    private void onPlayerEntityInteract(PlayerInteractEntityEvent evt) {
 
         //Make sure the player is actually participating in this minigame
         if (!CluedoPlugin.getGame().getPlayers().contains(evt.getPlayer())) {
             return;
         }
 
-        if(evt.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
+        if (evt.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
             return;
         }
 
-        if(evt.getRightClicked() instanceof ItemFrame) {
+        if (evt.getRightClicked() instanceof ItemFrame) {
             evt.setCancelled(true);
         }
     }
-
 
     @EventHandler
     private void onPotionConsume(PlayerItemConsumeEvent pice) {
@@ -345,7 +366,7 @@ public class CluedoListener implements Listener {
 
     private void handleArrowDamage(EntityDamageByEntityEvent evt) {
         Arrow arrow = (Arrow) evt.getDamager();
-        if(!evt.getEntity().equals(arrow.getShooter())) {
+        if (!evt.getEntity().equals(arrow.getShooter())) {
             if (arrow.isCritical()) {
                 evt.setDamage(100);
             } else {
@@ -357,10 +378,10 @@ public class CluedoListener implements Listener {
     }
 
     @EventHandler
-    private void onFoodLevelChange(FoodLevelChangeEvent flce){
+    private void onFoodLevelChange(FoodLevelChangeEvent flce) {
 
         //this event can be fired for an NPC, but since we're not interested in them we'll filter them out
-        if(!(flce.getEntity() instanceof Player)){
+        if (!(flce.getEntity() instanceof Player)) {
             return;
         }
         Player player = (Player) flce.getEntity();
@@ -372,6 +393,52 @@ public class CluedoListener implements Listener {
 
         flce.setCancelled(true);
         player.setSaturation(Float.MAX_VALUE);
+
+    }
+
+    @EventHandler
+    public void onEntityTarget(EntityTargetEvent ete) {
+        if (!(ete.getTarget() instanceof Player)) {
+            return;
+        }
+
+        if (!(ete.getEntityType() == EntityType.ZOMBIE)) {
+            return;
+        }
+
+        Player player = (Player) ete.getTarget();
+        Zombie zombie = (Zombie) ete.getEntity();
+
+        if (!MeeseeksManager.getInstance().isMeeseeksZombie(zombie)) {
+            return;
+        }
+
+        if (player != MeeseeksManager.getInstance().getMeeseeksOwner(zombie)) {
+            ete.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onZombieDamage(EntityDamageByEntityEvent evt) {
+        //a player damaged by a zombie
+        if (!(evt.getDamager() instanceof Zombie)) {
+            return;
+        }
+        if (!(evt.getEntity() instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) evt.getEntity();
+        Zombie zombie = (Zombie) evt.getDamager();
+
+        if (!MeeseeksManager.getInstance().isMeeseeksZombie(zombie)) {
+            return;
+        }
+
+        if (!(player.getLocation().distance(zombie.getLocation()) >= 10)) {
+            evt.setCancelled(true);
+            zombie.setTarget(null);
+        }
 
     }
 
