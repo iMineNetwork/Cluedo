@@ -12,29 +12,37 @@ import nl.imine.minigame.cluedo.game.player.role.RoleType;
 
 public class DetectiveRole extends CluedoRole {
 
-	public DetectiveRole() {
-		super(RoleType.DETECTIVE);
-	}
+    public DetectiveRole() {
+        super(RoleType.DETECTIVE);
+    }
 
-	@Override
-	public void preparePlayer(Player player) {
-		//Clean player's inventory
-		player.closeInventory();
-		player.getInventory().clear();
+    @Override
+    public void preparePlayer(Player player) {
+        //Clean player's inventory
+        player.closeInventory();
+        player.getInventory().clear();
 
-		//Set gamemode
-		player.setGameMode(GameMode.ADVENTURE);
+        //Set gamemode
+        player.setGameMode(GameMode.ADVENTURE);
 
-		//Set inventory
-		ItemStack bow = new ItemStack(Material.BOW);
-		ItemMeta bowMeta = bow.getItemMeta();
-		bowMeta.setUnbreakable(true);
-		bowMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
-		bow.setItemMeta(bowMeta);
+        //Set inventory
+        ItemStack bow = new ItemStack(Material.BOW);
+        ItemMeta bowMeta = bow.getItemMeta();
+        bowMeta.setUnbreakable(true);
+        bowMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+        bow.setItemMeta(bowMeta);
 
-		player.getInventory().setHeldItemSlot(0);
-                player.getInventory().setItem(1, bow);
-                player.getInventory().setItem(9, new ItemStack(Material.ARROW));
+        ItemStack mrMeeseeks = new ItemStack(Material.CARROT_STICK);
+        mrMeeseeks.setAmount(1);
+        mrMeeseeks.setDurability((short) 1);
 
-	}
+        player.getInventory().setHeldItemSlot(0);
+        player.getInventory().setItem(1, bow);
+        player.getInventory().setItem(9, new ItemStack(Material.ARROW));
+
+        if (player.hasPermission("imine.cluedo.mrmeeseeks")) {
+            player.getInventory().setItem(8, mrMeeseeks);
+        }
+
+    }
 }

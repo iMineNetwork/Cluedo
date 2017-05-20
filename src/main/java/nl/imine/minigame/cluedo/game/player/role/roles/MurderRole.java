@@ -44,7 +44,7 @@ public class MurderRole extends CluedoRole {
         invisibilitypotionMeta.setColor(Color.GRAY);
         invisibilitypotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 400, 0, true, false), true);
         invisibilityPotion.setItemMeta(invisibilitypotionMeta);
-        
+
         //Create Damage Potion itemstack
         ItemStack damagePotion = new ItemStack(Material.SPLASH_POTION);
         PotionMeta damagePotionMeta = (PotionMeta) damagePotion.getItemMeta();
@@ -57,11 +57,18 @@ public class MurderRole extends CluedoRole {
         damagePotionMeta.setLore(lore);
         damagePotion.setItemMeta(damagePotionMeta);
 
+        ItemStack mrMeeseeks = new ItemStack(Material.CARROT_STICK);
+        mrMeeseeks.setAmount(1);
+        mrMeeseeks.setDurability((short) 1);
+
         //Give the player their items
         player.getInventory().setHeldItemSlot(0);
         player.getInventory().setItem(1, knife);
         player.getInventory().setItem(2, invisibilityPotion);
         player.getInventory().setItem(3, damagePotion);
+        if (player.hasPermission("imine.cluedo.mrmeeseeks")) {
+            player.getInventory().setItem(8, mrMeeseeks);
+        }
 
     }
 }

@@ -8,17 +8,17 @@ import nl.imine.minigame.cluedo.game.player.role.RoleType;
 
 public class SpectatorRole extends CluedoRole {
 
-	public SpectatorRole() {
-		super(RoleType.SPECTATOR);
-	}
+    public SpectatorRole() {
+        super(RoleType.SPECTATOR);
+    }
 
-	@Override
-	public void preparePlayer(Player player) {
-		//Clean player's inventory
-		player.closeInventory();
-		player.getInventory().clear();
+    @Override
+    public void preparePlayer(Player player) {
+        //Clean player's inventory
+        player.closeInventory();
+        player.getInventory().clear();
 
-		//Set gamemode
-		player.setGameMode(GameMode.ADVENTURE);
-	}
+        //Set gamemode
+        player.setGameMode(GameMode.ADVENTURE);
+    }
 }
