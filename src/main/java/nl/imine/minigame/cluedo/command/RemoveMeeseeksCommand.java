@@ -23,6 +23,9 @@ public class RemoveMeeseeksCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!sender.hasPermission("imine.cluedo.command")) {
+            return true;
+        }
         if (args.length == 0) {
             MeeseeksManager.getInstance().removeAllMeeseekses();
         } else {
@@ -35,6 +38,9 @@ public class RemoveMeeseeksCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (!sender.hasPermission("imine.cluedo.command")) {
+            return null;
+        }
         List<String> players = new ArrayList<>();
 
         if (sender instanceof Player) {
