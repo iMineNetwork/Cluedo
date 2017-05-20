@@ -17,6 +17,7 @@ import org.bukkit.scoreboard.Team;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.CluedoMinigame;
+import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.game.state.CluedoState;
@@ -227,6 +228,8 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 
         //Unregister Team
         invisibleNametagTeam.unregister();
+        
+        MeeseeksManager.getInstance().removeAllMeeseekses();
 
         //Change state
         cluedoMinigame.changeGameState(CluedoStateType.END_GAME);

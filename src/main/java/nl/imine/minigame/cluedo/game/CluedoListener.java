@@ -400,22 +400,18 @@ public class CluedoListener implements Listener {
 
     @EventHandler
     public void onEntityTarget(EntityTargetEvent ete) {
-        if (!(ete.getTarget() instanceof Player)) {
-            return;
-        }
 
         if (!(ete.getEntityType() == EntityType.ZOMBIE)) {
             return;
         }
 
-        Player player = (Player) ete.getTarget();
         Zombie zombie = (Zombie) ete.getEntity();
 
         if (!MeeseeksManager.getInstance().isMeeseeksZombie(zombie)) {
             return;
         }
 
-        if (player != MeeseeksManager.getInstance().getMeeseeksOwner(zombie)) {
+        if (!(ete.getTarget() instanceof Player) || MeeseeksManager.getInstance().getMeeseeksOwner(zombie) != (Player) ete.getTarget()) {
             ete.setCancelled(true);
         }
     }
@@ -442,6 +438,21 @@ public class CluedoListener implements Listener {
             zombie.setTarget(null);
         }
 
+    }
+
+    @EventHandler
+    public void onMeeseekDeath(EntityDeathEvent evt) {
+        if (!(evt.getEntity() instanceof Zombie)) {
+            return;
+        }
+        
+        Zombie zombie = (Zombie) evt.getEntity();
+        
+        if (!MeeseeksManager.getInstance().isMeeseeksZombie(zombie)) {
+            return;
+        }
+        
+        MeeseeksManager.getInstance().remove(zombie);
     }
 
 }

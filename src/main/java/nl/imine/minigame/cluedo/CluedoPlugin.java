@@ -1,8 +1,10 @@
 package nl.imine.minigame.cluedo;
 
 import nl.imine.minigame.MinigameManager;
+import nl.imine.minigame.cluedo.command.RemoveMeeseeksCommand;
 import nl.imine.minigame.cluedo.game.CluedoMinigame;
 import nl.imine.minigame.cluedo.game.CluedoListener;
+import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.game.state.game.CluedoSpawn;
 import nl.imine.minigame.cluedo.game.state.game.jobs.AvailableJob;
@@ -38,6 +40,9 @@ public class CluedoPlugin extends JavaPlugin {
         //Initialize Timer Manager
         CluedoPlugin.timerManager = new TimerManager();
         CluedoPlugin.timerManager.init(this);
+
+        this.getCommand("removemeeseeks").setExecutor(new RemoveMeeseeksCommand());
+        this.getCommand("removemeeseeks").setTabCompleter(new RemoveMeeseeksCommand());
 
         //Create World
         WorldCreator worldCreator = new WorldCreator(settings.getString(Setting.GAME_WORLD_NAME))
@@ -89,6 +94,7 @@ public class CluedoPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         CluedoPlugin.plugin = null;
+        MeeseeksManager.getInstance().removeAllMeeseekses();
     }
 
     public static Plugin getInstance() {
