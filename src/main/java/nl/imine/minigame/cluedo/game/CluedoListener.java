@@ -445,13 +445,15 @@ public class CluedoListener implements Listener {
         if (!(evt.getEntity() instanceof Zombie)) {
             return;
         }
-        
+
         Zombie zombie = (Zombie) evt.getEntity();
-        
+
         if (!MeeseeksManager.getInstance().isMeeseeksZombie(zombie)) {
             return;
         }
-        
+        evt.setDroppedExp(0);
+        evt.getDrops().clear();
+
         MeeseeksManager.getInstance().remove(zombie);
     }
 

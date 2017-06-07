@@ -40,7 +40,7 @@ public class DetectiveRole extends CluedoRole {
         player.getInventory().setItem(1, bow);
         player.getInventory().setItem(9, new ItemStack(Material.ARROW));
 
-        if (player.hasPermission("imine.cluedo.mrmeeseeks")) {
+        if (player.hasPermission("imine.cluedo.pet")) {
             player.getInventory().setItem(8, mrMeeseeks);
         }
 

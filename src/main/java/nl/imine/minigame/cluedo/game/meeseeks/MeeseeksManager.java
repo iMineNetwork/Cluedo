@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -63,7 +64,7 @@ public class MeeseeksManager {
         zombie.setCanPickupItems(false);
         zombie.setCustomName("Mr Meeseeks");
         zombie.setCustomNameVisible(false);
-        zombie.setInvulnerable(true);
+        zombie.setInvulnerable(false);
         zombie.setSilent(false);
         zombie.setBaby(false);
         zombie.addScoreboardTag("MeeseeksID: " + meeseeksID);
@@ -77,6 +78,8 @@ public class MeeseeksManager {
      * @param zombie the zombie to remove
      */
     public void remove(Zombie zombie) {
+
+        System.out.println("remove(Zombie zombie)");
         meeseekses.keySet().forEach(player -> {
             meeseekses.get(player)
                     .stream()
@@ -85,18 +88,18 @@ public class MeeseeksManager {
                         remove(player, zombie);
                     });
         });
+        System.out.println("done remove(Zombie zombie)");
     }
 
     public void remove(Player player, Zombie zombie) {
-        meeseekses.get(player).remove(zombie);
         zombie.getScoreboardTags()
                 .stream()
                 .filter(tag -> tag.startsWith("MeeseeksID: "))
                 .forEach(tag -> {
                     Bukkit.getScheduler().cancelTask(Integer.parseInt(tag.replace("MeeseeksID: ", "")));
                 });
+        meeseekses.get(player).remove(zombie);
         zombie.remove();
-
     }
 
     /**
@@ -138,27 +141,19 @@ public class MeeseeksManager {
         if (!meeseekses.containsKey(player)) {
             return;
         }
-        new HashMap<>(meeseekses)
-                .get(player)
-                .stream()
-                .forEach(zombie -> {
-                    remove(player, zombie);
-                });
+        new ArrayList<>(meeseekses.get(player)).forEach(zombie -> remove(player, zombie));
     }
 
     /**
      * remove all meeseekses
      */
     public void removeAllMeeseekses() {
-        //using new HashMap<>(meeseekses) to prevent concurrentModificationException
-        new HashMap<>(meeseekses)
-                .keySet()
-                .forEach(player -> new HashMap<>(meeseekses)
-                .get(player)
-                .stream()
-                .forEach(zombie -> {
-                    remove(player, zombie);
-                }));
+
+        Set<Player> players = meeseekses.keySet();
+
+        players.forEach(player -> {
+            new ArrayList<>(meeseekses.get(player)).forEach(zombie -> remove(player, zombie));
+        });
     }
 
 }

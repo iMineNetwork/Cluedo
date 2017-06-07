@@ -66,7 +66,7 @@ public class MurderRole extends CluedoRole {
         player.getInventory().setItem(1, knife);
         player.getInventory().setItem(2, invisibilityPotion);
         player.getInventory().setItem(3, damagePotion);
-        if (player.hasPermission("imine.cluedo.mrmeeseeks")) {
+        if (player.hasPermission("imine.cluedo.pet")) {
             player.getInventory().setItem(8, mrMeeseeks);
         }
 

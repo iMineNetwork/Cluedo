@@ -47,14 +47,14 @@ public class RemoveMeeseeksCommand implements CommandExecutor, TabCompleter {
             Bukkit.getOnlinePlayers()
                     .stream()
                     .filter(onlinePlayer -> ((Player) sender).canSee(onlinePlayer))
-                    .filter(onlinePlayer -> (args.length == 0 || onlinePlayer.getDisplayName().contains(args[args.length])))
+                    .filter(onlinePlayer -> (args.length == 0 || onlinePlayer.getDisplayName().contains(args[args.length - 1])))
                     .forEach(onlinePlayer -> {
                         players.add(onlinePlayer.getDisplayName());
                     });
         } else {
             Bukkit.getOnlinePlayers()
                     .stream()
-                    .filter(onlinePlayer -> (args.length == 0 || onlinePlayer.getDisplayName().contains(args[args.length])))
+                    .filter(onlinePlayer -> (args.length == 0 || onlinePlayer.getDisplayName().contains(args[args.length - 1])))
                     .forEach(onlinePlayer -> {
                         players.add(onlinePlayer.getDisplayName());
 

@@ -24,7 +24,7 @@ public class BystanderRole extends CluedoRole {
         mrMeeseeks.setAmount(1);
         mrMeeseeks.setDurability((short) 1);
 
-        if (player.hasPermission("imine.cluedo.mrmeeseeks")) {
+        if (player.hasPermission("imine.cluedo.pet")) {
             player.getInventory().setItem(8, mrMeeseeks);
         }
         //Set gamemode
