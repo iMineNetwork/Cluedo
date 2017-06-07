@@ -84,10 +84,10 @@ public class JobManager {
 
             ItemStack bowMurderer = new ItemStack(Material.BOW);
             ItemMeta bowMurdererMeta = bowMurderer.getItemMeta();
-            bowMurdererMeta.addEnchant(Enchantment.DURABILITY, 0, true);
+            bowMurdererMeta.addEnchant(Enchantment.DURABILITY, 1, true);
             bowMurdererMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             bowMurdererMeta.setUnbreakable(true);
-            bowMurderer.setItemMeta(bowMeta);
+            bowMurderer.setItemMeta(bowMurdererMeta);
 
             switch (player.getRole().getRoleType()) {
                 case BYSTANDER:
