@@ -8,13 +8,15 @@ package nl.imine.minigame.cluedo.game.meeseeks;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  *
@@ -154,6 +156,17 @@ public class MeeseeksManager {
         players.forEach(player -> {
             new ArrayList<>(meeseekses.get(player)).forEach(zombie -> remove(player, zombie));
         });
+    }
+
+    public ItemStack getMeeseeksSpawningItem() {
+        ItemStack mrMeeseeks = new ItemStack(Material.CARROT_STICK);
+        mrMeeseeks.setAmount(1);
+        mrMeeseeks.setDurability((short) 1);
+        ItemMeta meta = mrMeeseeks.getItemMeta();
+        meta.setUnbreakable(true);
+        mrMeeseeks.setItemMeta(meta);
+
+        return mrMeeseeks;
     }
 
 }

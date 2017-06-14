@@ -9,7 +9,7 @@ import nl.imine.minigame.cluedo.game.player.role.RoleType;
 public class SpectatorRole extends CluedoRole {
 
     public SpectatorRole() {
-        super(RoleType.SPECTATOR);
+        super(RoleType.SPECTATOR, 10);
     }
 
     @Override

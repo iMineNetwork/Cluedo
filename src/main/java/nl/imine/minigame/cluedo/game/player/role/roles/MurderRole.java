@@ -2,6 +2,7 @@ package nl.imine.minigame.cluedo.game.player.role.roles;
 
 import java.util.ArrayList;
 import java.util.List;
+import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -57,9 +58,7 @@ public class MurderRole extends CluedoRole {
         damagePotionMeta.setLore(lore);
         damagePotion.setItemMeta(damagePotionMeta);
 
-        ItemStack mrMeeseeks = new ItemStack(Material.CARROT_STICK);
-        mrMeeseeks.setAmount(1);
-        mrMeeseeks.setDurability((short) 1);
+       
 
         //Give the player their items
         player.getInventory().setHeldItemSlot(0);
@@ -67,7 +66,7 @@ public class MurderRole extends CluedoRole {
         player.getInventory().setItem(2, invisibilityPotion);
         player.getInventory().setItem(3, damagePotion);
         if (player.hasPermission("imine.cluedo.pet")) {
-            player.getInventory().setItem(8, mrMeeseeks);
+            player.getInventory().setItem(8, MeeseeksManager.getInstance().getMeeseeksSpawningItem());
         }
 
     }

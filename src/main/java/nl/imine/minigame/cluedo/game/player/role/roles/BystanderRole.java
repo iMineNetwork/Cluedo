@@ -1,12 +1,11 @@
 package nl.imine.minigame.cluedo.game.player.role.roles;
 
+import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import nl.imine.minigame.cluedo.game.player.role.CluedoRole;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 public class BystanderRole extends CluedoRole {
 
@@ -20,12 +19,8 @@ public class BystanderRole extends CluedoRole {
         player.closeInventory();
         player.getInventory().clear();
 
-        ItemStack mrMeeseeks = new ItemStack(Material.CARROT_STICK);
-        mrMeeseeks.setAmount(1);
-        mrMeeseeks.setDurability((short) 1);
-
         if (player.hasPermission("imine.cluedo.pet")) {
-            player.getInventory().setItem(8, mrMeeseeks);
+            player.getInventory().setItem(8, MeeseeksManager.getInstance().getMeeseeksSpawningItem());
         }
         //Set gamemode
         player.setGameMode(GameMode.ADVENTURE);

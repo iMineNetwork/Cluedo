@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import nl.imine.minigame.cluedo.game.player.role.CluedoRole;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 
 public class CluedoPlayer {
 
@@ -113,17 +114,21 @@ public class CluedoPlayer {
 
     public void rewardXp() {
 
-        player.sendMessage(ChatColor.RED + "You recieved " + xpReward + " experience!");
+        if (xpReward <= 0) {
+            player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "You recieved no experience!");
+            return;
+        }
+
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10L, 0L);
+        player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "You received " + xpReward + " experience!");
 
         while (player.getExpToLevel() < xpReward) {
             xpReward -= player.getExpToLevel();
             player.setLevel(player.getLevel() + 1);
             player.setExp(0);
-
-            player.sendMessage(ChatColor.GOLD + "Level up! You are now level " + player.getLevel());
         }
 
-        player.setExp(xpReward);
+        player.setExp(((float) xpReward / (float) player.getExpToLevel()));
         xpReward = 0;
     }
 

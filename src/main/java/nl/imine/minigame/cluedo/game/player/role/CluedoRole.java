@@ -41,4 +41,8 @@ public abstract class CluedoRole {
 	public RoleType getRoleType() {
 		return roleType;
 	}
+        
+        public int getBaseXp(){
+            return BaseXp;
+        }
 }

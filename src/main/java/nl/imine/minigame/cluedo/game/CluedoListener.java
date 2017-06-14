@@ -108,7 +108,9 @@ public class CluedoListener implements Listener {
                         .findFirst().orElse(null);
                 if (killerPlayer.getRole().getRoleType().isInnocent()) {
                     if (killerPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)) {
-                        killerPlayer.removeXpFromReward(50);
+
+                        //killerPlayer.getPlayer().setExp((killerPlayer.getPlayer().getExpToLevel() / (1 - killerPlayer.getPlayer().getExp())) - 15);
+                        killerPlayer.removeXpFromReward(15);
                         //Demote the detective
                         killerPlayer.setRole(RoleType.BYSTANDER);
                         //Drop the bow
@@ -364,7 +366,7 @@ public class CluedoListener implements Listener {
             evt.setDamage(100);
             if (evt.getDamager() instanceof Player
                     && CluedoPlugin.getGame().getCluedoPlayer((Player) evt.getDamager()).getRole().getRoleType() == RoleType.MURDERER) {
-                CluedoPlugin.getGame().getCluedoPlayer((Player) evt.getDamager()).addXpToReward(10);
+                CluedoPlugin.getGame().getCluedoPlayer((Player) evt.getDamager()).addXpToReward(5);
 
             }
         } else {

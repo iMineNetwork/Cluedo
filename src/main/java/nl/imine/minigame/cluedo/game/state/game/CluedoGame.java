@@ -38,7 +38,6 @@ public class CluedoGame extends CluedoState implements TimerHandler {
     private Location respawnLocation = CluedoPlugin.getSettings().getLocation(Setting.LOBBY_SPAWN);
     private List<CluedoSpawn> spawns = CluedoPlugin.getSpawnLocationService().getSpawns();
     private int gameTimer = CluedoPlugin.getSettings().getInt(Setting.IN_GAME_TIME);
-    
 
     //Game variables
     //Scoreboard
@@ -67,7 +66,6 @@ public class CluedoGame extends CluedoState implements TimerHandler {
         invisibleNametagTeam = gameScoreboard.registerNewTeam("InvisibleNametag");
         invisibleNametagTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
         invisibleNametagTeam.setCanSeeFriendlyInvisibles(false);
-        
 
         footprintHandler = Bukkit.getScheduler().runTaskTimer(CluedoPlugin.getInstance(), new FootprintHandler(), 0, 5);
         cluedoMinigame.getPlayers().forEach(this::handlePlayer);
@@ -133,8 +131,8 @@ public class CluedoGame extends CluedoState implements TimerHandler {
             endGame(result);
         }
 
-        Bukkit.getScheduler().runTaskLater(CluedoPlugin.getInstance(), () ->
-                player.teleport(respawnLocation), 1L);
+        Bukkit.getScheduler().runTaskLater(CluedoPlugin.getInstance(), ()
+                -> player.teleport(respawnLocation), 1L);
 
     }
 
@@ -167,7 +165,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 
         if (innocentsAlive <= 0) {
             return GameResult.MURDERER_WIN;
-        } else if (innocentsAlive == 1){
+        } else if (innocentsAlive == 1) {
             cluedoMinigame.getCluedoPlayers().stream()
                     .filter(cluedoPlayer -> cluedoPlayer.getRole().isInnocent())
                     .forEach(cluedoPlayer -> {
@@ -199,24 +197,25 @@ public class CluedoGame extends CluedoState implements TimerHandler {
                 titleText = ChatColor.DARK_PURPLE + "Time limit reached";
                 break;
         }
-        
 
         for (CluedoPlayer player : cluedoMinigame.getCluedoPlayers()) {
-            switch (result){
+            player.addXpToReward(player.getRole().getBaseXp());
+            switch (result) {
                 case BYSTANDER_WIN:
-                    if(player.getRole().getRoleType() == RoleType.BYSTANDER || player.getRole().getRoleType() == RoleType.DETECTIVE && player.isParticipatingInGame()){
-                        player.addXpToReward(100);
+                    if (player.getRole().getRoleType() == RoleType.BYSTANDER || player.getRole().getRoleType() == RoleType.DETECTIVE || player.getRole().getRoleType() == RoleType.SPECTATOR) {
+                        player.addXpToReward(25);
                     }
                     break;
                 case MURDERER_WIN:
-                    if(player.getRole().getRoleType() == RoleType.MURDERER && player.isParticipatingInGame()){
-                        player.addXpToReward(100);
+                    if (player.getRole().getRoleType() == RoleType.MURDERER) {
+                        player.addXpToReward(25);
                     }
-                break;
+                    break;
             }
+
+            player.rewardXp();
             //Show the set-up title to all players in the minigame instance
             player.getPlayer().sendTitle(titleText, subtitleText, 10, 100, 10);
-            
 
             //Hide Timer
             timer.hideTimer(player.getPlayer());
@@ -242,7 +241,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 
         //Unregister Team
         invisibleNametagTeam.unregister();
-        
+
         MeeseeksManager.getInstance().removeAllMeeseekses();
 
         //Change state
