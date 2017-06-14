@@ -256,6 +256,12 @@ public class CluedoListener implements Listener {
             return;
         }
 
+        if (CluedoPlugin.getGame().getGameState().getState() == CluedoStateType.PRE_GAME
+                && ((evt.getPlayer().getInventory().getItemInMainHand() != null && evt.getPlayer().getInventory().getItemInMainHand().getType() == Material.SPLASH_POTION)
+                || (evt.getPlayer().getInventory().getItemInOffHand()!= null && evt.getPlayer().getInventory().getItemInOffHand().getType() == Material.SPLASH_POTION))) {
+            evt.setCancelled(true);
+        }
+
         //Get Cluedo player object
         CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
                 .filter(cPlayer -> cPlayer.getPlayer().equals(evt.getPlayer()))
