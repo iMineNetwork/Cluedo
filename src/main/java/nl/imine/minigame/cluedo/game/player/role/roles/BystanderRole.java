@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 public class BystanderRole extends CluedoRole {
 
     public BystanderRole() {
-        super(RoleType.BYSTANDER);
+        super(RoleType.BYSTANDER, 50);
     }
 
     @Override

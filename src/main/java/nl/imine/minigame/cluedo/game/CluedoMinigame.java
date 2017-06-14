@@ -105,4 +105,10 @@ public class CluedoMinigame extends Minigame {
                 break;
         }
     }
+    
+    public CluedoPlayer getCluedoPlayer(Player player){
+        return getCluedoPlayers().stream()
+                        .filter(cPlayer -> cPlayer.getPlayer().equals(player))
+                        .findFirst().orElse(null);
+    }
 }

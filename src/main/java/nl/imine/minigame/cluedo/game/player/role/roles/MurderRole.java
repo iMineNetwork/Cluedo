@@ -19,7 +19,7 @@ import org.bukkit.inventory.ItemFlag;
 public class MurderRole extends CluedoRole {
 
     public MurderRole() {
-        super(RoleType.MURDERER);
+        super(RoleType.MURDERER, 25);
     }
 
     @Override

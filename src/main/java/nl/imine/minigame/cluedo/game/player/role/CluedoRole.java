@@ -5,9 +5,16 @@ import org.bukkit.entity.Player;
 public abstract class CluedoRole {
 
 	private RoleType roleType;
+        private int BaseXp;
 
 	public CluedoRole(RoleType roleType) {
 		this.roleType = roleType;
+                this.BaseXp = 0;
+	}
+        
+	public CluedoRole(RoleType roleType, int baseXp) {
+		this.roleType = roleType;
+                this.BaseXp = baseXp;
 	}
 
 	/**

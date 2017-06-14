@@ -9,100 +9,133 @@ import org.bukkit.entity.Player;
 
 import nl.imine.minigame.cluedo.game.player.role.CluedoRole;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
+import org.bukkit.ChatColor;
 
 public class CluedoPlayer {
 
-	private final Player player;
-	private CluedoRole role;
+    private final Player player;
+    private CluedoRole role;
 
-	//Gameplay Details
-	private Color footprintColor = Color.black;
-	private LinkedList<Location> footprints = new LinkedList<>();
+    //Gameplay Details
+    private Color footprintColor = Color.black;
+    private LinkedList<Location> footprints = new LinkedList<>();
 
-	private Job activeJob;
-	private int completedJobs;
+    private Job activeJob;
+    private int completedJobs;
 
-	public CluedoPlayer(Player player, RoleType role) {
-		this.player = player;
-		this.role = RoleType.getCluedoRole(role);
-	}
+    private int xpReward;
 
-	public Player getPlayer() {
-		return player;
-	}
+    public CluedoPlayer(Player player, RoleType role) {
+        this.player = player;
+        this.role = RoleType.getCluedoRole(role);
+    }
 
-	/**
-	 * Sets the role and updates the player's inventory to the role specific settings.
-	 *
-	 * @param roleType, The role to update to
-	 */
-	public void setRole(RoleType roleType) {
-		this.role = RoleType.getCluedoRole(roleType);
-		role.preparePlayer(player);
-	}
+    public Player getPlayer() {
+        return player;
+    }
 
-	public CluedoRole getRole() {
-		return role;
-	}
+    /**
+     * Sets the role and updates the player's inventory to the role specific
+     * settings.
+     *
+     * @param roleType, The role to update to
+     */
+    public void setRole(RoleType roleType) {
+        this.role = RoleType.getCluedoRole(roleType);
+        role.preparePlayer(player);
+    }
 
-	public Color getFootprintColor() {
-		return footprintColor;
-	}
+    public CluedoRole getRole() {
+        return role;
+    }
 
-	public void setFootprintColor(Color footprintColor) {
-		this.footprintColor = footprintColor;
-	}
+    public Color getFootprintColor() {
+        return footprintColor;
+    }
 
-	/**
-	 * Get this player's footprints
-	 * @return a list of the last 20 locations of this player
-	 */
-	public LinkedList<Location> getFootprints() {
-		return footprints;
-	}
+    public void setFootprintColor(Color footprintColor) {
+        this.footprintColor = footprintColor;
+    }
 
-	/**
-	 * Reset this player's footprint list
-	 */
-	public void clearFootprints(){
-		footprints.clear();
-	}
+    /**
+     * Get this player's footprints
+     *
+     * @return a list of the last 20 locations of this player
+     */
+    public LinkedList<Location> getFootprints() {
+        return footprints;
+    }
 
-	/**
-	 *
-	 * @param footprint
-	 */
-	public void addFootprint(Location footprint) {
-		if(footprints.size() > 20){
-			footprints.removeFirst();
-		}
-		footprints.add(footprint);
-	}
+    /**
+     * Reset this player's footprint list
+     */
+    public void clearFootprints() {
+        footprints.clear();
+    }
 
-	public void setRole(CluedoRole role) {
-		this.role = role;
-	}
+    /**
+     *
+     * @param footprint
+     */
+    public void addFootprint(Location footprint) {
+        if (footprints.size() > 20) {
+            footprints.removeFirst();
+        }
+        footprints.add(footprint);
+    }
 
-	public void setFootprints(LinkedList<Location> footprints) {
-		this.footprints = footprints;
-	}
+    public void setRole(CluedoRole role) {
+        this.role = role;
+    }
 
-	public Job getActiveJob() {
-		return activeJob;
-	}
+    public void setFootprints(LinkedList<Location> footprints) {
+        this.footprints = footprints;
+    }
 
-	public void setActiveJob(Job activeJob) {
-		if(this.getActiveJob() != null) {
-			this.getActiveJob().getJobItem().remove();
-		}
-		this.activeJob = activeJob;
-	}
+    public Job getActiveJob() {
+        return activeJob;
+    }
 
-	public int getCompletedJobs() {
-		return completedJobs;
-	}
+    public void setActiveJob(Job activeJob) {
+        if (this.getActiveJob() != null) {
+            this.getActiveJob().getJobItem().remove();
+        }
+        this.activeJob = activeJob;
+    }
 
-	public void setCompletedJobs(int completedJobs) {
-		this.completedJobs = completedJobs;
-	}
+    public int getCompletedJobs() {
+        return completedJobs;
+    }
+
+    public void setCompletedJobs(int completedJobs) {
+        this.completedJobs = completedJobs;
+    }
+
+    public void rewardXp() {
+
+        player.sendMessage(ChatColor.RED + "You recieved " + xpReward + " experience!");
+
+        while (player.getExpToLevel() < xpReward) {
+            xpReward -= player.getExpToLevel();
+            player.setLevel(player.getLevel() + 1);
+            player.setExp(0);
+
+            player.sendMessage(ChatColor.GOLD + "Level up! You are now level " + player.getLevel());
+        }
+
+        player.setExp(xpReward);
+        xpReward = 0;
+    }
+
+    public void addXpToReward(int xp) {
+        xpReward += xp;
+    }
+
+    public void removeXpFromReward(int xp) {
+        xpReward -= xp;
+    }
+
+    public boolean isParticipatingInGame() {
+        return role.getRoleType() == RoleType.BYSTANDER || role.getRoleType() == RoleType.DETECTIVE || role.getRoleType() == RoleType.MURDERER;
+    }
 }

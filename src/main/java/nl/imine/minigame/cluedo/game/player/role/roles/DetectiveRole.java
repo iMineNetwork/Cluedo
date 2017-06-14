@@ -13,7 +13,7 @@ import nl.imine.minigame.cluedo.game.player.role.RoleType;
 public class DetectiveRole extends CluedoRole {
 
     public DetectiveRole() {
-        super(RoleType.DETECTIVE);
+        super(RoleType.DETECTIVE, 50);
     }
 
     @Override

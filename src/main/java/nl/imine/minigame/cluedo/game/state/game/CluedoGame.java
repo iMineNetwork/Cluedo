@@ -199,10 +199,24 @@ public class CluedoGame extends CluedoState implements TimerHandler {
                 titleText = ChatColor.DARK_PURPLE + "Time limit reached";
                 break;
         }
+        
 
         for (CluedoPlayer player : cluedoMinigame.getCluedoPlayers()) {
+            switch (result){
+                case BYSTANDER_WIN:
+                    if(player.getRole().getRoleType() == RoleType.BYSTANDER || player.getRole().getRoleType() == RoleType.DETECTIVE && player.isParticipatingInGame()){
+                        player.addXpToReward(100);
+                    }
+                    break;
+                case MURDERER_WIN:
+                    if(player.getRole().getRoleType() == RoleType.MURDERER && player.isParticipatingInGame()){
+                        player.addXpToReward(100);
+                    }
+                break;
+            }
             //Show the set-up title to all players in the minigame instance
             player.getPlayer().sendTitle(titleText, subtitleText, 10, 100, 10);
+            
 
             //Hide Timer
             timer.hideTimer(player.getPlayer());
