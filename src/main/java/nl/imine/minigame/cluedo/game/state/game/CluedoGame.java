@@ -202,15 +202,16 @@ public class CluedoGame extends CluedoState implements TimerHandler {
             player.addXpToReward(player.getRole().getBaseXp());
             switch (result) {
                 case BYSTANDER_WIN:
-                    if (player.getRole().getRoleType() == RoleType.BYSTANDER || player.getRole().getRoleType() == RoleType.DETECTIVE || player.getRole().getRoleType() == RoleType.SPECTATOR) {
+                    player.addXpToReward(10);
+                    if (player.getRole().getRoleType() == RoleType.BYSTANDER || player.getRole().getRoleType() == RoleType.DETECTIVE ) {
                         player.addXpToReward(25);
                     }
                     break;
-                case MURDERER_WIN:
-                    if (player.getRole().getRoleType() == RoleType.MURDERER) {
-                        player.addXpToReward(25);
-                    }
-                    break;
+//                case MURDERER_WIN:
+//                    if (player.getRole().getRoleType() == RoleType.MURDERER) {
+//                        player.addXpToReward(25);
+//                    }
+//                    break;
             }
 
             player.rewardXp();
