@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import nl.imine.minigame.cluedo.game.player.role.CluedoRole;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
+import nl.imine.minigame.cluedo.util.ExperienceUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 
@@ -119,16 +120,10 @@ public class CluedoPlayer {
             return;
         }
 
-        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10L, 0L);
         player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "You received " + xpReward + " experience!");
+        ExperienceUtil.addExp(player, xpReward);
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10L, 0L);
 
-        while (player.getExpToLevel() < xpReward) {
-            xpReward -= player.getExpToLevel();
-            player.setLevel(player.getLevel() + 1);
-            player.setExp(0);
-        }
-
-        player.setExp(((float) xpReward / (float) player.getExpToLevel()));
         xpReward = 0;
     }
 

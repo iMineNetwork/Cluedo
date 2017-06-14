@@ -55,9 +55,6 @@ public class CluedoLobby extends CluedoState implements TimerHandler {
             at the end of the lobby rather then when a player joins preparation. */
             Random random = new Random();
 
-            int aantalMurderers = (cluedoMinigame.getCluedoPlayers().size() > 8 ? (random.nextInt(100) > 30 ? 2 : 1) : 1);
-            aantalMurderers = Math.max((cluedoMinigame.getCluedoPlayers().size() > 10 ? (random.nextInt(100) > 30 ? 3 : 1) : 1), aantalMurderers);
-
             List<CluedoPlayer> assignablePlayers = cluedoMinigame.getCluedoPlayers().stream()
                     .filter(player -> player.getRole().getRoleType().equals(RoleType.LOBBY))
                     .collect(Collectors.toList());
@@ -85,7 +82,7 @@ public class CluedoLobby extends CluedoState implements TimerHandler {
                 assignablePlayers.remove(player);
             });
 
-            while (forceMurderers.size() < aantalMurderers) {
+            if (forceMurderers.isEmpty()) {
                 //Select a random player and make him the murderer, then remove him from the assignable list
                 int assignIndex = random.nextInt(assignablePlayers.size());
                 assignablePlayers.get(assignIndex).setRole(RoleType.MURDERER);
