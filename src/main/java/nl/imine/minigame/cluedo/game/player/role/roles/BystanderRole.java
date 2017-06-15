@@ -10,7 +10,7 @@ import nl.imine.minigame.cluedo.game.player.role.RoleType;
 public class BystanderRole extends CluedoRole {
 
     public BystanderRole() {
-        super(RoleType.BYSTANDER, 50);
+        super(RoleType.BYSTANDER, 25);
     }
 
     @Override
