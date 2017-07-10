@@ -17,7 +17,6 @@ import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -48,8 +47,8 @@ public class CluedoLobby extends CluedoState implements TimerHandler {
         Log.finest("Handling timer end for: " + this.getClass().getSimpleName());
         cluedoMinigame.getPlayers().forEach(timer::hideTimer);
 
-        //A game should always contain at least 4 players
-        if (cluedoMinigame.getCluedoPlayers().size() >= 4) {
+        //A game should always contain at least 3 players
+        if (cluedoMinigame.getCluedoPlayers().size() >= 3) {
 
             /* As we don't accept players anymore when the game has already started. We assign roles
             at the end of the lobby rather then when a player joins preparation. */
@@ -61,21 +60,29 @@ public class CluedoLobby extends CluedoState implements TimerHandler {
 
             //if the player has red dye in his inventory he has to become the murderer
             //if the player has lapis in his inventory he has to become the detective
-            List<CluedoPlayer> forceMurderers = assignablePlayers
-                    .stream()
-                    .filter(p -> p.getPlayer().getInventory().contains(new ItemStack(Material.INK_SACK, 1, (short) 1)))
-                    .collect(Collectors.toList());
+            List<CluedoPlayer> forceMurderers = new ArrayList<>();
+            assignablePlayers.forEach(player -> {
+                for (ItemStack item : player.getPlayer().getInventory().getContents()) {
+                    if (item != null && item.getType() == Material.INK_SACK && item.getDurability() == (short) 1) {
+                        forceMurderers.add(player);
+                    }
+                }
+            });
 
             forceMurderers.stream().forEach(player -> {
                 player.setRole(RoleType.MURDERER);
                 assignablePlayers.remove(player);
             });
 
-            List<CluedoPlayer> forceDetectives = assignablePlayers
-                    .stream()
-                    .filter(p -> p.getPlayer().getInventory().contains(new ItemStack(Material.INK_SACK, 1, (short) 4)))
-                    .filter(p -> !p.getPlayer().getInventory().contains(new ItemStack(Material.INK_SACK, 1, (short) 1))) // in case someone has both dyes in his inventory
-                    .collect(Collectors.toList());
+            List<CluedoPlayer> forceDetectives = new ArrayList<>();
+            
+            assignablePlayers.forEach(player -> {
+                for (ItemStack item : player.getPlayer().getInventory().getContents()) {
+                    if (item != null && item.getType() == Material.INK_SACK && item.getDurability() == (short) 4) {
+                        forceDetectives.add(player);
+                    }
+                }
+            });
 
             forceDetectives.stream().forEach(player -> {
                 player.setRole(RoleType.DETECTIVE);
@@ -89,7 +96,7 @@ public class CluedoLobby extends CluedoState implements TimerHandler {
                 assignablePlayers.remove(assignIndex);
             }
 
-            if (forceDetectives.isEmpty()) {
+            if (forceDetectives.isEmpty() && !assignablePlayers.isEmpty()) {
                 //Select a random player and make him the detective, then remove him from the assignable list
                 int assignIndex = random.nextInt(assignablePlayers.size());
                 assignablePlayers.get(assignIndex).setRole(RoleType.DETECTIVE);

@@ -244,8 +244,6 @@ public class CluedoGame extends CluedoState implements TimerHandler {
         //Unregister Team
         invisibleNametagTeam.unregister();
 
-        MeeseeksManager.getInstance().removeAllMeeseekses();
-
         //Change state
         cluedoMinigame.changeGameState(CluedoStateType.END_GAME);
     }

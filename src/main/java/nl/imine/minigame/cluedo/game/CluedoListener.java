@@ -23,6 +23,8 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 import java.util.List;
 import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class CluedoListener implements Listener {
 
@@ -49,6 +51,12 @@ public class CluedoListener implements Listener {
         if (evt.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
             evt.setCancelled(true);
         }
+
+        if (CluedoPlugin.getGame().getCluedoPlayer(player).getRole().getRoleType() == RoleType.LOBBY
+                || CluedoPlugin.getGame().getCluedoPlayer(player).getRole().getRoleType() == RoleType.SPECTATOR) {
+            evt.setCancelled(true);
+        }
+
     }
 
     @EventHandler
@@ -120,7 +128,7 @@ public class CluedoListener implements Listener {
                     }
                     killerPlayer.getPlayer().getInventory().clear();
                     //Put the detective in time-out
-                    killerPlayer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 5, 0, false, false), true);
+                    killerPlayer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 5, 1, false, false), true);
                     detectiveTimeout.add(killerPlayer);
                     //Remove him from timeout after 30 seconds (20 ticks == 1 second)
                     Bukkit.getScheduler().runTaskLater(CluedoPlugin.getInstance(), () -> detectiveTimeout.remove(killerPlayer), 30 * 20);
@@ -258,7 +266,7 @@ public class CluedoListener implements Listener {
 
         if (CluedoPlugin.getGame().getGameState().getState() == CluedoStateType.PRE_GAME
                 && ((evt.getPlayer().getInventory().getItemInMainHand() != null && evt.getPlayer().getInventory().getItemInMainHand().getType() == Material.SPLASH_POTION)
-                || (evt.getPlayer().getInventory().getItemInOffHand()!= null && evt.getPlayer().getInventory().getItemInOffHand().getType() == Material.SPLASH_POTION))) {
+                || (evt.getPlayer().getInventory().getItemInOffHand() != null && evt.getPlayer().getInventory().getItemInOffHand().getType() == Material.SPLASH_POTION))) {
             evt.setCancelled(true);
         }
 
@@ -462,13 +470,46 @@ public class CluedoListener implements Listener {
 
         Zombie zombie = (Zombie) evt.getEntity();
 
+        if (evt.getDrops() != null) {
+            evt.getDrops().clear();
+        }
+
         if (!MeeseeksManager.getInstance().isMeeseeksZombie(zombie)) {
             return;
         }
-        evt.setDroppedExp(0);
-        evt.getDrops().clear();
 
         MeeseeksManager.getInstance().remove(zombie);
+    }
+
+    @EventHandler
+    public void onInventoryMove(InventoryClickEvent evt) {
+        if (!(evt.getWhoClicked() instanceof Player)) {
+            return;
+        }
+
+        Player player = (Player) evt.getWhoClicked();
+        //Make sure the player is actually participating in this minigame
+        if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
+            return;
+        }
+
+        if (player.getGameMode() == GameMode.CREATIVE) {
+            return; //players in GM1 can do everyting they want
+        }
+
+        if (evt.getCurrentItem() != null
+                && (evt.getCurrentItem().getType() == null
+                || evt.getCurrentItem().getType() == Material.AIR
+                || evt.getCurrentItem().getType() == Material.POTION
+                || evt.getCurrentItem().getType() == Material.WHEAT)) {
+            return;
+        }
+
+        if (evt.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
+            return;
+        }
+
+        evt.setCancelled(true);
     }
 
 }
