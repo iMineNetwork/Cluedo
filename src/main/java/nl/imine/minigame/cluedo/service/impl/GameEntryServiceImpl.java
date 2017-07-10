@@ -40,13 +40,12 @@ public class GameEntryServiceImpl implements GameEntryService {
 	@Override
 	public void update(GameEntry gameEntry) {
 		try {
-			PreparedStatement preparedStatement = mySQLService.getConnection().prepareStatement("UPDATE GameEntry SET killerId=?, victimId=?, material=?, timestamp=? WHERE gameId LIKE ?;");
+			PreparedStatement preparedStatement = mySQLService.getConnection().prepareStatement("UPDATE GameEntry SET startTime=?, endTime=? WHERE gameId LIKE ?;");
 
-			preparedStatement.setString(1, gameEntry.getGameId().toString());
-			preparedStatement.setTimestamp(2, Timestamp.valueOf(gameEntry.getStartTime()));
-			preparedStatement.setTimestamp(3, Timestamp.valueOf(gameEntry.getEndTime()));
+			preparedStatement.setTimestamp(1, Timestamp.valueOf(gameEntry.getStartTime()));
+			preparedStatement.setTimestamp(2, Timestamp.valueOf(gameEntry.getEndTime()));
 
-			preparedStatement.setString(4, gameEntry.getGameId().toString());
+			preparedStatement.setString(3, gameEntry.getGameId().toString());
 
 			preparedStatement.execute();
 		} catch (SQLException e) {
