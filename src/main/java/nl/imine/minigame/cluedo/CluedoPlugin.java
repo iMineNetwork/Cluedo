@@ -1,6 +1,8 @@
 package nl.imine.minigame.cluedo;
 
 import nl.imine.minigame.MinigameManager;
+import nl.imine.minigame.cluedo.command.CommandDetective;
+import nl.imine.minigame.cluedo.command.CommandMurderer;
 import nl.imine.minigame.cluedo.command.RemoveMeeseeksCommand;
 import nl.imine.minigame.cluedo.game.CluedoMinigame;
 import nl.imine.minigame.cluedo.game.CluedoListener;
@@ -52,6 +54,9 @@ public class CluedoPlugin extends JavaPlugin {
 
         this.getCommand("removemeeseeks").setExecutor(new RemoveMeeseeksCommand());
         this.getCommand("removemeeseeks").setTabCompleter(new RemoveMeeseeksCommand());
+        
+        this.getCommand("murderer").setExecutor(new CommandMurderer());
+        this.getCommand("detective").setExecutor(new CommandDetective());
 
         //Create World
         WorldCreator worldCreator = new WorldCreator(settings.getString(Setting.GAME_WORLD_NAME))

@@ -301,6 +301,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 		} catch (Exception e) {
 			Log.warning("Saving Metadata at end of game caused an exception | " + e.getClass().getSimpleName() + ": " + e.getMessage());
 		}
+
         //Change state
         cluedoMinigame.changeGameState(CluedoStateType.END_GAME);
     }

@@ -10,6 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import nl.imine.minigame.cluedo.game.player.role.CluedoRole;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
+import org.bukkit.ChatColor;
 
 public class DetectiveRole extends CluedoRole {
 
@@ -32,10 +33,16 @@ public class DetectiveRole extends CluedoRole {
         bowMeta.setUnbreakable(true);
         bowMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
         bow.setItemMeta(bowMeta);
-
+        
+        ItemStack lapis = new ItemStack(Material.INK_SACK, 1, (short) 4);
+        ItemMeta lapisMeta = lapis.getItemMeta();
+        lapisMeta.setDisplayName(ChatColor.DARK_BLUE + "" + ChatColor.BOLD + "detective");
+        lapis.setItemMeta(lapisMeta);
+        
         player.getInventory().setHeldItemSlot(0);
         player.getInventory().setItem(1, bow);
         player.getInventory().setItem(9, new ItemStack(Material.ARROW));
+        player.getInventory().setItem(17, lapis);
 
         if (player.hasPermission("imine.cluedo.pet")) {
             player.getInventory().setItem(8, MeeseeksManager.getInstance().getMeeseeksSpawningItem());

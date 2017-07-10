@@ -8,3 +8,9 @@ commands:
     description: remove meeseeks
     usage: /removemeeseeks [player1] [player2]...
     aliases: [rmeeseeks, removemeeseeks, weallwannadiewearemrmeeseeks, zoudeserverallemistermeeseekskunnenverwijderenalstublieft, removem]
+  murderer:
+    description: make the player who executes this command a murderer
+    usage: /murderer [player1] [player2]...
+  detective:
+    description: make the player who executes this command a detective
+    usage: /detective

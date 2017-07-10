@@ -70,6 +70,7 @@ public class MeeseeksManager {
         zombie.setSilent(false);
         zombie.setBaby(false);
         zombie.addScoreboardTag("MeeseeksID: " + meeseeksID);
+        
 
         meeseekses.get(player).add(zombie);
     }
@@ -82,14 +83,7 @@ public class MeeseeksManager {
     public void remove(Zombie zombie) {
 
         System.out.println("remove(Zombie zombie)");
-        meeseekses.keySet().forEach(player -> {
-            meeseekses.get(player)
-                    .stream()
-                    .filter(meeseeksZombie -> meeseeksZombie.equals(zombie))
-                    .forEachOrdered(targetZombie -> {
-                        remove(player, zombie);
-                    });
-        });
+        remove(getMeeseeksOwner(zombie), zombie);
         System.out.println("done remove(Zombie zombie)");
     }
 

@@ -2,6 +2,7 @@ package nl.imine.minigame.cluedo.game.state.endgame;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.CluedoMinigame;
+import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.game.state.CluedoState;
@@ -16,21 +17,19 @@ import nl.imine.minigame.timer.TimerHandler;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class CluedoEndGame extends CluedoState implements TimerHandler{
+public class CluedoEndGame extends CluedoState implements TimerHandler {
 
-    
     private Location respawnLocation = CluedoPlugin.getSettings().getLocation(Setting.LOBBY_SPAWN);
-
 
     private CluedoMinigame cluedoMinigame;
     private int gameTimer = CluedoPlugin.getSettings().getInt(Setting.END_GAME_TIME);
     private Timer timer;
 
-    public CluedoEndGame(CluedoMinigame cluedoMinigame){
+    public CluedoEndGame(CluedoMinigame cluedoMinigame) {
         super(CluedoStateType.END_GAME);
         this.cluedoMinigame = cluedoMinigame;
     }
-    
+
     @Override
     public void handleStateChange() {
         Log.finer("Handling state change for: " + this.getClass().getSimpleName());
@@ -43,6 +42,7 @@ public class CluedoEndGame extends CluedoState implements TimerHandler{
     public void onTimerEnd() {
         Log.finest("Handling timer end for: " + this.getClass().getSimpleName());
         cluedoMinigame.getPlayers().forEach(timer::hideTimer);
+        MeeseeksManager.getInstance().removeAllMeeseekses();
         cluedoMinigame.changeGameState(CluedoStateType.LOBBY);
     }
 
@@ -63,7 +63,7 @@ public class CluedoEndGame extends CluedoState implements TimerHandler{
                 .orElse(null);
 
         //Clear the job data of this player
-        if(cluedoPlayer.getActiveJob() != null){
+        if (cluedoPlayer.getActiveJob() != null) {
             cluedoPlayer.getActiveJob().getJobItem().remove();
         }
         cluedoPlayer.setActiveJob(null);
