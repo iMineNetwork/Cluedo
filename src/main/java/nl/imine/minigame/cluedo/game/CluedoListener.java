@@ -132,7 +132,7 @@ public class CluedoListener implements Listener {
         evt.getDrops().clear();
         CluedoPlugin.getGame().getGameState().handlePlayerDeath(player);
         player.spigot().respawn();
-//        player.teleport(CluedoPlugin.getGame().getGameState().getRespawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+//        player.teleport(CluedoPlugin.getGameId().getGameState().getRespawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
     @EventHandler

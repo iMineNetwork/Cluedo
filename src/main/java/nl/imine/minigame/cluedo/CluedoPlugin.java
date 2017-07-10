@@ -12,6 +12,10 @@ import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.settings.Settings;
 import nl.imine.minigame.cluedo.settings.SpawnLocationService;
+import nl.imine.minigame.cluedo.util.Instances;
+import nl.imine.minigame.cluedo.util.mysql.MySQLConfig;
+import nl.imine.minigame.cluedo.util.mysql.MySQLService;
+import nl.imine.minigame.cluedo.util.mysql.TableCreator;
 import nl.imine.minigame.timer.TimerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -36,6 +40,11 @@ public class CluedoPlugin extends JavaPlugin {
         //Initialize Settings
         CluedoPlugin.settings = new Settings(this.getConfig());
         setUpConfig();
+
+        MySQLService mySQLService = initDatabase();
+        TableCreator tableCreator = new TableCreator(mySQLService);
+        tableCreator.createTables();
+        Instances.initInstances(mySQLService);
 
         //Initialize Timer Manager
         CluedoPlugin.timerManager = new TimerManager();
@@ -120,5 +129,15 @@ public class CluedoPlugin extends JavaPlugin {
     private void setUpConfig() {
         settings.createDefaults();
         this.saveConfig();
+    }
+
+    private MySQLService initDatabase() {
+        MySQLConfig mySQLConfig = new MySQLConfig();
+        mySQLConfig.loadConfigFile();
+
+        MySQLService mySQLService = new MySQLService(mySQLConfig.getUser(), mySQLConfig.getPassword(), mySQLConfig.getJdbcUrl());
+        mySQLService.connect();
+
+        return mySQLService;
     }
 }
