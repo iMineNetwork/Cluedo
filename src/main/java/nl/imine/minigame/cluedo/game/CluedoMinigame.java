@@ -11,6 +11,7 @@ import nl.imine.minigame.cluedo.game.state.endgame.CluedoEndGame;
 import nl.imine.minigame.cluedo.game.state.game.CluedoGame;
 import nl.imine.minigame.cluedo.game.state.lobby.CluedoLobby;
 import nl.imine.minigame.cluedo.game.state.pregame.CluedoPreGame;
+import nl.imine.minigame.cluedo.model.GameEntry;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
@@ -20,10 +21,12 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class CluedoMinigame extends Minigame {
 
+    private GameEntry currentGameEntry;
     private ArrayList<CluedoPlayer> players = new ArrayList<>();
     private CluedoState gameState;
 
@@ -110,5 +113,13 @@ public class CluedoMinigame extends Minigame {
         return getCluedoPlayers().stream()
                         .filter(cPlayer -> cPlayer.getPlayer().equals(player))
                         .findFirst().orElse(null);
+    }
+
+    public GameEntry getCurrentGameEntry() {
+        return currentGameEntry;
+    }
+
+    public void setCurrentGameEntry(GameEntry currentGameEntry) {
+        this.currentGameEntry = currentGameEntry;
     }
 }

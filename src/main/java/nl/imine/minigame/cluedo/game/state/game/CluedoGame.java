@@ -1,7 +1,9 @@
 package nl.imine.minigame.cluedo.game.state.game;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import org.bukkit.Bukkit;
@@ -22,7 +24,11 @@ import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.game.state.CluedoState;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
+import nl.imine.minigame.cluedo.model.GameEntry;
+import nl.imine.minigame.cluedo.model.KillEntry;
+import nl.imine.minigame.cluedo.model.PlayerEntry;
 import nl.imine.minigame.cluedo.settings.Setting;
+import nl.imine.minigame.cluedo.util.Instances;
 import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
@@ -73,6 +79,17 @@ public class CluedoGame extends CluedoState implements TimerHandler {
         JobManager.getInstance().startJobSystem();
 
         started = true;
+
+		GameEntry gameEntry = new GameEntry(UUID.randomUUID(), LocalDateTime.now(), LocalDateTime.now());
+		CluedoPlugin.getGame().setCurrentGameEntry(gameEntry);
+		try {
+			Instances.getGameEntryService().save(gameEntry);
+            CluedoPlugin.getGame().getCluedoPlayers().forEach(cluedoPlayer -> {
+                Instances.getPlayerEntryService().save(new PlayerEntry(gameEntry.getGameId(), cluedoPlayer.getPlayer().getUniqueId(), cluedoPlayer.getRole().getRoleType()));
+            });
+        } catch (Exception e) {
+            Log.warning("Saving Metadata at start of game caused an exception | " + e.getClass().getSimpleName() + ": " + e.getMessage());
+        }
     }
 
     @Override
@@ -133,6 +150,37 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 
         Bukkit.getScheduler().runTaskLater(CluedoPlugin.getInstance(), ()
                 -> player.teleport(respawnLocation), 1L);
+
+		try {
+			Material murderWeapon = null;
+			switch (player.getLastDamageCause().getCause()) {
+				case FIRE:
+				case FIRE_TICK:
+				case HOT_FLOOR:
+				case LAVA:
+					murderWeapon = Material.FIRE;
+					break;
+				case MAGIC:
+					murderWeapon = Material.POTION;
+					break;
+				case ENTITY_ATTACK:
+					murderWeapon = Material.WOOD_SWORD;
+					break;
+				case PROJECTILE:
+					murderWeapon = Material.BOW;
+					break;
+				default:
+					murderWeapon = Material.TNT;
+			}
+			if (player.getKiller() != null) {
+				murderWeapon = player.getKiller().getInventory().getItemInMainHand().getType();
+				player.getLastDamageCause().getCause();
+			}
+			KillEntry killEntry = new KillEntry(CluedoPlugin.getGame().getCurrentGameEntry().getGameId(), player.getKiller().getUniqueId(), player.getUniqueId(), murderWeapon, LocalDateTime.now());
+			Instances.getKillEntryService().save(killEntry);
+		} catch (Exception e) {
+			Log.warning("Saving Metadata at death in game caused an exception | " + e.getClass().getSimpleName() + ": " + e.getMessage());
+		}
 
     }
 
@@ -246,6 +294,13 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 
         MeeseeksManager.getInstance().removeAllMeeseekses();
 
+		try {
+			GameEntry entry = CluedoPlugin.getGame().getCurrentGameEntry();
+			entry.setEndTime(LocalDateTime.now());
+			Instances.getGameEntryService().update(entry);
+		} catch (Exception e) {
+			Log.warning("Saving Metadata at end of game caused an exception | " + e.getClass().getSimpleName() + ": " + e.getMessage());
+		}
         //Change state
         cluedoMinigame.changeGameState(CluedoStateType.END_GAME);
     }
