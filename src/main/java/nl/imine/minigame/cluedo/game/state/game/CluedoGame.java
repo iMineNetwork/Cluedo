@@ -172,10 +172,6 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 				default:
 					murderWeapon = Material.TNT;
 			}
-			if (player.getKiller() != null) {
-				murderWeapon = player.getKiller().getInventory().getItemInMainHand().getType();
-				player.getLastDamageCause().getCause();
-			}
 			KillEntry killEntry = new KillEntry(CluedoPlugin.getGame().getCurrentGameEntry().getGameId(), player.getKiller().getUniqueId(), player.getUniqueId(), murderWeapon, LocalDateTime.now());
 			Instances.getKillEntryService().save(killEntry);
 		} catch (Exception e) {
