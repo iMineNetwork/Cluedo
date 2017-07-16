@@ -3,8 +3,15 @@ package nl.imine.minigame.cluedo.util.mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Logger;
+
+import org.bukkit.plugin.java.JavaPlugin;
+
+import nl.imine.minigame.cluedo.CluedoPlugin;
 
 public class MySQLService {
+
+	private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
 
 	private String username;
 	private String password;
@@ -39,7 +46,7 @@ public class MySQLService {
 				connect();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 		return connection;
 	}

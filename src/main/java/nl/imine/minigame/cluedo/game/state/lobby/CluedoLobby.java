@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
@@ -13,7 +14,6 @@ import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.game.state.CluedoState;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.settings.Setting;
-import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
@@ -22,8 +22,11 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class CluedoLobby extends CluedoState implements TimerHandler {
+
+    private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
 
     private CluedoMinigame cluedoMinigame;
     private int gameTimer = CluedoPlugin.getSettings().getInt(Setting.LOBBY_TIME);
@@ -37,14 +40,14 @@ public class CluedoLobby extends CluedoState implements TimerHandler {
 
     @Override
     public void handleStateChange() {
-        Log.finer("Handling state change for: " + this.getClass().getSimpleName());
+        logger.finer("Handling state change for: " + this.getClass().getSimpleName());
         this.timer = CluedoPlugin.getTimerManager().createTimer("Lobby", gameTimer, this);
         cluedoMinigame.getPlayers().forEach(this::handlePlayer);
     }
 
     @Override
     public void onTimerEnd() {
-        Log.finest("Handling timer end for: " + this.getClass().getSimpleName());
+        logger.finest("Handling timer end for: " + this.getClass().getSimpleName());
         cluedoMinigame.getPlayers().forEach(timer::hideTimer);
 
         //A game should always contain at least 3 players
@@ -115,11 +118,11 @@ public class CluedoLobby extends CluedoState implements TimerHandler {
                 Color color = Color.getHSBColor((1F / cluedoMinigame.getCluedoPlayers().size()) * i, 1, 1);
 
                 //Debug: Calculate RGB from HSV values.
-                Log.finest(String.format("(%s) HSV: R:%s, G:%s, B:%s", cluedoPlayer.getPlayer().getName(), color.getRed(), color.getGreen(), color.getBlue()));
+                logger.finest(String.format("(%s) HSV: R:%s, G:%s, B:%s", cluedoPlayer.getPlayer().getName(), color.getRed(), color.getGreen(), color.getBlue()));
                 float colorR = (cluedoPlayer.getFootprintColor().getRed() / 255F) - 1F;
                 float colorG = (cluedoPlayer.getFootprintColor().getGreen() / 255F);
                 float colorB = (cluedoPlayer.getFootprintColor().getBlue() / 255F);
-                Log.finest(String.format("(%s) RGB: R:%s, G:%s, B:%s", cluedoPlayer.getPlayer().getName(), colorR, colorG, colorB));
+                logger.finest(String.format("(%s) RGB: R:%s, G:%s, B:%s", cluedoPlayer.getPlayer().getName(), colorR, colorG, colorB));
 
                 //Set the player's footprint color
                 cluedoPlayer.setFootprintColor(color);

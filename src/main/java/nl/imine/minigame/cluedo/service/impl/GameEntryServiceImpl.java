@@ -9,12 +9,18 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
+import org.bukkit.plugin.java.JavaPlugin;
+
+import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.model.GameEntry;
 import nl.imine.minigame.cluedo.service.GameEntryService;
 import nl.imine.minigame.cluedo.util.mysql.MySQLService;
 
 public class GameEntryServiceImpl implements GameEntryService {
+
+	private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
 
 	private MySQLService mySQLService;
 
@@ -33,7 +39,7 @@ public class GameEntryServiceImpl implements GameEntryService {
 
 			preparedStatement.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 	}
 
@@ -49,7 +55,7 @@ public class GameEntryServiceImpl implements GameEntryService {
 
 			preparedStatement.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 	}
 
@@ -67,7 +73,7 @@ public class GameEntryServiceImpl implements GameEntryService {
 				entry = new GameEntry(gameId, startDateTime, endDateTime);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 		return entry;
 	}
@@ -86,7 +92,7 @@ public class GameEntryServiceImpl implements GameEntryService {
 				entries.add(new GameEntry(gameId, startDateTime, endDateTime));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 		return entries;
 	}

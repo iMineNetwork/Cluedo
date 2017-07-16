@@ -2,8 +2,15 @@ package nl.imine.minigame.cluedo.util.mysql;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Logger;
+
+import org.bukkit.plugin.java.JavaPlugin;
+
+import nl.imine.minigame.cluedo.CluedoPlugin;
 
 public class TableCreator {
+
+	private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
 
 	private MySQLService mySQLService;
 
@@ -36,7 +43,7 @@ public class TableCreator {
 			createKillEntryTable.execute();
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 	}
 }

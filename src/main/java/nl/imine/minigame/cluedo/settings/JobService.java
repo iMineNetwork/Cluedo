@@ -2,22 +2,26 @@ package nl.imine.minigame.cluedo.settings;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.state.game.jobs.AvailableJob;
-import nl.imine.minigame.cluedo.util.Log;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class JobService {
 
+    private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
+
     private static final String JOBS_PATH = "Jobs";
-    private static final Path JOBS_FILE = CluedoPlugin.getInstance().getDataFolder().toPath().resolve("jobs.yml");
+    private static final Path JOBS_FILE = JavaPlugin.getPlugin(CluedoPlugin.class).getDataFolder().toPath().resolve("jobs.yml");
 
     private int requiredJobs = CluedoPlugin.getSettings().getInt(Setting.GAME_JOB_REQUIRED_AMOUNT);
 
@@ -39,7 +43,7 @@ public class JobService {
                 fileConfiguration.save(JOBS_FILE.toFile());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
         }
     }
 
@@ -60,7 +64,7 @@ public class JobService {
                     .forEach(availableJobs::add);
 
         } catch (IOException e) {
-            Log.warning("Could not loads jobs from file | Caused by: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+            logger.warning("Could not loads jobs from file | Caused by: " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
         return availableJobs;
     }

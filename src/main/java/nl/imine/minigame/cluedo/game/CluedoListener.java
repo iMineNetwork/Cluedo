@@ -17,6 +17,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -31,7 +32,7 @@ public class CluedoListener implements Listener {
     private List<CluedoPlayer> detectiveTimeout = new ArrayList<>();
 
     public static void init() {
-        Bukkit.getServer().getPluginManager().registerEvents(new CluedoListener(), CluedoPlugin.getInstance());
+        Bukkit.getServer().getPluginManager().registerEvents(new CluedoListener(), JavaPlugin.getPlugin(CluedoPlugin.class));
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -131,7 +132,7 @@ public class CluedoListener implements Listener {
                     killerPlayer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 5, 1, false, false), true);
                     detectiveTimeout.add(killerPlayer);
                     //Remove him from timeout after 30 seconds (20 ticks == 1 second)
-                    Bukkit.getScheduler().runTaskLater(CluedoPlugin.getInstance(), () -> detectiveTimeout.remove(killerPlayer), 30 * 20);
+                    Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(CluedoPlugin.class), () -> detectiveTimeout.remove(killerPlayer), 30 * 20);
                 }
             }
         }
@@ -366,7 +367,7 @@ public class CluedoListener implements Listener {
         }
 
         if (pice.getItem().getType() == Material.POTION) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(CluedoPlugin.getInstance(), () -> { //delay to allow the bottle to be placed into the inventory
+            Bukkit.getScheduler().scheduleSyncDelayedTask(JavaPlugin.getPlugin(CluedoPlugin.class), () -> { //delay to allow the bottle to be placed into the inventory
                 ItemStack bottle = new ItemStack(Material.GLASS_BOTTLE);
                 bottle.setAmount(1);
                 pice.getPlayer().getInventory().remove(bottle);

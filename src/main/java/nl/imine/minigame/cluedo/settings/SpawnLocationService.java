@@ -2,9 +2,10 @@ package nl.imine.minigame.cluedo.settings;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.state.game.CluedoSpawn;
-import nl.imine.minigame.cluedo.util.Log;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,8 +16,10 @@ import java.util.logging.Logger;
 
 public class SpawnLocationService {
 
+    private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
+
     private static final String SPAWNS_PATH = "Spawns";
-    private static final Path SPAWNS_FILE = CluedoPlugin.getInstance().getDataFolder().toPath().resolve("spawns.yml");
+    private static final Path SPAWNS_FILE = JavaPlugin.getPlugin(CluedoPlugin.class).getDataFolder().toPath().resolve("spawns.yml");
 
     public SpawnLocationService() {
     }
@@ -33,7 +36,7 @@ public class SpawnLocationService {
                 fileConfiguration.save(SPAWNS_FILE.toFile());
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
         }
     }
 
@@ -54,7 +57,7 @@ public class SpawnLocationService {
                     .forEach(cluedoSpawns::add);
 
         } catch (IOException e) {
-            Log.warning("Could not loads spawns from file | Caused by: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+            logger.warning("Could not loads spawns from file | Caused by: " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
         return cluedoSpawns;
     }

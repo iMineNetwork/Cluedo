@@ -7,7 +7,6 @@ import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.settings.JobService;
 import nl.imine.minigame.cluedo.settings.Setting;
-import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.timer.Timer;
 
 import org.bukkit.Material;
@@ -19,9 +18,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
+
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class JobManager {
+
+    private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
 
     private static JobManager jobManager;
 
@@ -68,10 +72,10 @@ public class JobManager {
         player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0F, 1.0F);
 
         if (player.getCompletedJobs() < CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT)) {
-            Log.info(player.getPlayer().getDisplayName() + " has completed a Job. " + player.getCompletedJobs() + "/" + CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT));
+            logger.info(player.getPlayer().getDisplayName() + " has completed a Job. " + player.getCompletedJobs() + "/" + CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT));
             //Assign a new job
         } else {
-            Log.info(player.getPlayer().getDisplayName() + " has finished all of their Jobs. " + player.getCompletedJobs() + "/" + CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT));
+            logger.info(player.getPlayer().getDisplayName() + " has finished all of their Jobs. " + player.getCompletedJobs() + "/" + CluedoPlugin.getSettings().getInt(GAME_JOB_REQUIRED_AMOUNT));
             //Give the player a bonus for completing the jobs.
             //TODO Upgrade System for roles?
 

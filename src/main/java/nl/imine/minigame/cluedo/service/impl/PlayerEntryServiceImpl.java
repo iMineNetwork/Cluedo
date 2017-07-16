@@ -6,13 +6,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
+import org.bukkit.plugin.java.JavaPlugin;
+
+import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.model.PlayerEntry;
 import nl.imine.minigame.cluedo.service.PlayerEntryService;
 import nl.imine.minigame.cluedo.util.mysql.MySQLService;
 
 public class PlayerEntryServiceImpl implements PlayerEntryService {
+
+	private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
 
 	private MySQLService mySQLService;
 
@@ -31,7 +37,7 @@ public class PlayerEntryServiceImpl implements PlayerEntryService {
 
 			preparedStatement.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());
 		}
 	}
 
@@ -46,7 +52,7 @@ public class PlayerEntryServiceImpl implements PlayerEntryService {
 
 			preparedStatement.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 	}
 
@@ -65,7 +71,7 @@ public class PlayerEntryServiceImpl implements PlayerEntryService {
 				entries.add(new PlayerEntry(gameId, playerId, roleType));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 		return entries;
 	}
@@ -84,7 +90,7 @@ public class PlayerEntryServiceImpl implements PlayerEntryService {
 				entries.add(new PlayerEntry(gameId, playerId, roleType));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 		return entries;
 	}
@@ -103,7 +109,7 @@ public class PlayerEntryServiceImpl implements PlayerEntryService {
 				entry = new PlayerEntry(gameId, playerId, roleType);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 		return entry;
 	}

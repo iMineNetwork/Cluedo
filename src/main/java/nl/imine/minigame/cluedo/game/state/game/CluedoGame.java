@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import org.bukkit.Bukkit;
@@ -13,6 +14,7 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -29,7 +31,6 @@ import nl.imine.minigame.cluedo.model.KillEntry;
 import nl.imine.minigame.cluedo.model.PlayerEntry;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.Instances;
-import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
@@ -37,7 +38,9 @@ import org.bukkit.Material;
 
 public class CluedoGame extends CluedoState implements TimerHandler {
 
-    //Dependencies
+	private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
+
+	//Dependencies
     private CluedoMinigame cluedoMinigame;
 
     //Settings
@@ -61,7 +64,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 
     @Override
     public void handleStateChange() {
-        Log.finer("Handling state change for: " + this.getClass().getSimpleName());
+        logger.finer("Handling state change for: " + this.getClass().getSimpleName());
 
         this.timer = CluedoPlugin.getTimerManager().createTimer(CluedoPlugin.getSettings().getString(Setting.GAME_NAME), gameTimer, this);
 
@@ -73,7 +76,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
         invisibleNametagTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
         invisibleNametagTeam.setCanSeeFriendlyInvisibles(false);
 
-        footprintHandler = Bukkit.getScheduler().runTaskTimer(CluedoPlugin.getInstance(), new FootprintHandler(), 0, 5);
+        footprintHandler = Bukkit.getScheduler().runTaskTimer(JavaPlugin.getPlugin(CluedoPlugin.class), new FootprintHandler(), 0, 5);
         cluedoMinigame.getPlayers().forEach(this::handlePlayer);
 
         JobManager.getInstance().startJobSystem();
@@ -88,13 +91,13 @@ public class CluedoGame extends CluedoState implements TimerHandler {
                 Instances.getPlayerEntryService().save(new PlayerEntry(gameEntry.getGameId(), cluedoPlayer.getPlayer().getUniqueId(), cluedoPlayer.getRole().getRoleType()));
             });
         } catch (Exception e) {
-            Log.warning("Saving Metadata at start of game caused an exception | " + e.getClass().getSimpleName() + ": " + e.getMessage());
+            logger.warning("Saving Metadata at start of game caused an exception | " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
 
     @Override
     public void onTimerEnd() {
-        Log.finest("Handling timer end for: " + this.getClass().getSimpleName());
+        logger.finest("Handling timer end for: " + this.getClass().getSimpleName());
         endGame(GameResult.STALEMATE);
     }
 
@@ -148,7 +151,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
             endGame(result);
         }
 
-        Bukkit.getScheduler().runTaskLater(CluedoPlugin.getInstance(), ()
+        Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(CluedoPlugin.class), ()
                 -> player.teleport(respawnLocation), 1L);
 
 		try {
@@ -175,7 +178,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 			KillEntry killEntry = new KillEntry(CluedoPlugin.getGame().getCurrentGameEntry().getGameId(), player.getKiller().getUniqueId(), player.getUniqueId(), murderWeapon, LocalDateTime.now());
 			Instances.getKillEntryService().save(killEntry);
 		} catch (Exception e) {
-			Log.warning("Saving Metadata at death in game caused an exception | " + e.getClass().getSimpleName() + ": " + e.getMessage());
+			logger.warning("Saving Metadata at death in game caused an exception | " + e.getClass().getSimpleName() + ": " + e.getMessage());
 		}
 
     }
@@ -295,7 +298,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 			entry.setEndTime(LocalDateTime.now());
 			Instances.getGameEntryService().update(entry);
 		} catch (Exception e) {
-			Log.warning("Saving Metadata at end of game caused an exception | " + e.getClass().getSimpleName() + ": " + e.getMessage());
+			logger.warning("Saving Metadata at end of game caused an exception | " + e.getClass().getSimpleName() + ": " + e.getMessage());
 		}
 
         //Change state

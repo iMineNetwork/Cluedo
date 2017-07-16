@@ -6,12 +6,13 @@ import java.nio.file.Path;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import org.bukkit.plugin.java.JavaPlugin;
+
 import nl.imine.minigame.cluedo.CluedoPlugin;
 
 public class MySQLConfig {
 
-	private Logger logger = CluedoPlugin.getInstance().getLogger();
-
+	private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
 
 	private String jdbcUrl = "UNDEFINED";
 	private String user = "UNDEFINED";
@@ -19,7 +20,7 @@ public class MySQLConfig {
 
 	public boolean loadConfigFile() {
 		try {
-			Path dir = CluedoPlugin.getInstance().getDataFolder().toPath();
+			Path dir = JavaPlugin.getPlugin(CluedoPlugin.class).getDataFolder().toPath();
 			logger.info("Datefolder: " + dir);
 			if (!Files.exists(dir) || !Files.isDirectory(dir)) {
 				Files.createDirectory(dir);

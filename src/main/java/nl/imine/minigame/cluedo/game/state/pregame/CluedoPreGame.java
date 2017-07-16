@@ -1,9 +1,12 @@
 package nl.imine.minigame.cluedo.game.state.pregame;
 
+import java.util.logging.Logger;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -13,12 +16,13 @@ import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.state.CluedoState;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.settings.Setting;
-import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
 
 public class CluedoPreGame extends CluedoState implements TimerHandler {
+
+	private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
 
 	private CluedoMinigame cluedoMinigame;
 	private int gameTimer = CluedoPlugin.getSettings().getInt(Setting.PRE_GAME_TIME);
@@ -32,14 +36,14 @@ public class CluedoPreGame extends CluedoState implements TimerHandler {
 
 	@Override
 	public void handleStateChange() {
-		Log.finer("Handling state change for: " + this.getClass().getSimpleName());
+		logger.finer("Handling state change for: " + this.getClass().getSimpleName());
 		this.timer = CluedoPlugin.getTimerManager().createTimer("Preparation", gameTimer, this);
 		cluedoMinigame.getPlayers().forEach(this::handlePlayer);
 	}
 
 	@Override
 	public void onTimerEnd() {
-		Log.finest("Handling timer end for: " + this.getClass().getSimpleName());
+		logger.finest("Handling timer end for: " + this.getClass().getSimpleName());
 		cluedoMinigame.changeGameState(CluedoStateType.IN_GAME);
 
 		//Reveal all players to each other

@@ -1,5 +1,7 @@
 package nl.imine.minigame.cluedo.game.state.endgame;
 
+import java.util.logging.Logger;
+
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.CluedoMinigame;
 import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
@@ -9,15 +11,17 @@ import nl.imine.minigame.cluedo.game.state.CluedoState;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import nl.imine.minigame.cluedo.settings.Setting;
-import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class CluedoEndGame extends CluedoState implements TimerHandler {
+
+    private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
 
     private Location respawnLocation = CluedoPlugin.getSettings().getLocation(Setting.LOBBY_SPAWN);
 
@@ -32,7 +36,7 @@ public class CluedoEndGame extends CluedoState implements TimerHandler {
 
     @Override
     public void handleStateChange() {
-        Log.finer("Handling state change for: " + this.getClass().getSimpleName());
+        logger.finer("Handling state change for: " + this.getClass().getSimpleName());
         this.timer = CluedoPlugin.getTimerManager().createTimer(CluedoPlugin.getSettings().getString(Setting.GAME_NAME), gameTimer, this);
         cluedoMinigame.getPlayers().forEach(this::handlePlayer);
         JobManager.getInstance().resetJobs();
@@ -40,7 +44,7 @@ public class CluedoEndGame extends CluedoState implements TimerHandler {
 
     @Override
     public void onTimerEnd() {
-        Log.finest("Handling timer end for: " + this.getClass().getSimpleName());
+        logger.finest("Handling timer end for: " + this.getClass().getSimpleName());
         cluedoMinigame.getPlayers().forEach(timer::hideTimer);
         MeeseeksManager.getInstance().removeAllMeeseekses();
         cluedoMinigame.changeGameState(CluedoStateType.LOBBY);

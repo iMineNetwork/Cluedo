@@ -9,14 +9,19 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.bukkit.Material;
+import org.bukkit.plugin.java.JavaPlugin;
 
+import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.model.KillEntry;
 import nl.imine.minigame.cluedo.service.KillEntryService;
 import nl.imine.minigame.cluedo.util.mysql.MySQLService;
 
 public class KillEntryServiceImpl implements KillEntryService {
+
+	private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
 
 	private MySQLService mySQLService;
 
@@ -37,7 +42,7 @@ public class KillEntryServiceImpl implements KillEntryService {
 
 			preparedStatement.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 	}
 
@@ -56,7 +61,7 @@ public class KillEntryServiceImpl implements KillEntryService {
 
 			preparedStatement.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 	}
 
@@ -76,7 +81,7 @@ public class KillEntryServiceImpl implements KillEntryService {
 				entry = new KillEntry(gameId, killerId, victimId, material, localDateTime);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 		return entry;
 	}
@@ -97,7 +102,7 @@ public class KillEntryServiceImpl implements KillEntryService {
 				entries.add(new KillEntry(gameId, killerId, victimId, material, localDateTime));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 		return entries;
 	}
@@ -118,7 +123,7 @@ public class KillEntryServiceImpl implements KillEntryService {
 				entries.add(new KillEntry(gameId, killerId, victimId, material, localDateTime));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 		return entries;
 	}
@@ -139,7 +144,7 @@ public class KillEntryServiceImpl implements KillEntryService {
 				entries.add(new KillEntry(gameId, killerId, victimId, material, localDateTime));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.warning(e.getClass().getSimpleName() + ": " + e.getMessage());;
 		}
 		return entries;
 	}

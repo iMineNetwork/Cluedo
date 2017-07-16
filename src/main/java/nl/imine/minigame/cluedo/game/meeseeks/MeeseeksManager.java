@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  *
@@ -53,7 +54,7 @@ public class MeeseeksManager {
         }
         Zombie zombie = loc.getWorld().spawn(loc, Zombie.class);
 
-        int meeseeksID = Bukkit.getScheduler().scheduleSyncRepeatingTask(CluedoPlugin.getPlugin(), () -> {
+        int meeseeksID = Bukkit.getScheduler().scheduleSyncRepeatingTask(JavaPlugin.getPlugin(CluedoPlugin.class), () -> {
             if (player.getLocation().distance(zombie.getLocation()) > TARGET_DISTANCE && player.getLocation().distance(zombie.getLocation()) < TELEPORT_DISTANCE) {
                 if (zombie.getTarget() != player) {
                     zombie.setTarget(player);

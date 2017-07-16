@@ -29,7 +29,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class CluedoPlugin extends JavaPlugin {
 
-    private static Plugin plugin;
     private static CluedoMinigame game;
     private static Settings settings;
     private static TimerManager timerManager;
@@ -37,7 +36,6 @@ public class CluedoPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        CluedoPlugin.plugin = this;
 
         //Initialize Settings
         CluedoPlugin.settings = new Settings(this.getConfig());
@@ -101,18 +99,9 @@ public class CluedoPlugin extends JavaPlugin {
         MinigameManager.registerMinigame(game);
     }
 
-    public static Plugin getPlugin() {
-        return plugin;
-    }
-
     @Override
     public void onDisable() {
-        CluedoPlugin.plugin = null;
         MeeseeksManager.getInstance().removeAllMeeseekses();
-    }
-
-    public static Plugin getInstance() {
-        return plugin;
     }
 
     public static CluedoMinigame getGame() {

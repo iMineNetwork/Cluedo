@@ -13,18 +13,20 @@ import nl.imine.minigame.cluedo.game.state.lobby.CluedoLobby;
 import nl.imine.minigame.cluedo.game.state.pregame.CluedoPreGame;
 import nl.imine.minigame.cluedo.model.GameEntry;
 import nl.imine.minigame.cluedo.settings.Setting;
-import nl.imine.minigame.cluedo.util.Log;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class CluedoMinigame extends Minigame {
+
+    private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
 
     private GameEntry currentGameEntry;
     private ArrayList<CluedoPlayer> players = new ArrayList<>();
@@ -88,7 +90,7 @@ public class CluedoMinigame extends Minigame {
     }
 
     public void changeGameState(CluedoStateType type) {
-        Log.fine("Changing game state to: " + type.name());
+        logger.fine("Changing game state to: " + type.name());
         switch (type) {
             case PRE_GAME:
                 gameState = new CluedoPreGame(this);
