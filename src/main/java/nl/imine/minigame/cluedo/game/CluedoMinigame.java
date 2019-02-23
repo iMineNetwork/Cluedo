@@ -97,7 +97,9 @@ public class CluedoMinigame {
     }
 
     public void changeGameState(CluedoStateType type) {
-        gameState.handleStateEnd();
+        if(gameState != null) {
+            gameState.handleStateEnd();
+        }
         logger.fine("Changing game state to: " + type.name());
         switch (type) {
             case PRE_GAME:
