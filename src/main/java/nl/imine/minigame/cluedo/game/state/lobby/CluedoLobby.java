@@ -55,6 +55,7 @@ public class CluedoLobby extends CluedoState implements TimerHandler {
     @Override
     public void onTimerEnd() {
         logger.finest("Handling timer end for: " + this.getClass().getSimpleName());
+        cluedoMinigame.getPlayers().forEach(this.timer::hideTimer);
 
         //A game should always contain at least 2 players
         if (cluedoMinigame.getCluedoPlayers().size() < 2) {
