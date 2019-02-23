@@ -1,10 +1,8 @@
 package nl.imine.minigame.cluedo.game.state;
 
-import java.util.ArrayList;
+import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public abstract class CluedoState {
 
@@ -15,8 +13,10 @@ public abstract class CluedoState {
     }
 
     public abstract void handleStateChange();
+    public abstract void handleStateEnd();
     public abstract CluedoStateType getState();
-    public abstract void handlePlayer(Player player);
-    public abstract void handlePlayerDeath(Player player);
+    public abstract void handlePlayer(CluedoPlayer cluedoPlayer);
+    public abstract void handlePlayerDeath(CluedoPlayer cluedoPlayer);
+    public abstract void handlePlayerLeave(CluedoPlayer cluedoPlayer);
     public abstract Location getRespawnLocation();
 }

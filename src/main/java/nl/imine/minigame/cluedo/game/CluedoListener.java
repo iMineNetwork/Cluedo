@@ -3,6 +3,7 @@ package nl.imine.minigame.cluedo.game;
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.player.role.RoleInteractPermission;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
+import nl.imine.minigame.cluedo.game.state.game.CluedoGame;
 import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.*;
@@ -23,7 +24,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
-import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
+import java.util.Optional;
+
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -70,36 +72,25 @@ public class CluedoListener implements Listener {
         }
 
         //Get Cluedo player object
-        CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
+        CluedoPlugin.getGame().getCluedoPlayers().stream()
                 .filter(cPlayer -> cPlayer.getPlayer().equals(player))
-                .findFirst().orElse(null);
-
-        //Handle item drops
-        if (cluedoPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)) {
-            Item item = evt.getPlayer().getLocation().getWorld()
-                    .dropItem(evt.getPlayer().getLocation(), new ItemStack(Material.BOW));
-            item.setInvulnerable(true);
-        }
-
-        //Don't drop the inventory
-        CluedoPlugin.getGame().getGameState().handlePlayerDeath(player);
-
-        CluedoPlugin.getGame().getCluedoPlayers().remove(cluedoPlayer);
+                .findFirst().ifPresent(CluedoPlugin.getGame()::onLeave);
     }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent evt) {
         Player player = evt.getEntity();
 
-        //Make sure the player is actually participating in this minigame
-        if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
+        //Get Cluedo player object
+        Optional<CluedoPlayer> optionalCluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
+                .filter(cPlayer -> cPlayer.getPlayer().equals(player))
+                .findFirst();
+
+        if (!optionalCluedoPlayer.isPresent()) {
             return;
         }
 
-        //Get Cluedo player object
-        CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
-                .filter(cPlayer -> cPlayer.getPlayer().equals(player))
-                .findFirst().orElse(null);
+        CluedoPlayer cluedoPlayer = optionalCluedoPlayer.get();
 
         //Handle item drops
         if (cluedoPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)) {
@@ -139,7 +130,7 @@ public class CluedoListener implements Listener {
 
         //Don't drop the inventory
         evt.getDrops().clear();
-        CluedoPlugin.getGame().getGameState().handlePlayerDeath(player);
+        CluedoPlugin.getGame().getGameState().handlePlayerDeath(cluedoPlayer);
         player.spigot().respawn();
 //        player.teleport(CluedoPlugin.getGameId().getGameState().getRespawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
@@ -157,19 +148,24 @@ public class CluedoListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerItemPickup(PlayerPickupItemEvent evt) {
-        Player player = evt.getPlayer();
-
-        //Make sure the player is actually participating in this minigame
-        if (!CluedoPlugin.getGame().getPlayers().contains(player)) {
+    public void onPlayerItemPickup(EntityPickupItemEvent evt) {
+        if (!(evt.getEntity() instanceof Player)) {
             return;
         }
 
-        //Get Cluedo player object
-        CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
-                .filter(cPlayer -> cPlayer.getPlayer().equals(player))
-                .findFirst().orElse(null);
+        Player player = (Player) evt.getEntity();
 
+        //Get Cluedo player object
+        Optional<CluedoPlayer> optionalCluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
+                .filter(cPlayer -> cPlayer.getPlayer().equals(player))
+                .findFirst();
+
+        //Make sure the player is actually participating in this minigame
+        if (!optionalCluedoPlayer.isPresent()) {
+            return;
+        }
+
+        CluedoPlayer cluedoPlayer = optionalCluedoPlayer.get();
         if (evt.getItem().getItemStack().getType().equals(Material.BOW)) {
             //Check if the player is a bystander without a weapon
             if (cluedoPlayer.getRole().getRoleType().equals(RoleType.BYSTANDER) && !detectiveTimeout.contains(cluedoPlayer)) {
@@ -286,31 +282,6 @@ public class CluedoListener implements Listener {
     }
 
     @EventHandler
-    private void onCarrotOnAStickInteract(PlayerInteractEvent evt) {
-        //Make sure the player is actually participating in this minigame
-        if (!CluedoPlugin.getGame().getPlayers().contains(evt.getPlayer())) {
-            return;
-        }
-
-        ItemStack mainHandItem = evt.getPlayer().getInventory().getItemInMainHand();
-        ItemStack offhandItem = evt.getPlayer().getInventory().getItemInOffHand();
-        if ((mainHandItem.getType().equals(Material.CARROT_STICK) && mainHandItem.getDurability() == 1)) {
-
-            mainHandItem.setAmount(mainHandItem.getAmount() - 1);
-            evt.getPlayer().getInventory().setItemInMainHand(mainHandItem);
-            evt.setCancelled(true);
-            MeeseeksManager.getInstance().createMeeseeks(evt.getPlayer(), evt.getPlayer().getLocation());
-
-        } else if ((offhandItem.getType().equals(Material.CARROT_STICK) && offhandItem.getDurability() == 1)) {
-            offhandItem.setAmount(offhandItem.getAmount() - 1);
-            evt.getPlayer().getInventory().setItemInOffHand(offhandItem);
-            evt.setCancelled(true);
-            MeeseeksManager.getInstance().createMeeseeks(evt.getPlayer(), evt.getPlayer().getLocation());
-        }
-
-    }
-
-    @EventHandler
     private void onEntityBlockInteract(EntityInteractEvent evt) {
         if (!evt.getEntity().getWorld().equals(CluedoPlugin.getGame().getCluedoWorld())) {
             return;
@@ -422,67 +393,6 @@ public class CluedoListener implements Listener {
     }
 
     @EventHandler
-    public void onEntityTarget(EntityTargetEvent ete) {
-
-        if (!(ete.getEntityType() == EntityType.ZOMBIE)) {
-            return;
-        }
-
-        Zombie zombie = (Zombie) ete.getEntity();
-
-        if (!MeeseeksManager.getInstance().isMeeseeksZombie(zombie)) {
-            return;
-        }
-
-        if (!(ete.getTarget() instanceof Player) || MeeseeksManager.getInstance().getMeeseeksOwner(zombie) != (Player) ete.getTarget()) {
-            ete.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onZombieDamage(EntityDamageByEntityEvent evt) {
-        //a player damaged by a zombie
-        if (!(evt.getDamager() instanceof Zombie)) {
-            return;
-        }
-        if (!(evt.getEntity() instanceof Player)) {
-            return;
-        }
-
-        Player player = (Player) evt.getEntity();
-        Zombie zombie = (Zombie) evt.getDamager();
-
-        if (!MeeseeksManager.getInstance().isMeeseeksZombie(zombie)) {
-            return;
-        }
-
-        if (!(player.getLocation().distance(zombie.getLocation()) >= 10)) {
-            evt.setCancelled(true);
-            zombie.setTarget(null);
-        }
-
-    }
-
-    @EventHandler
-    public void onMeeseekDeath(EntityDeathEvent evt) {
-        if (!(evt.getEntity() instanceof Zombie)) {
-            return;
-        }
-
-        Zombie zombie = (Zombie) evt.getEntity();
-
-        if (evt.getDrops() != null) {
-            evt.getDrops().clear();
-        }
-
-        if (!MeeseeksManager.getInstance().isMeeseeksZombie(zombie)) {
-            return;
-        }
-
-        MeeseeksManager.getInstance().remove(zombie);
-    }
-
-    @EventHandler
     public void onInventoryMove(InventoryClickEvent evt) {
         if (!(evt.getWhoClicked() instanceof Player)) {
             return;
@@ -511,6 +421,24 @@ public class CluedoListener implements Listener {
         }
 
         evt.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerTeleport(PlayerTeleportEvent evt) {
+        //Only care about teleports FROM the cluedo world
+        if (!evt.getFrom().getWorld().equals(CluedoPlugin.getGame().getCluedoWorld())) {
+            return;
+        }
+
+        //Teleports TO the cluedo world are fine
+        if (evt.getTo().getWorld().equals(CluedoPlugin.getGame().getCluedoWorld())) {
+            return;
+        }
+
+        CluedoPlugin.getGame().getCluedoPlayers().stream()
+                .filter(cPlayer -> cPlayer.getPlayer().equals(evt.getPlayer()))
+                .findFirst()
+                .ifPresent(CluedoPlugin.getGame()::onLeave);
     }
 
 }

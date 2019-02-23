@@ -2,7 +2,6 @@ package nl.imine.minigame.cluedo.game.player.role.roles;
 
 import java.util.ArrayList;
 import java.util.List;
-import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -34,18 +33,19 @@ public class MurderRole extends CluedoRole {
         player.setGameMode(GameMode.ADVENTURE);
 
         //Create knife itemstack
-        int kills = Bukkit.getScoreboardManager().getMainScoreboard().getObjective("playerkills").getScore(player.getDisplayName()).getScore();
-        ItemStack knife;
-
-        if (kills >= 25 && kills < 100) {
-            knife = new ItemStack(Material.STONE_SWORD);
-        } else if (kills >= 100 && kills < 500) {
-            knife = new ItemStack(Material.IRON_SWORD);
-        } else if (kills >= 500) {
-            knife = new ItemStack(Material.DIAMOND_SWORD);
-        } else {
-            knife = new ItemStack(Material.WOOD_SWORD);
-        }
+//        int kills = Bukkit.getScoreboardManager().getMainScoreboard().getObjective("playerkills").getScore(player.getDisplayName()).getScore();
+//        ItemStack knife;
+//
+//        if (kills >= 25 && kills < 100) {
+//            knife = new ItemStack(Material.STONE_SWORD);
+//        } else if (kills >= 100 && kills < 500) {
+//            knife = new ItemStack(Material.IRON_SWORD);
+//        } else if (kills >= 500) {
+//            knife = new ItemStack(Material.DIAMOND_SWORD);
+//        } else {
+//            knife = new ItemStack(Material.WOODEN_SWORD);
+//        }
+        ItemStack knife = new ItemStack(Material.WOODEN_SWORD);
 
         ItemMeta knifeMeta = knife.getItemMeta();
         knifeMeta.setUnbreakable(true);
@@ -71,7 +71,7 @@ public class MurderRole extends CluedoRole {
         damagePotionMeta.setLore(lore);
         damagePotion.setItemMeta(damagePotionMeta);
 
-        ItemStack redDye = new ItemStack(Material.INK_SACK, 1, (short) 1);
+        ItemStack redDye = new ItemStack(Material.ROSE_RED, 1);
         ItemMeta redDyeMeta = redDye.getItemMeta();
         redDyeMeta.setDisplayName(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Murderer");
         redDye.setItemMeta(redDyeMeta);
@@ -82,10 +82,5 @@ public class MurderRole extends CluedoRole {
         player.getInventory().setItem(2, invisibilityPotion);
         player.getInventory().setItem(3, damagePotion);
         player.getInventory().setItem(17, redDye);
-
-        if (player.hasPermission("imine.cluedo.pet")) {
-            player.getInventory().setItem(8, MeeseeksManager.getInstance().getMeeseeksSpawningItem());
-        }
-
     }
 }

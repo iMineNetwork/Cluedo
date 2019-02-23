@@ -1,10 +1,7 @@
 package nl.imine.minigame.cluedo.game.state.endgame;
 
-import java.util.logging.Logger;
-
 import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.CluedoMinigame;
-import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.game.state.CluedoState;
@@ -14,10 +11,10 @@ import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
-
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Logger;
 
 public class CluedoEndGame extends CluedoState implements TimerHandler {
 
@@ -38,15 +35,20 @@ public class CluedoEndGame extends CluedoState implements TimerHandler {
     public void handleStateChange() {
         logger.finer("Handling state change for: " + this.getClass().getSimpleName());
         this.timer = CluedoPlugin.getTimerManager().createTimer(CluedoPlugin.getSettings().getString(Setting.GAME_NAME), gameTimer, this);
-        cluedoMinigame.getPlayers().forEach(this::handlePlayer);
+        cluedoMinigame.getCluedoPlayers().forEach(this::handlePlayer);
         JobManager.getInstance().resetJobs();
+    }
+
+    @Override
+    public void handleStateEnd() {
+        logger.finer("Handling end change for: " + this.getClass().getSimpleName());
+        this.timer.setStopped(true);
+        cluedoMinigame.getPlayers().forEach(this.timer::hideTimer);
     }
 
     @Override
     public void onTimerEnd() {
         logger.finest("Handling timer end for: " + this.getClass().getSimpleName());
-        cluedoMinigame.getPlayers().forEach(timer::hideTimer);
-        MeeseeksManager.getInstance().removeAllMeeseekses();
         cluedoMinigame.changeGameState(CluedoStateType.LOBBY);
     }
 
@@ -56,15 +58,9 @@ public class CluedoEndGame extends CluedoState implements TimerHandler {
     }
 
     @Override
-    public void handlePlayer(Player player) {
-        PlayerUtil.cleanPlayer(player, false);
-        timer.showTimer(player);
-
-        //Find the player's game object.
-        CluedoPlayer cluedoPlayer = cluedoMinigame.getCluedoPlayers().stream()
-                .filter(registeredPlayer -> registeredPlayer.getPlayer().equals(player))
-                .findAny()
-                .orElse(null);
+    public void handlePlayer(CluedoPlayer cluedoPlayer) {
+        PlayerUtil.cleanPlayer(cluedoPlayer.getPlayer(), false);
+        timer.showTimer(cluedoPlayer.getPlayer());
 
         //Clear the job data of this player
         if (cluedoPlayer.getActiveJob() != null) {
@@ -75,23 +71,24 @@ public class CluedoEndGame extends CluedoState implements TimerHandler {
     }
 
     @Override
-    public void handlePlayerDeath(Player player) {
+    public void handlePlayerDeath(CluedoPlayer cluedoPlayer) {
         //Clear the player of his items and put him back in the lobby.
-        PlayerUtil.cleanPlayer(player, true);
-
-        //Find the player's game object.
-        CluedoPlayer cluedoPlayer = cluedoMinigame.getCluedoPlayers().stream()
-                .filter(registeredPlayer -> registeredPlayer.getPlayer().equals(player))
-                .findAny()
-                .orElse(null);
+        PlayerUtil.cleanPlayer(cluedoPlayer.getPlayer(), true);
 
         cluedoPlayer.setRole(RoleType.SPECTATOR);
-
-        player.teleport(respawnLocation);
+        cluedoPlayer.getPlayer().teleport(respawnLocation);
     }
 
     @Override
     public Location getRespawnLocation() {
         return respawnLocation;
+    }
+
+    @Override
+    public void handlePlayerLeave(CluedoPlayer cluedoPlayer) {
+        timer.hideTimer(cluedoPlayer.getPlayer());
+
+        //Clear the player of their items
+        PlayerUtil.cleanPlayer(cluedoPlayer.getPlayer(), true);
     }
 }

@@ -1,13 +1,12 @@
-name: CluedoPlugin
+name: Cluedo
 main: nl.imine.minigame.cluedo.CluedoPlugin
 version: 1.0
-depend: [iMineAPI, Minigame-Server]
+api-version: 1.13
 
 commands:
-  removemeeseeks:
-    description: remove meeseeks
-    usage: /removemeeseeks [player1] [player2]...
-    aliases: [rmeeseeks, removemeeseeks, weallwannadiewearemrmeeseeks, zoudeserverallemistermeeseekskunnenverwijderenalstublieft, removem]
+  cluedo:
+    description: Join or leave, your call....
+    usage: /cluedo
   murderer:
     description: make the player who executes this command a murderer
     usage: /murderer [player1] [player2]...

@@ -1,5 +1,6 @@
 package nl.imine.minigame.cluedo.settings;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,7 +51,7 @@ public class Settings {
 
         //Role block interactions
         Map<String, List<String>> defaults = new HashMap<>();
-        defaults.put(Material.WOOD_BUTTON.toString(), Collections.singletonList(RoleType.MURDERER.toString()));
+        defaults.put(Material.OAK_BUTTON.toString(), Collections.singletonList(RoleType.MURDERER.toString()));
         configuration.addDefault(Setting.ROLE_INTERACTION_LIST, defaults);
 
         configuration.options().copyDefaults(true);

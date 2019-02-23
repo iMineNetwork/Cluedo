@@ -40,19 +40,19 @@ public class CommandDetective implements CommandExecutor {
             return true;
         }
 
-        if (player.getInventory().contains(new ItemStack(Material.INK_SACK, 1, (short) 4))) {
+        if (player.getInventory().contains(new ItemStack(Material.LAPIS_LAZULI, 1))) {
             player.sendMessage(ChatColor.RED + "You're already going to spawn as a detective");
             return true;
         }
 
-        if (player.getInventory().contains(new ItemStack(Material.INK_SACK, 1, (short) 1))) {
+        if (player.getInventory().contains(new ItemStack(Material.ROSE_RED, 1))) {
             player.sendMessage(ChatColor.RED + "We're sorry, but the murderer cannot be a detective at the same time");
             return true;
         }
 
         if (player.getLevel() >= 10) {
             player.setLevel(player.getLevel() - 10);
-            ItemStack lapis = new ItemStack(Material.INK_SACK, 1, (short) 4);
+            ItemStack lapis = new ItemStack(Material.INK_SAC, 1, (short) 4);
 
             ItemMeta lapisMeta = lapis.getItemMeta();
 

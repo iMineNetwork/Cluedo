@@ -1,12 +1,10 @@
 package nl.imine.minigame.cluedo;
 
-import nl.imine.minigame.MinigameManager;
 import nl.imine.minigame.cluedo.command.CommandDetective;
 import nl.imine.minigame.cluedo.command.CommandMurderer;
-import nl.imine.minigame.cluedo.command.RemoveMeeseeksCommand;
-import nl.imine.minigame.cluedo.game.CluedoMinigame;
+import nl.imine.minigame.cluedo.command.CommandParticipate;
 import nl.imine.minigame.cluedo.game.CluedoListener;
-import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
+import nl.imine.minigame.cluedo.game.CluedoMinigame;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.game.state.game.CluedoSpawn;
 import nl.imine.minigame.cluedo.game.state.game.jobs.AvailableJob;
@@ -14,17 +12,9 @@ import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.settings.Settings;
 import nl.imine.minigame.cluedo.settings.SpawnLocationService;
-import nl.imine.minigame.cluedo.util.Instances;
-import nl.imine.minigame.cluedo.util.mysql.MySQLConfig;
-import nl.imine.minigame.cluedo.util.mysql.MySQLService;
-import nl.imine.minigame.cluedo.util.mysql.TableCreator;
 import nl.imine.minigame.timer.TimerManager;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
-import org.bukkit.WorldType;
+import org.bukkit.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class CluedoPlugin extends JavaPlugin {
@@ -38,23 +28,13 @@ public class CluedoPlugin extends JavaPlugin {
     public void onEnable() {
 
         //Initialize Settings
-        CluedoPlugin.settings = new Settings(this.getConfig());
-        setUpConfig();
-
-        MySQLService mySQLService = initDatabase();
-        TableCreator tableCreator = new TableCreator(mySQLService);
-        tableCreator.createTables();
-        Instances.initInstances(mySQLService);
+        settings = new Settings(this.getConfig());
+        settings.createDefaults();
+        this.saveConfig();
 
         //Initialize Timer Manager
-        CluedoPlugin.timerManager = new TimerManager();
-        CluedoPlugin.timerManager.init(this);
-
-        this.getCommand("removemeeseeks").setExecutor(new RemoveMeeseeksCommand());
-        this.getCommand("removemeeseeks").setTabCompleter(new RemoveMeeseeksCommand());
-        
-        this.getCommand("murderer").setExecutor(new CommandMurderer());
-        this.getCommand("detective").setExecutor(new CommandDetective());
+        timerManager = new TimerManager();
+        timerManager.init(this);
 
         //Create World
         WorldCreator worldCreator = new WorldCreator(settings.getString(Setting.GAME_WORLD_NAME))
@@ -65,14 +45,15 @@ public class CluedoPlugin extends JavaPlugin {
         World world = Bukkit.createWorld(worldCreator);
 
         //Set world Gamerules
-        world.setGameRuleValue("spectatorsGenerateChunks", "false");
-        world.setGameRuleValue("doWeatherCycle", "false");
-        world.setGameRuleValue("doTileDrops", "false");
-        world.setGameRuleValue("doFireTick", "false");
-        world.setGameRuleValue("naturalRegeneration", "false");
-        world.setGameRuleValue("doMobSpawning", "false");
-        world.setGameRuleValue("mobGriefing", "false");
-        world.setGameRuleValue("doEntityDrops", "false");
+        world.setGameRule(GameRule.SPECTATORS_GENERATE_CHUNKS, false);
+        world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+        world.setGameRule(GameRule.DO_TILE_DROPS, false);
+        world.setGameRule(GameRule.DO_FIRE_TICK, false);
+        world.setGameRule(GameRule.NATURAL_REGENERATION, false);
+        world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+        world.setGameRule(GameRule.MOB_GRIEFING, false);
+        world.setGameRule(GameRule.DO_ENTITY_DROPS, false);
+        world.setPVP(true);
 
         //Set world time and weather
         world.setWeatherDuration(1);
@@ -90,18 +71,24 @@ public class CluedoPlugin extends JavaPlugin {
 
         //Start Plugin
         game = new CluedoMinigame();
+
+        this.getCommand("murderer").setExecutor(new CommandMurderer());
+        this.getCommand("detective").setExecutor(new CommandDetective());
+        this.getCommand("cluedo").setExecutor(new CommandParticipate(game));
+
         game.changeGameState(CluedoStateType.LOBBY);
 
         //Load Listener
         CluedoListener.init();
-
-        //Initialization Finished, register Minigame
-        MinigameManager.registerMinigame(game);
     }
 
     @Override
     public void onDisable() {
-        MeeseeksManager.getInstance().removeAllMeeseekses();
+        game.shutdown();
+        game = null;
+        settings = null;
+        timerManager = null;
+        spawnLocationService = null;
     }
 
     public static CluedoMinigame getGame() {
@@ -120,18 +107,4 @@ public class CluedoPlugin extends JavaPlugin {
         return spawnLocationService;
     }
 
-    private void setUpConfig() {
-        settings.createDefaults();
-        this.saveConfig();
-    }
-
-    private MySQLService initDatabase() {
-        MySQLConfig mySQLConfig = new MySQLConfig();
-        mySQLConfig.loadConfigFile();
-
-        MySQLService mySQLService = new MySQLService(mySQLConfig.getUser(), mySQLConfig.getPassword(), mySQLConfig.getJdbcUrl());
-        mySQLService.connect();
-
-        return mySQLService;
-    }
 }

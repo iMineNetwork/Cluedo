@@ -2,6 +2,8 @@ package nl.imine.minigame.cluedo.game.state.game;
 
 import java.util.List;
 
+import org.bukkit.Color;
+import org.bukkit.EntityEffect;
 import org.bukkit.Particle;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
@@ -26,12 +28,7 @@ public class FootprintHandler implements Runnable {
 						.forEach(trackingPlayer -> {
 							//Show the footprints
 							trackingPlayer.getFootprints().forEach(footprint -> {
-								//Calculate colors. Red has an offset because it is originally a redstone particle
-								float colorR = (trackingPlayer.getFootprintColor().getRed() / 255F) - 1F;
-								float colorG = (trackingPlayer.getFootprintColor().getGreen()  / 255F);
-								float colorB = (trackingPlayer.getFootprintColor().getBlue() / 255F);
-
-								cluedoPlayer.getPlayer().spawnParticle(Particle.REDSTONE, footprint, 0,  colorR, colorG, colorB, 1);
+								cluedoPlayer.getPlayer().spawnParticle(Particle.REDSTONE, footprint, 0, new Particle.DustOptions(trackingPlayer.getFootprintColor(), 1));
 							});
 						});
 			}

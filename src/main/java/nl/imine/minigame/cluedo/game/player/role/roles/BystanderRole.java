@@ -1,6 +1,5 @@
 package nl.imine.minigame.cluedo.game.player.role.roles;
 
-import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
@@ -23,7 +22,7 @@ public class BystanderRole extends CluedoRole {
         player.closeInventory();
         player.getInventory().clear();
 
-        ItemStack grayDye = new ItemStack(Material.INK_SACK, 1, (short) 8);
+        ItemStack grayDye = new ItemStack(Material.GRAY_DYE, 1);
         ItemMeta grayDyeMeta = grayDye.getItemMeta();
         grayDyeMeta.setDisplayName(ChatColor.GRAY + "" + ChatColor.BOLD + "Bystander");
         grayDye.setItemMeta(grayDyeMeta);
@@ -32,9 +31,6 @@ public class BystanderRole extends CluedoRole {
         player.getInventory().setHeldItemSlot(0);
         player.getInventory().setItem(17, grayDye);
 
-        if (player.hasPermission("imine.cluedo.pet")) {
-            player.getInventory().setItem(8, MeeseeksManager.getInstance().getMeeseeksSpawningItem());
-        }
         //Set gamemode
         player.setGameMode(GameMode.ADVENTURE);
     }

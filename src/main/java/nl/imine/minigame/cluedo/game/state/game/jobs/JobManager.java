@@ -102,9 +102,9 @@ public class JobManager {
                 case DETECTIVE:
                     // As players can shuffle their inventory, check if the off hand is occupied before setting the item.
                     if (player.getPlayer().getInventory().getItemInOffHand() == null) {
-                        player.getPlayer().getInventory().setItemInOffHand(new ItemStack(Material.TOTEM));
+                        player.getPlayer().getInventory().setItemInOffHand(new ItemStack(Material.TOTEM_OF_UNDYING));
                     } else {
-                        player.getPlayer().getInventory().setItemInOffHand(new ItemStack(Material.TOTEM));
+                        player.getPlayer().getInventory().setItemInOffHand(new ItemStack(Material.TOTEM_OF_UNDYING));
                     }
                     break;
                 case MURDERER:

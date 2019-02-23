@@ -42,23 +42,23 @@ public class CommandMurderer implements CommandExecutor {
             return true;
         }
 
-        if (player.getInventory().contains(new ItemStack(Material.INK_SACK, 1, (short) 1))) {
+        if (player.getInventory().contains(new ItemStack(Material.ROSE_RED,1))) {
             player.sendMessage(ChatColor.RED + "You're already going to spawn as a murderer");
             return true;
         }
 
-        if (player.getInventory().contains(new ItemStack(Material.INK_SACK, 1, (short) 4))) {
+        if (player.getInventory().contains(new ItemStack(Material.LAPIS_LAZULI, 1))) {
             player.sendMessage(ChatColor.RED + "We're sorry, but the detective cannot be a murderer at the same time");
             return true;
         }
 
         if (player.getLevel() >= 15) {
             player.setLevel(player.getLevel() - 15);
-            ItemStack roseRed = new ItemStack(Material.INK_SACK, 1, (short) 1);
+            ItemStack roseRed = new ItemStack(Material.ROSE_RED, 1);
 
             ItemMeta roseRedMeta = roseRed.getItemMeta();
 
-            roseRedMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "You are guaranteed a murderer next game");
+            roseRedMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "You are guaranteed to be a murderer next game");
 
             roseRed.setItemMeta(roseRedMeta);
 

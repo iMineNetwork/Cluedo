@@ -48,12 +48,8 @@ public class AvailableJob implements ConfigurationSerializable {
         ret.put("spawnX", spawnX);
         ret.put("spawnY", spawnY);
         ret.put("spawnZ", spawnZ);
-
         ret.put("description", description);
-
         ret.put("itemType", displayItem.getType().toString());
-        ret.put("itemData", displayItem.getDurability());
-
         return ret;
     }
 
@@ -61,7 +57,7 @@ public class AvailableJob implements ConfigurationSerializable {
 
         String displayName = objectMap.get("description").toString();
 
-        ItemStack item = new ItemStack(Material.valueOf(objectMap.get("itemType").toString()), 1, Short.parseShort(objectMap.get("itemData").toString()));
+        ItemStack item = new ItemStack(Material.valueOf(objectMap.get("itemType").toString()), 1);
 
         return new AvailableJob(
                 Double.parseDouble(objectMap.get("spawnX").toString()),

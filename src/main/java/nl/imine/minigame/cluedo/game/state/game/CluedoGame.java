@@ -1,46 +1,39 @@
 package nl.imine.minigame.cluedo.game.state.game;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.logging.Logger;
-
+import nl.imine.minigame.cluedo.CluedoPlugin;
+import nl.imine.minigame.cluedo.game.CluedoMinigame;
+import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
+import nl.imine.minigame.cluedo.game.player.role.RoleType;
+import nl.imine.minigame.cluedo.game.state.CluedoState;
+import nl.imine.minigame.cluedo.game.state.CluedoStateType;
 import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
+import nl.imine.minigame.cluedo.settings.Setting;
+import nl.imine.minigame.cluedo.util.PlayerUtil;
+import nl.imine.minigame.timer.Timer;
+import nl.imine.minigame.timer.TimerHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import nl.imine.minigame.cluedo.CluedoPlugin;
-import nl.imine.minigame.cluedo.game.CluedoMinigame;
-import nl.imine.minigame.cluedo.game.meeseeks.MeeseeksManager;
-import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
-import nl.imine.minigame.cluedo.game.player.role.RoleType;
-import nl.imine.minigame.cluedo.game.state.CluedoState;
-import nl.imine.minigame.cluedo.game.state.CluedoStateType;
-import nl.imine.minigame.cluedo.model.GameEntry;
-import nl.imine.minigame.cluedo.model.KillEntry;
-import nl.imine.minigame.cluedo.model.PlayerEntry;
-import nl.imine.minigame.cluedo.settings.Setting;
-import nl.imine.minigame.cluedo.util.Instances;
-import nl.imine.minigame.cluedo.util.PlayerUtil;
-import nl.imine.minigame.timer.Timer;
-import nl.imine.minigame.timer.TimerHandler;
-import org.bukkit.Material;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.logging.Logger;
 
 public class CluedoGame extends CluedoState implements TimerHandler {
 
-	private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
+    private Logger logger = JavaPlugin.getPlugin(CluedoPlugin.class).getLogger();
 
-	//Dependencies
+    //Dependencies
     private CluedoMinigame cluedoMinigame;
 
     //Settings
@@ -51,14 +44,15 @@ public class CluedoGame extends CluedoState implements TimerHandler {
     //Game variables
     //Scoreboard
     private Scoreboard gameScoreboard;
-    private Team invisibleNametagTeam;
+    private Team invisibleNameTagTeam;
     private Timer timer;
     private BukkitTask footprintHandler;
     private boolean started = false;
 
+    private PlayerTracker playerTracker;
+
     public CluedoGame(CluedoMinigame cluedoMinigame) {
         super(CluedoStateType.IN_GAME);
-
         this.cluedoMinigame = cluedoMinigame;
     }
 
@@ -72,27 +66,23 @@ public class CluedoGame extends CluedoState implements TimerHandler {
         gameScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 
         //Add a team to remove the players' nametags
-        invisibleNametagTeam = gameScoreboard.registerNewTeam("InvisibleNametag");
-        invisibleNametagTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
-        invisibleNametagTeam.setCanSeeFriendlyInvisibles(false);
+        invisibleNameTagTeam = gameScoreboard.registerNewTeam("InvisibleNametag");
+        invisibleNameTagTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
+        invisibleNameTagTeam.setCanSeeFriendlyInvisibles(false);
 
         footprintHandler = Bukkit.getScheduler().runTaskTimer(JavaPlugin.getPlugin(CluedoPlugin.class), new FootprintHandler(), 0, 5);
-        cluedoMinigame.getPlayers().forEach(this::handlePlayer);
+        cluedoMinigame.getCluedoPlayers().forEach(this::handlePlayer);
 
         JobManager.getInstance().startJobSystem();
 
         started = true;
+    }
 
-		GameEntry gameEntry = new GameEntry(UUID.randomUUID(), LocalDateTime.now(), LocalDateTime.now());
-		CluedoPlugin.getGame().setCurrentGameEntry(gameEntry);
-		try {
-			Instances.getGameEntryService().save(gameEntry);
-            CluedoPlugin.getGame().getCluedoPlayers().forEach(cluedoPlayer -> {
-                Instances.getPlayerEntryService().save(new PlayerEntry(gameEntry.getGameId(), cluedoPlayer.getPlayer().getUniqueId(), cluedoPlayer.getRole().getRoleType()));
-            });
-        } catch (Exception e) {
-            logger.warning("Saving Metadata at start of game caused an exception | " + e.getClass().getSimpleName() + ": " + e.getMessage());
-        }
+    @Override
+    public void handleStateEnd() {
+        logger.finer("Handling state end for: " + this.getClass().getSimpleName());
+        this.timer.setStopped(true);
+        cluedoMinigame.getPlayers().forEach(this.timer::hideTimer);
     }
 
     @Override
@@ -107,40 +97,27 @@ public class CluedoGame extends CluedoState implements TimerHandler {
     }
 
     @Override
-    public void handlePlayer(Player player) {
-        PlayerUtil.cleanPlayer(player, false);
+    public void handlePlayer(CluedoPlayer cluedoPlayer) {
+        PlayerUtil.cleanPlayer(cluedoPlayer.getPlayer(), false);
         if (!started) {
-            timer.showTimer(player);
+            timer.showTimer(cluedoPlayer.getPlayer());
 
             //Handle scoreboard
-            player.setScoreboard(gameScoreboard);
-            invisibleNametagTeam.addEntry(player.getName());
+            cluedoPlayer.getPlayer().setScoreboard(gameScoreboard);
+            invisibleNameTagTeam.addEntry(cluedoPlayer.getPlayer().getName());
 
             //Teleport player to random spawn
             spawns = CluedoPlugin.getSpawnLocationService().getSpawns();
-            player.teleport(spawns.get(new Random().nextInt(spawns.size())).getLocation());
-
-            //Find the player's game object.
-            CluedoPlayer cluedoPlayer = cluedoMinigame.getCluedoPlayers().stream()
-                    .filter(registeredPlayer -> registeredPlayer.getPlayer().equals(player))
-                    .findAny()
-                    .orElse(null);
-
+            cluedoPlayer.getPlayer().teleport(spawns.get(new Random().nextInt(spawns.size())).getLocation());
         } else {
-            player.teleport(respawnLocation);
+            cluedoPlayer.getPlayer().teleport(respawnLocation);
         }
     }
 
     @Override
-    public void handlePlayerDeath(Player player) {
+    public void handlePlayerDeath(CluedoPlayer cluedoPlayer) {
         //Clear the player of his items and put him back in the lobby.
-        PlayerUtil.cleanPlayer(player, true);
-
-        //Find the player's game object.
-        CluedoPlayer cluedoPlayer = cluedoMinigame.getCluedoPlayers().stream()
-                .filter(registeredPlayer -> registeredPlayer.getPlayer().equals(player))
-                .findAny()
-                .orElse(null);
+        PlayerUtil.cleanPlayer(cluedoPlayer.getPlayer(), true);
 
         //Make the player a spectator
         cluedoPlayer.setRole(RoleType.SPECTATOR);
@@ -152,35 +129,28 @@ public class CluedoGame extends CluedoState implements TimerHandler {
         }
 
         Bukkit.getScheduler().runTaskLater(JavaPlugin.getPlugin(CluedoPlugin.class), ()
-                -> player.teleport(respawnLocation), 1L);
+                -> cluedoPlayer.getPlayer().teleport(respawnLocation), 1L);
+    }
 
-		try {
-			Material murderWeapon = null;
-			switch (player.getLastDamageCause().getCause()) {
-				case FIRE:
-				case FIRE_TICK:
-				case HOT_FLOOR:
-				case LAVA:
-					murderWeapon = Material.FIRE;
-					break;
-				case MAGIC:
-					murderWeapon = Material.POTION;
-					break;
-				case ENTITY_ATTACK:
-					murderWeapon = Material.WOOD_SWORD;
-					break;
-				case PROJECTILE:
-					murderWeapon = Material.BOW;
-					break;
-				default:
-					murderWeapon = Material.TNT;
-			}
-			KillEntry killEntry = new KillEntry(CluedoPlugin.getGame().getCurrentGameEntry().getGameId(), player.getKiller().getUniqueId(), player.getUniqueId(), murderWeapon, LocalDateTime.now());
-			Instances.getKillEntryService().save(killEntry);
-		} catch (Exception e) {
-			logger.warning("Saving Metadata at death in game caused an exception | " + e.getClass().getSimpleName() + ": " + e.getMessage());
-		}
+    @Override
+    public void handlePlayerLeave(CluedoPlayer cluedoPlayer) {
+        timer.hideTimer(cluedoPlayer.getPlayer());
 
+        //Handle item drops
+        if (cluedoPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)) {
+            Item item = cluedoPlayer.getPlayer().getLocation().getWorld()
+                    .dropItem(cluedoPlayer.getPlayer().getLocation(), new ItemStack(Material.BOW));
+            item.setInvulnerable(true);
+        }
+
+        //Clear the player of their items.
+        PlayerUtil.cleanPlayer(cluedoPlayer.getPlayer(), true);
+
+        //Check if the game has to end
+        GameResult result = checkGameEnd();
+        if (result != null) {
+            endGame(result);
+        }
     }
 
     @Override
@@ -213,11 +183,19 @@ public class CluedoGame extends CluedoState implements TimerHandler {
         if (innocentsAlive <= 0) {
             return GameResult.MURDERER_WIN;
         } else if (innocentsAlive == 1) {
-            cluedoMinigame.getCluedoPlayers().stream()
+            Optional<PlayerTracker> optionalPlayerTracker = cluedoMinigame.getCluedoPlayers().stream()
                     .filter(cluedoPlayer -> cluedoPlayer.getRole().isInnocent())
-                    .forEach(cluedoPlayer -> {
-                        cluedoPlayer.getPlayer().setGlowing(true);
-                    });
+                    .findAny()
+                    .map(cluedoPlayer -> new PlayerTracker(cluedoPlayer, gameScoreboard));
+            if (optionalPlayerTracker.isPresent()) {
+                playerTracker = optionalPlayerTracker.get();
+                playerTracker.startTracker();
+            }
+//            cluedoMinigame.getCluedoPlayers().stream()
+//                    .filter(cluedoPlayer -> cluedoPlayer.getRole().isInnocent())
+//                    .forEach(cluedoPlayer -> {
+//                        cluedoPlayer.getPlayer().setGlowing(true);
+//                    });
         }
 
         return null;
@@ -271,7 +249,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 
             //Remove player nametag invisibility
             player.getPlayer().setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-            invisibleNametagTeam.removeEntry(player.getPlayer().getName());
+            invisibleNameTagTeam.removeEntry(player.getPlayer().getName());
 
             //Remove footprints
             player.clearFootprints();
@@ -283,25 +261,19 @@ public class CluedoGame extends CluedoState implements TimerHandler {
         //Clean map
         cluedoMinigame.getCluedoWorld().getEntitiesByClasses(Arrow.class, Item.class)
                 .forEach(Entity::remove);
+        if(playerTracker != null) {
+            playerTracker.stopTracker();
+        }
 
         //Remove footprint runner
         footprintHandler.cancel();
         footprintHandler = null;
 
         //Unregister Team
-        invisibleNametagTeam.unregister();
-
-        MeeseeksManager.getInstance().removeAllMeeseekses();
-
-		try {
-			GameEntry entry = CluedoPlugin.getGame().getCurrentGameEntry();
-			entry.setEndTime(LocalDateTime.now());
-			Instances.getGameEntryService().update(entry);
-		} catch (Exception e) {
-			logger.warning("Saving Metadata at end of game caused an exception | " + e.getClass().getSimpleName() + ": " + e.getMessage());
-		}
+        invisibleNameTagTeam.unregister();
 
         //Change state
         cluedoMinigame.changeGameState(CluedoStateType.END_GAME);
     }
+
 }

@@ -1,7 +1,9 @@
 package nl.imine.minigame.cluedo.game.state.pregame;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
+import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -19,6 +21,8 @@ import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
+
+import javax.swing.text.html.Option;
 
 public class CluedoPreGame extends CluedoState implements TimerHandler {
 
@@ -38,22 +42,30 @@ public class CluedoPreGame extends CluedoState implements TimerHandler {
 	public void handleStateChange() {
 		logger.finer("Handling state change for: " + this.getClass().getSimpleName());
 		this.timer = CluedoPlugin.getTimerManager().createTimer("Preparation", gameTimer, this);
-		cluedoMinigame.getPlayers().forEach(this::handlePlayer);
+		cluedoMinigame.getCluedoPlayers().forEach(this::handlePlayer);
+	}
+
+	@Override
+	public void handleStateEnd() {
+		logger.finer("Handling state end for: " + this.getClass().getSimpleName());
+		this.timer.setStopped(true);
+		cluedoMinigame.getPlayers().forEach(this.timer::hideTimer);
 	}
 
 	@Override
 	public void onTimerEnd() {
 		logger.finest("Handling timer end for: " + this.getClass().getSimpleName());
-		cluedoMinigame.changeGameState(CluedoStateType.IN_GAME);
 
 		//Reveal all players to each other
 		for (CluedoPlayer subjectPlayer : cluedoMinigame.getCluedoPlayers()) {
 			for (CluedoPlayer targetPlayer : cluedoMinigame.getCluedoPlayers()) {
 				if(subjectPlayer != targetPlayer){
-					subjectPlayer.getPlayer().showPlayer(targetPlayer.getPlayer());
+					subjectPlayer.getPlayer().showPlayer(JavaPlugin.getPlugin(CluedoPlugin.class), targetPlayer.getPlayer());
 				}
 			}
 		}
+
+		cluedoMinigame.changeGameState(CluedoStateType.IN_GAME);
 	}
 
 	@Override
@@ -62,20 +74,14 @@ public class CluedoPreGame extends CluedoState implements TimerHandler {
 	}
 
 	@Override
-	public void handlePlayer(Player player) {
-		PlayerUtil.cleanPlayer(player, false);
-		player.teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
-
-		//Find the player's game object.
-		CluedoPlayer cluedoPlayer = cluedoMinigame.getCluedoPlayers().stream()
-				.filter(registeredPlayer -> registeredPlayer.getPlayer().equals(player))
-				.findAny()
-				.orElse(null);
+	public void handlePlayer(CluedoPlayer cluedoPlayer) {
+		PlayerUtil.cleanPlayer(cluedoPlayer.getPlayer(), false);
+		cluedoPlayer.getPlayer().teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
 		//Hide all other players
 		for (CluedoPlayer targetPlayer : cluedoMinigame.getCluedoPlayers()) {
 			if(cluedoPlayer != targetPlayer){
-				cluedoPlayer.getPlayer().hidePlayer(targetPlayer.getPlayer());
+				cluedoPlayer.getPlayer().hidePlayer(JavaPlugin.getPlugin(CluedoPlugin.class), targetPlayer.getPlayer());
 			}
 		}
 
@@ -102,19 +108,28 @@ public class CluedoPreGame extends CluedoState implements TimerHandler {
 				subtitleText = String.format("%sPlease report this to one of the members of staff", ChatColor.LIGHT_PURPLE);
 				break;
 		}
-		player.sendTitle(titleText, subtitleText,10 ,(timer.getTimer()*20),10);
+		cluedoPlayer.getPlayer().sendTitle(titleText, subtitleText,10 ,(timer.getTimer()*20),10);
 
 		//Blind the players for the remainder of the preparation
-		player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, ((timer.getTimer()+1) * 20), 0, true, false), true);
+		cluedoPlayer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, ((timer.getTimer()+1) * 20), 0, true, false), true);
 	}
 
 	@Override
-	public void handlePlayerDeath(Player player) {
-		player.teleport(spawnLocation);
+	public void handlePlayerDeath(CluedoPlayer cluedoPlayer) {
+		cluedoPlayer.getPlayer().teleport(spawnLocation);
 	}
 
 	@Override
 	public Location getRespawnLocation() {
 		return spawnLocation;
+	}
+
+	@Override
+	public void handlePlayerLeave(CluedoPlayer cluedoPlayer) {
+		timer.hideTimer(cluedoPlayer.getPlayer());
+		if(cluedoPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE) || cluedoPlayer.getRole().getRoleType().equals(RoleType.MURDERER)) {
+			cluedoMinigame.getPlayers().forEach(player -> player.sendMessage("Game aborted due to the " + cluedoPlayer.getRole().getRoleType().name().toLowerCase() + " leaving the game."));
+			cluedoMinigame.changeGameState(CluedoStateType.LOBBY);
+		}
 	}
 }

@@ -1,9 +1,9 @@
 package nl.imine.minigame.cluedo.game.player;
 
-import java.awt.Color;
 import java.util.LinkedList;
 
 import nl.imine.minigame.cluedo.game.state.game.jobs.Job;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -12,14 +12,17 @@ import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.util.ExperienceUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.inventory.ItemStack;
 
 public class CluedoPlayer {
 
     private final Player player;
-    private CluedoRole role;
+    private final PreviousPlayerState previousState;
+
 
     //Gameplay Details
-    private Color footprintColor = Color.black;
+    private CluedoRole role;
+    private Color footprintColor = Color.BLACK;
     private LinkedList<Location> footprints = new LinkedList<>();
 
     private Job activeJob;
@@ -30,10 +33,15 @@ public class CluedoPlayer {
     public CluedoPlayer(Player player, RoleType role) {
         this.player = player;
         this.role = RoleType.getCluedoRole(role);
+        this.previousState = PreviousPlayerState.loadFromPlayer(player);
     }
 
     public Player getPlayer() {
         return player;
+    }
+
+    public PreviousPlayerState getPreviousState() {
+        return previousState;
     }
 
     /**
@@ -76,7 +84,6 @@ public class CluedoPlayer {
     }
 
     /**
-     *
      * @param footprint
      */
     public void addFootprint(Location footprint) {
@@ -116,7 +123,7 @@ public class CluedoPlayer {
     public void rewardXp() {
 
         if (xpReward <= 0) {
-            player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "You recieved no experience!");
+            player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "You received no experience!");
             return;
         }
 
