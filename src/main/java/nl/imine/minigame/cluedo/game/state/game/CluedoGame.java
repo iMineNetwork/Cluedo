@@ -223,10 +223,8 @@ public class CluedoGame extends CluedoState implements TimerHandler {
 
         for (CluedoPlayer player : cluedoMinigame.getCluedoPlayers()) {
             player.addXpToReward(player.getRole().getBaseXp());
-            switch (result) {
-                case BYSTANDER_WIN:
-                    player.addXpToReward(10);
-                    break;
+            if (result == GameResult.BYSTANDER_WIN && player.getRole().isInnocent()) {
+                player.addXpToReward(10);
             }
 
             player.rewardXp();
