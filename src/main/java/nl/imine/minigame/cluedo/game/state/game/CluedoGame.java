@@ -226,16 +226,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
             switch (result) {
                 case BYSTANDER_WIN:
                     player.addXpToReward(10);
-                    if (player.getRole().getRoleType() == RoleType.BYSTANDER || player.getRole().getRoleType() == RoleType.DETECTIVE || player.getRole().getRoleType() == RoleType.SPECTATOR) {
-                        //non murderer players recieve +25 xp instead of +10
-                        player.addXpToReward(15);
-                    }
                     break;
-//                case MURDERER_WIN:
-//                    if (player.getRole().getRoleType() == RoleType.MURDERER) {
-//                        player.addXpToReward(25);
-//                    }
-//                    break;
             }
 
             player.rewardXp();
@@ -257,7 +248,7 @@ public class CluedoGame extends CluedoState implements TimerHandler {
         CluedoPlugin.getTimerManager().removeTimer(timer);
 
         //Clean map
-        if(playerTracker != null) {
+        if (playerTracker != null) {
             playerTracker.stopTracker();
         }
 

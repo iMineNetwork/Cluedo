@@ -1,18 +1,15 @@
 package nl.imine.minigame.cluedo.game.player;
 
-import java.util.LinkedList;
-
-import nl.imine.minigame.cluedo.game.state.game.jobs.Job;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-
 import nl.imine.minigame.cluedo.game.player.role.CluedoRole;
 import nl.imine.minigame.cluedo.game.player.role.RoleType;
-import nl.imine.minigame.cluedo.util.ExperienceUtil;
+import nl.imine.minigame.cluedo.game.state.game.jobs.Job;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.entity.Player;
+
+import java.util.LinkedList;
 
 public class CluedoPlayer {
 
@@ -128,7 +125,7 @@ public class CluedoPlayer {
         }
 
         player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "You received " + xpReward + " experience!");
-        ExperienceUtil.addExp(player, xpReward);
+        player.giveExp(xpReward);
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10L, 0L);
 
         xpReward = 0;
