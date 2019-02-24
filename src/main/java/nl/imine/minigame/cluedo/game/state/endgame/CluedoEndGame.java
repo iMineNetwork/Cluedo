@@ -12,6 +12,9 @@ import nl.imine.minigame.cluedo.util.PlayerUtil;
 import nl.imine.minigame.timer.Timer;
 import nl.imine.minigame.timer.TimerHandler;
 import org.bukkit.Location;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -44,6 +47,10 @@ public class CluedoEndGame extends CluedoState implements TimerHandler {
         logger.finer("Handling end change for: " + this.getClass().getSimpleName());
         this.timer.setStopped(true);
         cluedoMinigame.getPlayers().forEach(this.timer::hideTimer);
+
+        //Clear all arrows from the world
+        cluedoMinigame.getCluedoWorld().getEntitiesByClasses(Arrow.class, Item.class)
+                .forEach(Entity::remove);
     }
 
     @Override

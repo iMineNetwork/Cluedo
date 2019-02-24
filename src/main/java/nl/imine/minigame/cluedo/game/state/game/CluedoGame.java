@@ -15,8 +15,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -259,8 +257,6 @@ public class CluedoGame extends CluedoState implements TimerHandler {
         CluedoPlugin.getTimerManager().removeTimer(timer);
 
         //Clean map
-        cluedoMinigame.getCluedoWorld().getEntitiesByClasses(Arrow.class, Item.class)
-                .forEach(Entity::remove);
         if(playerTracker != null) {
             playerTracker.stopTracker();
         }
