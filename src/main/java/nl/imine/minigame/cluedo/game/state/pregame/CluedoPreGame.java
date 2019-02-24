@@ -31,6 +31,7 @@ public class CluedoPreGame extends CluedoState implements TimerHandler {
 	private CluedoMinigame cluedoMinigame;
 	private int gameTimer = CluedoPlugin.getSettings().getInt(Setting.PRE_GAME_TIME);
 	private Location spawnLocation = CluedoPlugin.getSettings().getLocation(Setting.PRE_GAME_SPAWN);
+	private Location lobbyLocation = CluedoPlugin.getSettings().getLocation(Setting.LOBBY_SPAWN);
 	private Timer timer;
 
 	public CluedoPreGame(CluedoMinigame cluedoMinigame) {
@@ -76,7 +77,11 @@ public class CluedoPreGame extends CluedoState implements TimerHandler {
 	@Override
 	public void handlePlayer(CluedoPlayer cluedoPlayer) {
 		PlayerUtil.cleanPlayer(cluedoPlayer.getPlayer(), false);
-		cluedoPlayer.getPlayer().teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+		if(cluedoPlayer.getRole().getRoleType().equals(RoleType.SPECTATOR) || cluedoPlayer.getRole().getRoleType().equals(RoleType.LOBBY)) {
+			cluedoPlayer.getPlayer().teleport(lobbyLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+		} else {
+			cluedoPlayer.getPlayer().teleport(spawnLocation, PlayerTeleportEvent.TeleportCause.PLUGIN);
+		}
 
 		//Hide all other players
 		for (CluedoPlayer targetPlayer : cluedoMinigame.getCluedoPlayers()) {
@@ -102,6 +107,9 @@ public class CluedoPreGame extends CluedoState implements TimerHandler {
 				subtitleText = String.format("%sThere is a murderer on the loose. Don't get caught", ChatColor.AQUA);
 				break;
 			case SPECTATOR:
+				titleText = String.format("%sYou are late", ChatColor.GOLD);
+				subtitleText = String.format("%sA game is in progress, please wait to join the next one", ChatColor.YELLOW);
+				break;
 			case LOBBY:
 			default:
 				titleText = String.format("%sYou are... not assigned correctly", ChatColor.DARK_PURPLE);
