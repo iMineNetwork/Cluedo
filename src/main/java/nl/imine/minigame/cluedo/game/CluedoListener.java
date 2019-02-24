@@ -241,9 +241,13 @@ public class CluedoListener implements Listener {
     private void onPlayerInteract(PlayerInteractEvent evt) {
 
         //Make sure the player is actually participating in this minigame
-        if (!CluedoPlugin.getGame().getPlayers().contains(evt.getPlayer())) {
+        Optional<CluedoPlayer> optionalCluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
+                .filter(cPlayer -> cPlayer.getPlayer().equals(evt.getPlayer()))
+                .findFirst();
+        if (!optionalCluedoPlayer.isPresent()) {
             return;
         }
+        CluedoPlayer cluedoPlayer = optionalCluedoPlayer.get();
 
         //testing to see if the clicked block exists to prevent NullPointerExceptions
         if (evt.getClickedBlock() == null) {
@@ -256,7 +260,7 @@ public class CluedoListener implements Listener {
         }
 
         //Disallow players from taking items from flower pots
-        if (evt.getClickedBlock().getType().equals(Material.FLOWER_POT)) {
+        if (isFlowerPot(evt.getClickedBlock().getType())) {
             evt.setCancelled(true);
             return;
         }
@@ -266,11 +270,6 @@ public class CluedoListener implements Listener {
                 || (evt.getPlayer().getInventory().getItemInOffHand() != null && evt.getPlayer().getInventory().getItemInOffHand().getType() == Material.SPLASH_POTION))) {
             evt.setCancelled(true);
         }
-
-        //Get Cluedo player object
-        CluedoPlayer cluedoPlayer = CluedoPlugin.getGame().getCluedoPlayers().stream()
-                .filter(cPlayer -> cPlayer.getPlayer().equals(evt.getPlayer()))
-                .findFirst().orElse(null);
 
         //Check if the player can interact with this block
         CluedoPlugin.getGame().getRoleInteractionPermissions().stream()
@@ -455,6 +454,31 @@ public class CluedoListener implements Listener {
 
         arrow.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
 
+    }
+
+    private boolean isFlowerPot(Material material){
+        return material.equals(Material.FLOWER_POT)
+        || material.equals(Material.POTTED_ACACIA_SAPLING)
+        || material.equals(Material.POTTED_ALLIUM)
+        || material.equals(Material.POTTED_AZURE_BLUET)
+        || material.equals(Material.POTTED_BIRCH_SAPLING)
+        || material.equals(Material.POTTED_BLUE_ORCHID)
+        || material.equals(Material.POTTED_BROWN_MUSHROOM)
+        || material.equals(Material.POTTED_CACTUS)
+        || material.equals(Material.POTTED_DANDELION)
+        || material.equals(Material.POTTED_DARK_OAK_SAPLING)
+        || material.equals(Material.POTTED_DEAD_BUSH)
+        || material.equals(Material.POTTED_FERN)
+        || material.equals(Material.POTTED_JUNGLE_SAPLING)
+        || material.equals(Material.POTTED_OAK_SAPLING)
+        || material.equals(Material.POTTED_ORANGE_TULIP)
+        || material.equals(Material.POTTED_OXEYE_DAISY)
+        || material.equals(Material.POTTED_PINK_TULIP)
+        || material.equals(Material.POTTED_POPPY)
+        || material.equals(Material.POTTED_RED_MUSHROOM)
+        || material.equals(Material.POTTED_RED_TULIP)
+        || material.equals(Material.POTTED_SPRUCE_SAPLING)
+        || material.equals(Material.POTTED_WHITE_TULIP);
     }
 
 }
