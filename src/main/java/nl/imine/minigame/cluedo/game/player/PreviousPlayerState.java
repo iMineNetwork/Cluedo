@@ -6,7 +6,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class PreviousPlayerState {
 
-    private final ItemStack[] content;
+    private final ItemStack[] inventoryContent;
+    private final ItemStack[] enderChestContent;
     private final Location location;
     private final double health;
     private final int food;
@@ -14,22 +15,27 @@ public class PreviousPlayerState {
     private final float fallingDistance;
     private final float exhaustion;
     private final int oxygen;
+    private final int fireTicks;
+
 
     public static PreviousPlayerState loadFromPlayer(Player player) {
         return new PreviousPlayerState(
                 player.getInventory().getContents(),
+                player.getEnderChest().getContents(),
                 player.getLocation(),
                 player.getHealth(),
                 player.getFoodLevel(),
                 player.getSaturation(),
                 player.getFallDistance(),
                 player.getExhaustion(),
-                player.getRemainingAir()
+                player.getRemainingAir(),
+                player.getFireTicks()
         );
     }
 
-    public PreviousPlayerState(ItemStack[] content, Location location, double health, int food, float saturation, float fallingDistance, float exhaustion, int oxygen) {
-        this.content = content;
+    public PreviousPlayerState(ItemStack[] inventoryContent, ItemStack[] enderChestContent, Location location, double health, int food, float saturation, float fallingDistance, float exhaustion, int oxygen, int fireTicks) {
+        this.inventoryContent = inventoryContent;
+        this.enderChestContent = enderChestContent;
         this.location = location;
         this.health = health;
         this.food = food;
@@ -37,21 +43,27 @@ public class PreviousPlayerState {
         this.fallingDistance = fallingDistance;
         this.exhaustion = exhaustion;
         this.oxygen = oxygen;
+        this.fireTicks = fireTicks;
     }
 
     public void restoreState(Player player) {
         player.teleport(location);
-        player.getInventory().setContents(content);
+        player.getInventory().setContents(inventoryContent);
         player.setHealth(health);
         player.setFoodLevel(food);
         player.setSaturation(saturation);
         player.setFallDistance(fallingDistance);
         player.setExhaustion(exhaustion);
         player.setRemainingAir(oxygen);
+        player.setFireTicks(fireTicks);
     }
 
-    public ItemStack[] getContent() {
-        return content;
+    public ItemStack[] getInventoryContent() {
+        return inventoryContent;
+    }
+
+    public ItemStack[] getEnderChestContent() {
+        return enderChestContent;
     }
 
     public Location getLocation() {
@@ -80,5 +92,9 @@ public class PreviousPlayerState {
 
     public int getOxygen() {
         return oxygen;
+    }
+
+    public int getFireTicks() {
+        return fireTicks;
     }
 }

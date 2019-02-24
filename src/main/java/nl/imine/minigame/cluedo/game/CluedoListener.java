@@ -405,7 +405,7 @@ public class CluedoListener implements Listener {
         }
 
         if (player.getGameMode() == GameMode.CREATIVE) {
-            return; //players in GM1 can do everyting they want
+            return; //players in GM1 can do anything they want
         }
 
         if (evt.getCurrentItem() != null
@@ -413,10 +413,6 @@ public class CluedoListener implements Listener {
                 || evt.getCurrentItem().getType() == Material.AIR
                 || evt.getCurrentItem().getType() == Material.POTION
                 || evt.getCurrentItem().getType() == Material.WHEAT)) {
-            return;
-        }
-
-        if (evt.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
             return;
         }
 
@@ -439,6 +435,26 @@ public class CluedoListener implements Listener {
                 .filter(cPlayer -> cPlayer.getPlayer().equals(evt.getPlayer()))
                 .findFirst()
                 .ifPresent(CluedoPlugin.getGame()::onLeave);
+    }
+
+    @EventHandler
+    public void onProjectileLaunch(ProjectileLaunchEvent projectileLaunchEvent){
+        if(!(projectileLaunchEvent.getEntity() instanceof Arrow)){
+            return;
+        }
+        Arrow arrow = (Arrow) projectileLaunchEvent.getEntity();
+
+        if (!(arrow.getShooter() instanceof Player)) {
+            return;
+        }
+        Player shooter = (Player) arrow.getShooter();
+
+        if (!CluedoPlugin.getGame().getPlayers().contains(shooter)) {
+            return;
+        }
+
+        arrow.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
+
     }
 
 }
