@@ -73,12 +73,12 @@ public class CluedoLobby extends CluedoState implements TimerHandler {
                 .filter(player -> player.getRole().getRoleType().equals(RoleType.LOBBY))
                 .collect(Collectors.toList());
 
-        //if the player has red dye in his inventory he has to become the murderer
-        //if the player has lapis in his inventory he has to become the detective
+        //if the player has red dye in his inventory they have to become the murderer
+        //if the player has blue dye in his inventory they have to become the detective
         List<CluedoPlayer> forcedMurderers = new ArrayList<>();
         assignablePlayers.forEach(player -> {
             for (ItemStack item : player.getPlayer().getInventory().getContents()) {
-                if (item != null && item.getType() == Material.ROSE_RED) {
+                if (item != null && item.getType() == Material.RED_DYE) {
                     forcedMurderers.add(player);
                 }
             }
@@ -93,7 +93,7 @@ public class CluedoLobby extends CluedoState implements TimerHandler {
 
         assignablePlayers.forEach(player -> {
             for (ItemStack item : player.getPlayer().getInventory().getContents()) {
-                if (item != null && item.getType() == Material.LAPIS_LAZULI) {
+                if (item != null && item.getType() == Material.BLUE_DYE) {
                     forcedDetectives.add(player);
                 }
             }

@@ -40,29 +40,29 @@ public class CommandDetective implements CommandExecutor {
             return true;
         }
 
-        if (player.getInventory().contains(new ItemStack(Material.LAPIS_LAZULI, 1))) {
+        if (player.getInventory().contains(new ItemStack(Material.BLUE_DYE, 1))) {
             player.sendMessage(ChatColor.RED + "You're already going to spawn as a detective");
             return true;
         }
 
-        if (player.getInventory().contains(new ItemStack(Material.ROSE_RED, 1))) {
+        if (player.getInventory().contains(new ItemStack(Material.RED_DYE, 1))) {
             player.sendMessage(ChatColor.RED + "We're sorry, but the murderer cannot be a detective at the same time");
             return true;
         }
 
         if (player.getLevel() >= 10) {
             player.setLevel(player.getLevel() - 10);
-            ItemStack lapis = new ItemStack(Material.INK_SAC, 1, (short) 4);
+            ItemStack detectiveRoleToken = new ItemStack(Material.BLUE_DYE, 1);
 
-            ItemMeta lapisMeta = lapis.getItemMeta();
+            ItemMeta detectiveRoleTokenItemMeta = detectiveRoleToken.getItemMeta();
 
-            lapisMeta.setDisplayName(ChatColor.BLUE + "" + ChatColor.BOLD + "You are guaranteed to be a detective next game");
+            detectiveRoleTokenItemMeta.setDisplayName(ChatColor.BLUE + "" + ChatColor.BOLD + "You are guaranteed to be a detective next game");
 
-            lapis.setItemMeta(lapisMeta);
+            detectiveRoleToken.setItemMeta(detectiveRoleTokenItemMeta);
 
             player.sendMessage(ChatColor.BLUE + "" + ChatColor.BOLD + "You will be a detective next game, good luck!");
             player.getInventory().setHeldItemSlot(0);
-            player.getInventory().setItem(4, lapis);
+            player.getInventory().setItem(4, detectiveRoleToken);
         }else{
              player.sendMessage(ChatColor.RED + "You'll need 10 levels to become a detective!");
         }

@@ -33,14 +33,14 @@ public class DetectiveRole extends CluedoRole {
         bowMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
         bow.setItemMeta(bowMeta);
         
-        ItemStack lapis = new ItemStack(Material.LAPIS_LAZULI, 1);
-        ItemMeta lapisMeta = lapis.getItemMeta();
-        lapisMeta.setDisplayName(ChatColor.DARK_BLUE + "" + ChatColor.BOLD + "Detective");
-        lapis.setItemMeta(lapisMeta);
+        ItemStack roleToken = new ItemStack(Material.BLUE_DYE, 1);
+        ItemMeta roleTokenItemMeta = roleToken.getItemMeta();
+        roleTokenItemMeta.setDisplayName(ChatColor.DARK_BLUE + "" + ChatColor.BOLD + "Detective");
+        roleToken.setItemMeta(roleTokenItemMeta);
         
         player.getInventory().setHeldItemSlot(0);
         player.getInventory().setItem(1, bow);
         player.getInventory().setItem(9, new ItemStack(Material.ARROW));
-        player.getInventory().setItem(17, lapis);
+        player.getInventory().setItem(17, roleToken);
     }
 }

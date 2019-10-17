@@ -22,14 +22,14 @@ public class BystanderRole extends CluedoRole {
         player.closeInventory();
         player.getInventory().clear();
 
-        ItemStack grayDye = new ItemStack(Material.GRAY_DYE, 1);
-        ItemMeta grayDyeMeta = grayDye.getItemMeta();
-        grayDyeMeta.setDisplayName(ChatColor.GRAY + "" + ChatColor.BOLD + "Bystander");
-        grayDye.setItemMeta(grayDyeMeta);
+        ItemStack innocentRoleToken = new ItemStack(Material.GRAY_DYE, 1);
+        ItemMeta innocentRoleTokenItemMeta = innocentRoleToken.getItemMeta();
+        innocentRoleTokenItemMeta.setDisplayName(ChatColor.GRAY + "" + ChatColor.BOLD + "Bystander");
+        innocentRoleToken.setItemMeta(innocentRoleTokenItemMeta);
 
         //Give the player their items
         player.getInventory().setHeldItemSlot(0);
-        player.getInventory().setItem(17, grayDye);
+        player.getInventory().setItem(17, innocentRoleToken);
 
         //Set gamemode
         player.setGameMode(GameMode.ADVENTURE);

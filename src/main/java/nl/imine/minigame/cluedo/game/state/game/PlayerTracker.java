@@ -1,6 +1,7 @@
 package nl.imine.minigame.cluedo.game.state.game;
 
 import nl.imine.minigame.cluedo.CluedoPlugin;
+import nl.imine.minigame.cluedo.game.CluedoMinigame;
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
@@ -29,7 +30,7 @@ public class PlayerTracker {
     public void startTracker(){
         this.trackingIconEntity = (MagmaCube) cluedoPlayer.getPlayer().getWorld().spawnEntity(cluedoPlayer.getPlayer().getLocation(), EntityType.MAGMA_CUBE);
         setupMarkerEntity();
-        this.task = Bukkit.getScheduler().runTaskTimer(JavaPlugin.getPlugin(CluedoPlugin.class), () -> trackingIconEntity.teleport(cluedoPlayer.getPlayer().getEyeLocation().subtract(0, 1, 0)), 0, 5*20);
+        this.task = Bukkit.getScheduler().runTaskTimer(JavaPlugin.getPlugin(CluedoPlugin.class), this::teleportTracker, 0, 5*20);
     }
 
     public void stopTracker(){
@@ -58,5 +59,13 @@ public class PlayerTracker {
         }
         team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
         team.addEntry(trackingIconEntity.getUniqueId().toString());
+    }
+
+    private void teleportTracker() {
+        if(!cluedoPlayer.getPlayer().getEyeLocation().getWorld().equals(CluedoPlugin.getGame().getCluedoWorld())) {
+            stopTracker();
+            return;
+        }
+        trackingIconEntity.teleport(cluedoPlayer.getPlayer().getEyeLocation().subtract(0, 1, 0));
     }
 }

@@ -15,9 +15,14 @@ import nl.imine.minigame.cluedo.settings.SpawnLocationService;
 import nl.imine.minigame.timer.TimerManager;
 import org.bukkit.*;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class CluedoPlugin extends JavaPlugin {
+
+    public static final Permission PERMISSION_CLUEDO_JOIN = new Permission("cluedo.join");
+    public static final Permission PERMISSION_CLUEDO_FORCE_DETECTIVE = new Permission("cluedo.force.detective");
+    public static final Permission PERMISSION_CLUEDO_FORCE_MURDERER = new Permission("cluedo.force.murderer");
 
     private static CluedoMinigame game;
     private static Settings settings;
@@ -35,6 +40,11 @@ public class CluedoPlugin extends JavaPlugin {
         //Initialize Timer Manager
         timerManager = new TimerManager();
         timerManager.init(this);
+
+        //Register Permissions
+        Bukkit.getPluginManager().addPermission(PERMISSION_CLUEDO_JOIN);
+        Bukkit.getPluginManager().addPermission(PERMISSION_CLUEDO_FORCE_DETECTIVE);
+        Bukkit.getPluginManager().addPermission(PERMISSION_CLUEDO_FORCE_MURDERER);
 
         //Create World
         WorldCreator worldCreator = new WorldCreator(settings.getString(Setting.GAME_WORLD_NAME))
@@ -84,7 +94,15 @@ public class CluedoPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        //Stop minigame
         game.shutdown();
+
+        //Unregister Permissions
+        Bukkit.getPluginManager().removePermission(PERMISSION_CLUEDO_JOIN);
+        Bukkit.getPluginManager().removePermission(PERMISSION_CLUEDO_FORCE_DETECTIVE);
+        Bukkit.getPluginManager().removePermission(PERMISSION_CLUEDO_FORCE_MURDERER);
+
+        //Clear variables
         game = null;
         settings = null;
         timerManager = null;

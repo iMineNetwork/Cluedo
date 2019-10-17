@@ -32,34 +32,22 @@ public class MurderRole extends CluedoRole {
         //Set gamemode
         player.setGameMode(GameMode.ADVENTURE);
 
-        //Create knife itemstack
-//        int kills = Bukkit.getScoreboardManager().getMainScoreboard().getObjective("playerkills").getScore(player.getDisplayName()).getScore();
-//        ItemStack knife;
-//
-//        if (kills >= 25 && kills < 100) {
-//            knife = new ItemStack(Material.STONE_SWORD);
-//        } else if (kills >= 100 && kills < 500) {
-//            knife = new ItemStack(Material.IRON_SWORD);
-//        } else if (kills >= 500) {
-//            knife = new ItemStack(Material.DIAMOND_SWORD);
-//        } else {
-//            knife = new ItemStack(Material.WOODEN_SWORD);
-//        }
+        //Create knife ItemStack
         ItemStack knife = new ItemStack(Material.WOODEN_SWORD);
 
         ItemMeta knifeMeta = knife.getItemMeta();
         knifeMeta.setUnbreakable(true);
         knife.setItemMeta(knifeMeta);
 
-        //Create invisibility potion itemstack
+        //Create invisibility potion ItemStack
         ItemStack invisibilityPotion = new ItemStack(Material.POTION);
-        PotionMeta invisibilitypotionMeta = (PotionMeta) invisibilityPotion.getItemMeta();
-        invisibilitypotionMeta.setDisplayName(ChatColor.WHITE + "Potion of Invisibility");
-        invisibilitypotionMeta.setColor(Color.GRAY);
-        invisibilitypotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 400, 0, true, false), true);
-        invisibilityPotion.setItemMeta(invisibilitypotionMeta);
+        PotionMeta invisibilityPotionMeta = (PotionMeta) invisibilityPotion.getItemMeta();
+        invisibilityPotionMeta.setDisplayName(ChatColor.WHITE + "Potion of Invisibility");
+        invisibilityPotionMeta.setColor(Color.GRAY);
+        invisibilityPotionMeta.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 400, 0, true, false), true);
+        invisibilityPotion.setItemMeta(invisibilityPotionMeta);
 
-        //Create Damage Potion itemstack
+        //Create Damage Potion ItemStack
         ItemStack damagePotion = new ItemStack(Material.SPLASH_POTION);
         PotionMeta damagePotionMeta = (PotionMeta) damagePotion.getItemMeta();
         damagePotionMeta.setDisplayName(ChatColor.WHITE + "Instant kill potion");
@@ -71,16 +59,16 @@ public class MurderRole extends CluedoRole {
         damagePotionMeta.setLore(lore);
         damagePotion.setItemMeta(damagePotionMeta);
 
-        ItemStack redDye = new ItemStack(Material.ROSE_RED, 1);
-        ItemMeta redDyeMeta = redDye.getItemMeta();
-        redDyeMeta.setDisplayName(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Murderer");
-        redDye.setItemMeta(redDyeMeta);
+        ItemStack murdererRoleToken = new ItemStack(Material.RED_DYE, 1);
+        ItemMeta murdererRoleTokenItemMeta = murdererRoleToken.getItemMeta();
+        murdererRoleTokenItemMeta.setDisplayName(ChatColor.DARK_RED + "" + ChatColor.BOLD + "Murderer");
+        murdererRoleToken.setItemMeta(murdererRoleTokenItemMeta);
 
         //Give the player their items
         player.getInventory().setHeldItemSlot(0);
         player.getInventory().setItem(1, knife);
         player.getInventory().setItem(2, invisibilityPotion);
         player.getInventory().setItem(3, damagePotion);
-        player.getInventory().setItem(17, redDye);
+        player.getInventory().setItem(17, murdererRoleToken);
     }
 }

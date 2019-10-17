@@ -7,9 +7,12 @@ commands:
   cluedo:
     description: Join or leave, your call....
     usage: /cluedo
+    permission: cluedo.join
   murderer:
     description: make the player who executes this command a murderer
     usage: /murderer [player1] [player2]...
+    permission: cluedo.force.murderer
   detective:
     description: make the player who executes this command a detective
     usage: /detective
+    permission: cluedo.force.detective

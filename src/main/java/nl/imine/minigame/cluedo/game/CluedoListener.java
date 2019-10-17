@@ -1,21 +1,20 @@
 package nl.imine.minigame.cluedo.game;
 
+import nl.imine.minigame.cluedo.CluedoPlugin;
 import nl.imine.minigame.cluedo.game.player.CluedoPlayer;
 import nl.imine.minigame.cluedo.game.player.role.RoleInteractPermission;
+import nl.imine.minigame.cluedo.game.player.role.RoleType;
 import nl.imine.minigame.cluedo.game.state.CluedoStateType;
-import nl.imine.minigame.cluedo.game.state.game.CluedoGame;
 import nl.imine.minigame.cluedo.game.state.game.jobs.JobManager;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
-
-import nl.imine.minigame.cluedo.CluedoPlugin;
-import nl.imine.minigame.cluedo.game.player.role.RoleType;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,9 +24,6 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class CluedoListener implements Listener {
 
@@ -93,7 +89,7 @@ public class CluedoListener implements Listener {
         CluedoPlayer cluedoPlayer = optionalCluedoPlayer.get();
 
         //Handle item drops
-        if (cluedoPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)) {
+        if (RoleType.DETECTIVE.equals(cluedoPlayer.getRole().getRoleType())) {
             Item item = evt.getEntity().getLocation().getWorld()
                     .dropItem(evt.getEntity().getLocation(), new ItemStack(Material.BOW));
             item.setInvulnerable(true);
@@ -107,7 +103,7 @@ public class CluedoListener implements Listener {
                         .filter(cPlayer -> cPlayer.getPlayer().equals(evt.getEntity().getKiller()))
                         .findFirst().orElse(null);
                 if (killerPlayer.getRole().getRoleType().isInnocent()) {
-                    if (killerPlayer.getRole().getRoleType().equals(RoleType.DETECTIVE)) {
+                    if (RoleType.DETECTIVE.equals(killerPlayer.getRole().getRoleType())) {
 
                         //killerPlayer.getPlayer().setExp((killerPlayer.getPlayer().getExpToLevel() / (1 - killerPlayer.getPlayer().getExp())) - 15);
                         killerPlayer.removeXpFromReward(15);
@@ -132,7 +128,6 @@ public class CluedoListener implements Listener {
         evt.getDrops().clear();
         CluedoPlugin.getGame().getGameState().handlePlayerDeath(cluedoPlayer);
         player.spigot().respawn();
-//        player.teleport(CluedoPlugin.getGameId().getGameState().getRespawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
     }
 
     @EventHandler
@@ -168,7 +163,7 @@ public class CluedoListener implements Listener {
         CluedoPlayer cluedoPlayer = optionalCluedoPlayer.get();
         if (evt.getItem().getItemStack().getType().equals(Material.BOW)) {
             //Check if the player is a bystander without a weapon
-            if (cluedoPlayer.getRole().getRoleType().equals(RoleType.BYSTANDER) && !detectiveTimeout.contains(cluedoPlayer)) {
+            if (RoleType.BYSTANDER.equals(cluedoPlayer.getRole().getRoleType()) && !detectiveTimeout.contains(cluedoPlayer)) {
                 cluedoPlayer.setRole(RoleType.DETECTIVE);
                 evt.getItem().remove();
             }
@@ -183,44 +178,55 @@ public class CluedoListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPvPDamage(EntityDamageByEntityEvent evt) {
-        //Check if entity is a player
-        if (!(evt.getEntity() instanceof Player)) {
+    public void onMeleeDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Player)) {
             return;
         }
-        Player player = (Player) evt.getEntity();
+        Player damager = (Player) event.getDamager();
 
-        //Check if the attacker was a player
-        Player damager = null;
-        boolean wasArrow = false;
-        if (!(evt.getDamager() instanceof Player)) {
-            if (evt.getDamager() instanceof Arrow) {
-                Arrow arrow = (Arrow) evt.getDamager();
-                if (arrow.getShooter() instanceof Player) {
-                    damager = (Player) arrow.getShooter();
-                    wasArrow = true;
-                }
-            } else {
-                return;
-            }
+        if (!(event.getEntity() instanceof Player)) {
+            return;
         }
-        if (damager == null) {
-            damager = (Player) evt.getDamager();
-        }
+        Player victim = (Player) event.getEntity();
 
         //Make sure the players are actually participating in this minigame
-        if (!(CluedoPlugin.getGame().getPlayers().contains(damager) && CluedoPlugin.getGame().getPlayers().contains(player))) {
+        if (!(CluedoPlugin.getGame().getPlayers().contains(damager) && CluedoPlugin.getGame().getPlayers().contains(victim))) {
             return;
         }
 
         if (CluedoPlugin.getGame().getGameState().getState().equals(CluedoStateType.IN_GAME)) {
-            if (wasArrow) {
-                handleArrowDamage(evt);
-            } else {
-                handleMeleeDamage(evt);
-            }
+            handleMeleeDamage(event);
         } else {
-            evt.setCancelled(true);
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onArrowDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof Arrow)) {
+            return;
+        }
+        Arrow arrow = (Arrow) event.getDamager();
+
+        if (arrow.getShooter() == null || !(arrow.getShooter() instanceof Player)) {
+            return;
+        }
+        Player damager = (Player) arrow.getShooter();
+
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+        Player victim = (Player) event.getEntity();
+
+        //Make sure the players are actually participating in this minigame
+        if (!(CluedoPlugin.getGame().getPlayers().contains(damager) && CluedoPlugin.getGame().getPlayers().contains(victim))) {
+            return;
+        }
+
+        if (CluedoPlugin.getGame().getGameState().getState().equals(CluedoStateType.IN_GAME)) {
+            handleArrowDamage(event);
+        } else {
+            event.setCancelled(true);
         }
     }
 
@@ -266,8 +272,7 @@ public class CluedoListener implements Listener {
         }
 
         if (CluedoPlugin.getGame().getGameState().getState() == CluedoStateType.PRE_GAME
-                && ((evt.getPlayer().getInventory().getItemInMainHand() != null && evt.getPlayer().getInventory().getItemInMainHand().getType() == Material.SPLASH_POTION)
-                || (evt.getPlayer().getInventory().getItemInOffHand() != null && evt.getPlayer().getInventory().getItemInOffHand().getType() == Material.SPLASH_POTION))) {
+                && (Material.SPLASH_POTION.equals(evt.getPlayer().getInventory().getItemInMainHand().getType()) || Material.SPLASH_POTION.equals(evt.getPlayer().getInventory().getItemInOffHand().getType()))) {
             evt.setCancelled(true);
         }
 
@@ -408,8 +413,7 @@ public class CluedoListener implements Listener {
         }
 
         if (evt.getCurrentItem() != null
-                && (evt.getCurrentItem().getType() == null
-                || evt.getCurrentItem().getType() == Material.AIR
+                && (evt.getCurrentItem().getType() == Material.AIR
                 || evt.getCurrentItem().getType() == Material.POTION
                 || evt.getCurrentItem().getType() == Material.WHEAT)) {
             return;
@@ -437,8 +441,8 @@ public class CluedoListener implements Listener {
     }
 
     @EventHandler
-    public void onProjectileLaunch(ProjectileLaunchEvent projectileLaunchEvent){
-        if(!(projectileLaunchEvent.getEntity() instanceof Arrow)){
+    public void onProjectileLaunch(ProjectileLaunchEvent projectileLaunchEvent) {
+        if (!(projectileLaunchEvent.getEntity() instanceof Arrow)) {
             return;
         }
         Arrow arrow = (Arrow) projectileLaunchEvent.getEntity();
@@ -453,32 +457,31 @@ public class CluedoListener implements Listener {
         }
 
         arrow.setPickupStatus(Arrow.PickupStatus.DISALLOWED);
-
     }
 
-    private boolean isFlowerPot(Material material){
+    private boolean isFlowerPot(Material material) {
         return material.equals(Material.FLOWER_POT)
-        || material.equals(Material.POTTED_ACACIA_SAPLING)
-        || material.equals(Material.POTTED_ALLIUM)
-        || material.equals(Material.POTTED_AZURE_BLUET)
-        || material.equals(Material.POTTED_BIRCH_SAPLING)
-        || material.equals(Material.POTTED_BLUE_ORCHID)
-        || material.equals(Material.POTTED_BROWN_MUSHROOM)
-        || material.equals(Material.POTTED_CACTUS)
-        || material.equals(Material.POTTED_DANDELION)
-        || material.equals(Material.POTTED_DARK_OAK_SAPLING)
-        || material.equals(Material.POTTED_DEAD_BUSH)
-        || material.equals(Material.POTTED_FERN)
-        || material.equals(Material.POTTED_JUNGLE_SAPLING)
-        || material.equals(Material.POTTED_OAK_SAPLING)
-        || material.equals(Material.POTTED_ORANGE_TULIP)
-        || material.equals(Material.POTTED_OXEYE_DAISY)
-        || material.equals(Material.POTTED_PINK_TULIP)
-        || material.equals(Material.POTTED_POPPY)
-        || material.equals(Material.POTTED_RED_MUSHROOM)
-        || material.equals(Material.POTTED_RED_TULIP)
-        || material.equals(Material.POTTED_SPRUCE_SAPLING)
-        || material.equals(Material.POTTED_WHITE_TULIP);
+                || material.equals(Material.POTTED_ACACIA_SAPLING)
+                || material.equals(Material.POTTED_ALLIUM)
+                || material.equals(Material.POTTED_AZURE_BLUET)
+                || material.equals(Material.POTTED_BIRCH_SAPLING)
+                || material.equals(Material.POTTED_BLUE_ORCHID)
+                || material.equals(Material.POTTED_BROWN_MUSHROOM)
+                || material.equals(Material.POTTED_CACTUS)
+                || material.equals(Material.POTTED_DANDELION)
+                || material.equals(Material.POTTED_DARK_OAK_SAPLING)
+                || material.equals(Material.POTTED_DEAD_BUSH)
+                || material.equals(Material.POTTED_FERN)
+                || material.equals(Material.POTTED_JUNGLE_SAPLING)
+                || material.equals(Material.POTTED_OAK_SAPLING)
+                || material.equals(Material.POTTED_ORANGE_TULIP)
+                || material.equals(Material.POTTED_OXEYE_DAISY)
+                || material.equals(Material.POTTED_PINK_TULIP)
+                || material.equals(Material.POTTED_POPPY)
+                || material.equals(Material.POTTED_RED_MUSHROOM)
+                || material.equals(Material.POTTED_RED_TULIP)
+                || material.equals(Material.POTTED_SPRUCE_SAPLING)
+                || material.equals(Material.POTTED_WHITE_TULIP);
     }
 
 }

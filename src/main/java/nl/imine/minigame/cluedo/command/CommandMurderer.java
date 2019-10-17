@@ -42,29 +42,29 @@ public class CommandMurderer implements CommandExecutor {
             return true;
         }
 
-        if (player.getInventory().contains(new ItemStack(Material.ROSE_RED,1))) {
+        if (player.getInventory().contains(new ItemStack(Material.RED_DYE,1))) {
             player.sendMessage(ChatColor.RED + "You're already going to spawn as a murderer");
             return true;
         }
 
-        if (player.getInventory().contains(new ItemStack(Material.LAPIS_LAZULI, 1))) {
+        if (player.getInventory().contains(new ItemStack(Material.BLUE_DYE, 1))) {
             player.sendMessage(ChatColor.RED + "We're sorry, but the detective cannot be a murderer at the same time");
             return true;
         }
 
         if (player.getLevel() >= 15) {
             player.setLevel(player.getLevel() - 15);
-            ItemStack roseRed = new ItemStack(Material.ROSE_RED, 1);
+            ItemStack murdererRoleToken = new ItemStack(Material.RED_DYE, 1);
 
-            ItemMeta roseRedMeta = roseRed.getItemMeta();
+            ItemMeta murdererRoleTokenItemMeta = murdererRoleToken.getItemMeta();
 
-            roseRedMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "You are guaranteed to be a murderer next game");
+            murdererRoleTokenItemMeta.setDisplayName(ChatColor.RED + "" + ChatColor.BOLD + "You are guaranteed to be a murderer next game");
 
-            roseRed.setItemMeta(roseRedMeta);
+            murdererRoleToken.setItemMeta(murdererRoleTokenItemMeta);
 
             player.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "You will be a murderer next game, good luck!");
             player.getInventory().setHeldItemSlot(0);
-            player.getInventory().setItem(4, roseRed);
+            player.getInventory().setItem(4, murdererRoleToken);
         }else{
              player.sendMessage(ChatColor.RED + "You'll need 15 levels to become a murderer!");
         }
