@@ -13,6 +13,7 @@ import nl.imine.minigame.cluedo.game.state.pregame.CluedoPreGame;
 import nl.imine.minigame.cluedo.settings.Setting;
 import nl.imine.minigame.cluedo.util.PlayerUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,9 +46,15 @@ public class CluedoMinigame {
     }
 
     public void joinPlayer(Player player) {
-        if (isJoinable() && !isPlayerInGame(player)) {
-            onJoin(player);
+        if(!isJoinable()) {
+            player.sendMessage(ChatColor.RED + "Cluedo is currently full. Please try again later");
+            return;
         }
+        if (isPlayerInGame(player)) {
+            player.sendMessage(ChatColor.RED + "You are already in-game.");
+            return;
+        }
+        onJoin(player);
     }
 
     private void onJoin(Player player) {
